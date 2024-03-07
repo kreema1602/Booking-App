@@ -25,7 +25,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
@@ -45,30 +44,40 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bookingapp.ui.theme.BookingAppTheme
 
-@Composable
-fun Greeting2(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen() {
     BookingAppTheme {
-        Scaffold(
-            topBar = {
-                SearchBar()
-            }
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            LazyColumn(
-                contentPadding = PaddingValues(start = 16.dp, top = 80.dp, end = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(10) {
-                    HotelItem()
-                    Spacer(modifier = Modifier.height(8.dp))
+            Row {
+                Column {
+                    Text(
+                        text = "LOGO HERE",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    SearchBar()
+                }
+            }
+            // Hotels list
+            Row {
+                LazyColumn(
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        top = 16.dp,
+                        end = 16.dp,
+                        bottom = 16.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(10) {
+                        HotelItem()
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                 }
             }
         }
@@ -86,7 +95,6 @@ fun SearchBar() {
 
     Box(
         Modifier
-            .fillMaxSize()
             .semantics { isTraversalGroup = true }) {
         Surface(
             modifier = Modifier.align(Alignment.TopCenter),
@@ -157,7 +165,7 @@ fun HotelDescription(modifier: Modifier) {
                 text = "Hotel ABC",
                 style = MaterialTheme.typography.titleLarge
             )
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -206,9 +214,6 @@ fun HotelDescription(modifier: Modifier) {
 @Composable
 fun GreetingPreview2() {
     BookingAppTheme {
-//        Greeting2("Android")
-//        SearchBar()
-//        HotelItem()
         MainScreen()
     }
 }
