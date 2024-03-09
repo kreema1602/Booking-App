@@ -1,6 +1,7 @@
 package com.example.bookingapp
 
 import android.annotation.SuppressLint
+import android.provider.CalendarContract.Colors
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -49,35 +50,43 @@ import com.example.bookingapp.ui.theme.BookingAppTheme
 fun MainScreen() {
     BookingAppTheme {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 8.dp,
+                    bottom = 0.dp
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Row {
-                Column {
-                    Text(
-                        text = "LOGO HERE",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(16.dp)
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = "LOGO HERE",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                    modifier = Modifier.padding(
+                        top = 16.dp,
+                        bottom = 16.dp
                     )
-                    SearchBar()
-                }
+                )
+                SearchBar()
             }
             // Hotels list
-            Row {
-                LazyColumn(
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        top = 16.dp,
-                        end = 16.dp,
-                        bottom = 16.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(10) {
-                        HotelItem()
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    top = 16.dp,
+                    bottom = 16.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(10) {
+                    HotelItem()
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
@@ -91,18 +100,23 @@ fun SearchBar() {
     var active by rememberSaveable { mutableStateOf(false) }
 
     val backgroundColor = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
-    val borderColor = if (isSystemInDarkTheme()) Color.White else Color.Black
 
     Box(
         Modifier
+            .background(Color.Transparent)
             .semantics { isTraversalGroup = true }) {
         Surface(
-            modifier = Modifier.align(Alignment.TopCenter),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .background(Color.Transparent),
             contentColor = MaterialTheme.colorScheme.onSurface,
+            color = Color.Transparent
         ) {
             SearchBar(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
+                    .background(Color.Transparent)
                     .semantics { traversalIndex = -1f },
                 query = text,
                 onQueryChange = { text = it },
@@ -141,7 +155,7 @@ fun HotelItem() {
                 modifier = Modifier
                     .height(200.dp)
                     .fillMaxWidth()
-                    .background(Color.Cyan)
+                    .background(Color.Gray)
             ) {
                 HotelDescription(modifier = Modifier.align(Alignment.BottomStart))
             }
