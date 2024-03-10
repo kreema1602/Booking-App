@@ -1,7 +1,9 @@
-package com.example.bookingapp
+package com.example.bookingapp.reservation
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,19 +24,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun ReservationScreen() {
+fun ReservationMainScreen() {
     Surface(color = Color.White) {
         Column(modifier = Modifier.fillMaxSize()) {
-            TopBar(title = "Reservation")
-            ReservationList()
+            MainTopBar(title = "Reservation")
+            ReservationList(navController)
         }
     }
 }
 
 @Composable
-fun TopBar(title: String) {
+fun MainTopBar(title: String) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color.White,
@@ -58,8 +63,8 @@ fun TopBar(title: String) {
 }
 
 @Composable
-fun ReservationList() {
-    val items = ReservationItem.getSampleData()
+fun ReservationList(navController: NavHostController) {
+    val items = ReservationData.sampleData
 
     LazyColumn (
 //        contentPadding = PaddingValues(16.dp),
@@ -71,17 +76,21 @@ fun ReservationList() {
     )
     {
         items(items = items) { item ->
-            ReservationListItem(item = item)
+            ReservationListItem(item = item, viewDetail = {
+                Log.i("ReservationList", "View detail of ${item.id}")
+                navController.navigate("reservation_detail/${item.id}")
+            })
         }
     }
 }
 @Composable
-fun ReservationListItem(item: ReservationItem) {
+fun ReservationListItem(item: ReservationItem, viewDetail: () -> Unit = {}){
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(vertical = 5.dp, horizontal = 10.dp),
+            .padding(vertical = 5.dp, horizontal = 10.dp)
+            .clickable (onClick = viewDetail),
 //        verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
@@ -97,7 +106,7 @@ fun ReservationListItem(item: ReservationItem) {
                 modifier = imageModifier
             ) {
                 Image(
-                    painter = painterResource(id = item.imageResource),
+                    painter = painterResource(id = item.imageResource[0]),
                     contentDescription = null, // Add proper content description
                     contentScale = ContentScale.FillHeight,
                     modifier = Modifier.fillMaxSize()
@@ -180,6 +189,7 @@ fun StatusBox(status: String) {
         Text(
             text = status,
             color = textColor,
+            fontSize = 16.sp,
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp)
         )
     }
@@ -188,6 +198,7 @@ fun StatusBox(status: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun ReservationScreenPreview() {
-    ReservationScreen()
+fun ReservationMainScreenPreview() {
+    navController = rememberNavController()
+    ReservationMainScreen()
 }
