@@ -126,6 +126,7 @@ private fun NavController.currentScreenAsState(): State<RootScreen> {
     val selectedItem = remember { mutableStateOf<RootScreen>(RootScreen.Home) }
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            Log.d("Navigation", "Destination changed to: ${destination.route}")
             when {
                 destination.hierarchy.any { it.route == RootScreen.Home.route } -> {
                     selectedItem.value = RootScreen.Home
@@ -153,6 +154,7 @@ private fun NavController.currentRouteAsState(): State<String?> {
     val selectedItem = remember { mutableStateOf<String?>(null) }
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            Log.d("Navigation", "Destination: ${destination.route}")
             selectedItem.value = destination.route
         }
         addOnDestinationChangedListener(listener)

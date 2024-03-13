@@ -2,6 +2,7 @@ package com.example.bookingapp.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -11,6 +12,7 @@ import androidx.navigation.navigation
 import com.example.bookingapp.pages.HomeDetailsPage
 import com.example.bookingapp.pages.HomePage
 import com.example.bookingapp.pages.NotificationPage
+import com.example.bookingapp.pages.NotificationViewModel
 import com.example.bookingapp.pages.ProfilePage
 import com.example.bookingapp.pages.ReservationPage
 
@@ -88,7 +90,9 @@ private fun NavGraphBuilder.addNotificationsRoute(navController: NavController) 
 
 private fun NavGraphBuilder.showNotifications(navController: NavController) {
     composable(LeafScreen.Notifications.route) {
-        NotificationPage()
+        NotificationPage(
+            viewModel = NotificationViewModel(savedStateHandle = SavedStateHandle(), notificationList = arrayListOf())
+        )
     }
 }
 // end of Notifications navigation
