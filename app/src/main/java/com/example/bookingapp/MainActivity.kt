@@ -23,7 +23,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
+import com.example.bookingapp.core.compose.CalendarIcon
 import com.example.bookingapp.core.compose.HomeIcon
+import com.example.bookingapp.core.compose.NotificationIcon
 import com.example.bookingapp.core.compose.ProfileIcon
 import com.example.bookingapp.core.ui.theme.BookingAppTheme
 import com.example.bookingapp.navigation.AppNavGraph
@@ -90,7 +92,7 @@ private fun BottomNavBar(
                 Text(text = stringResource(id = R.string.reservations))
             },
             icon = {
-                HomeIcon()
+                CalendarIcon()
             }
         )
         NavigationBarItem(
@@ -101,7 +103,7 @@ private fun BottomNavBar(
                 Text(text = stringResource(id = R.string.notifications))
             },
             icon = {
-                HomeIcon()
+                NotificationIcon()
             }
         )
         NavigationBarItem(

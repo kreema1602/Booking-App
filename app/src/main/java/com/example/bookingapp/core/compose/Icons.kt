@@ -184,6 +184,28 @@ fun StarIcon(
     )
 }
 
+@Composable
+fun CalendarIcon(
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        painterResource(id = R.drawable.ic_calendar_month),
+        contentDescription = "Calendar",
+        modifier = modifier
+    )
+}
+
+@Composable
+fun NotificationIcon(
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        painterResource(id = R.drawable.ic_notification),
+        contentDescription = "Notifications",
+        modifier = modifier
+    )
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Preview
 @Composable
@@ -197,6 +219,8 @@ fun PreviewIcons() {
             ImportExportIcon()
             SortIcon()
             BookMarkIcon()
+            CalendarIcon()
+            NotificationIcon()
         }
     }
 }
