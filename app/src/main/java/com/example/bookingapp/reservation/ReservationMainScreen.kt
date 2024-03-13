@@ -22,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -114,54 +115,10 @@ fun ReservationListItem(item: ReservationItem, viewDetail: () -> Unit = {}){
             }
 
             // Details
-            val columnHeight = imageSize + 30.dp
-            Column(
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .heightIn(min = columnHeight),
-//                .background(Color.Red),
-                verticalArrangement = Arrangement.SpaceBetween,
-            ) {
-                StatusBox(status = item.status)
-                Text(
-                    text = item.name,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF333333),
-                    fontSize = 16.sp)
-                Text(text = item.roomType, color = Color(0xFF555555))
-                Text(text = item.date, color = Color(0xFF555555))
-                Text(
-                    text = "${item.price} VNĐ",
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFFF6400),
-                    fontSize = 18.sp)
-
-            }
+            ItemDetail(item = item, columnHeight = imageSize + 30.dp)
         }
         // Rating Button Row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            if (item.status == "Completed") {
-                Button(
-                    onClick = { /* Handle button click */ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                        .clip(RoundedCornerShape(4.dp)),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(0xFFff6400)
-                    )
-                ) {
-                    Text(text = "Rating", color = Color(0xFFFFFFFF))
-                }
-            }
-        }
-
+        RatingButton(item.status)
     }
 }
 
@@ -192,6 +149,57 @@ fun StatusBox(status: String) {
             fontSize = 16.sp,
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp)
         )
+    }
+}
+
+@Composable
+fun RatingButton(status: String){
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        if (status == "Completed") {
+            Button(
+                onClick = { /* Handle button click */ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xFFff6400)
+                )
+            ) {
+                Text(text = "Rating", color = Color(0xFFFFFFFF))
+            }
+        }
+    }
+}
+
+@Composable
+fun ItemDetail(item: ReservationItem, columnHeight: Dp){
+    Column(
+        modifier = Modifier
+            .padding(start = 16.dp)
+            .fillMaxWidth()
+            .heightIn(min = columnHeight),
+//                .background(Color.Red),
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
+        StatusBox(status = item.status)
+        Text(
+            text = item.name,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF333333),
+            fontSize = 16.sp)
+        Text(text = item.roomType, color = Color(0xFF555555))
+        Text(text = item.date, color = Color(0xFF555555))
+        Text(
+            text = "${item.price} VNĐ",
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFFFF6400),
+            fontSize = 18.sp)
+
     }
 }
 

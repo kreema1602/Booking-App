@@ -1,5 +1,6 @@
 package com.example.bookingapp.reservation
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -129,6 +130,7 @@ fun DetailContent(chosenHotel: ReservationItem) {
     }
 }
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CoreContent(images: List<Int>, hotelName: String, roomType: String) {
