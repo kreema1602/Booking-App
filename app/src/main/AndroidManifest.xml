@@ -16,6 +16,11 @@
             android:name=".NavBar"
             android:exported="false"
             android:label="@string/title_activity_nav_bar"
+        />
+        <activity
+            android:name=".NotificationScreen"
+            android:exported="false"
+            android:label="@string/title_activity_notification_screen"
             android:theme="@style/Theme.BookingApp" />
         <activity
             android:name=".MainActivity"

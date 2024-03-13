@@ -28,4 +28,5 @@
     <string name="login_success">Login Success</string>
     <string name="retry_login">Retry Login</string>
     <string name="forgot_password">Forget Password?</string>
+    <string name="title_activity_notification_screen">NotificationScreen</string>
 </resources>
