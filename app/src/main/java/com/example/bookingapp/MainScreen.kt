@@ -1,7 +1,7 @@
 package com.example.bookingapp
 
 import android.annotation.SuppressLint
-import android.provider.CalendarContract.Colors
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,6 +39,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
@@ -65,30 +68,35 @@ fun MainScreen() {
             Column(
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(
-                    text = "LOGO HERE",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = if (isSystemInDarkTheme()) Color.White else Color.Black,
-                    modifier = Modifier.padding(
-                        top = 16.dp,
-                        bottom = 16.dp
-                    )
+                // Logo
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .width(100.dp)
+                        .height(50.dp)
+                        .align(Alignment.Start)
                 )
                 SearchBar()
             }
-            // Hotels list
-            LazyColumn(
-                contentPadding = PaddingValues(
-                    top = 16.dp,
-                    bottom = 16.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(10) {
-                    HotelItem()
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
+            HotelList()
+        }
+    }
+}
+
+@Composable
+fun HotelList() {
+    LazyColumn(
+        contentPadding = PaddingValues(
+            top = 16.dp,
+            bottom = 16.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(10) {
+            HotelItem()
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -144,7 +152,7 @@ fun HotelItem() {
     ) {
         Column {
 //            Image(
-//                painter = painterResource(id = hotel.imageResId),
+//                painter = painterResource(id = R.drawable.hotel1),
 //                contentDescription = null,
 //                modifier = Modifier
 //                    .height(200.dp)
@@ -155,8 +163,13 @@ fun HotelItem() {
                 modifier = Modifier
                     .height(200.dp)
                     .fillMaxWidth()
-                    .background(Color.Gray)
             ) {
+                Image(
+                    painter = painterResource(id = R.drawable.hotel1),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
                 HotelDescription(modifier = Modifier.align(Alignment.BottomStart))
             }
         }
@@ -177,7 +190,8 @@ fun HotelDescription(modifier: Modifier) {
         ) {
             Text(
                 text = "Hotel ABC",
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.White
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -192,7 +206,8 @@ fun HotelDescription(modifier: Modifier) {
                 )
                 Text(
                     text = "4.5",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White
                 )
             }
         }
@@ -209,16 +224,18 @@ fun HotelDescription(modifier: Modifier) {
                     contentDescription = null,
                     modifier = Modifier
                         .size(20.dp),
-                    tint = Color.Black
+                    tint = Color.White
                 )
                 Text(
                     text = "Hotel location",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White
                 )
             }
             Text(
                 text = "Price",
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White
             )
         }
     }
