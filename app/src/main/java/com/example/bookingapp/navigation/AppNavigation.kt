@@ -63,9 +63,7 @@ private fun NavGraphBuilder.addReservationsRoute(navController: NavController) {
         route = RootScreen.Reservations.route,
         startDestination = LeafScreen.Reservations.route
     ) {
-        composable(LeafScreen.Reservations.route) {
-            showReservations(navController)
-        }
+        showReservations(navController)
     }
 }
 
@@ -82,9 +80,7 @@ private fun NavGraphBuilder.addNotificationsRoute(navController: NavController) 
         route = RootScreen.Notifications.route,
         startDestination = LeafScreen.Notifications.route
     ) {
-        composable(LeafScreen.Notifications.route) {
-            showNotifications(navController)
-        }
+        showNotifications(navController)
     }
 }
 
@@ -103,9 +99,7 @@ private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
         route = RootScreen.Profile.route,
         startDestination = LeafScreen.Profile.route
     ) {
-        composable(LeafScreen.Profile.route) {
-            showProfile(navController)
-        }
+        showProfile(navController)
     }
 }
 
