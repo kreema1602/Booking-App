@@ -1,12 +1,13 @@
 package com.example.bookingapp.models
 
-class JoyhubAccount(
-    private var username: String,
-    private var password: String,
-    private var email: String,
-    private var phone: String,
-    private var wallet: Int
-) {
+import java.io.Serializable
+
+class JoyhubAccount(s: String, s1: String, s2: String, s3: String, i: Int) : Serializable {
+    private var username: String = s
+    private var password: String = s1
+    private var email: String = s2
+    private var phone: String = s3
+    private var wallet: Int = i
 
     fun get_username(): String {
         return username

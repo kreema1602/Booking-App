@@ -1,8 +1,16 @@
+@file:Suppress("LocalVariableName")
+
 package com.example.bookingapp.profile_screen
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -42,7 +51,7 @@ val mavenProFontFamily = (Font(R.font.maven_pro_regular, FontWeight.Normal) to F
     R.font.maven_pro_bold, FontWeight.Bold
 ))
 
-class Profile_main_screen : AppCompatActivity() {
+class ProfileMainScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -93,25 +102,49 @@ fun ConfigCard(acc: JoyhubAccount) {
 @Composable
 fun Name_tag(acc: JoyhubAccount) {
     Card(colors = CardDefaults.cardColors(containerColor = OrangePrimary)) {
-        Row(modifier = Modifier.padding(16.dp)) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.CenterHorizontally)
+        ) {
             AsyncImage(
-                model = "https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/426537568_3230198847282323_3777633320519734564_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeEy7wFkTZti3P-LHZ125WndGablwDNx4jsZpuXAM3HiO0e413eT3pk6j7bbjA0GAa6Tg9JserM0AyLhckuZVdBS&_nc_ohc=5U54vLYizzUAX-zxfQe&_nc_ht=scontent.fsgn5-9.fna&oh=00_AfAL_osxzv7xFOhHWCRpO5BgNVNdEY8ZH3ppM1Ro_FrE7A&oe=65F1FC0B",
+                model = R.drawable.ava,
                 contentDescription = null,
                 modifier = Modifier
                     .size(60.dp)
                     .clip(CircleShape)
+                    .align(Alignment.CenterVertically)
             )
-            Spacer(modifier = Modifier.padding(3.dp))
-            Column {
+            Spacer(modifier = Modifier.padding(4.dp))
+            Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Bottom) {
                 Text(
-                    text = acc.get_username(), modifier = Modifier.fillMaxWidth(), fontSize = 20.sp
+                    text = acc.get_username(),
+                    modifier = Modifier.fillMaxWidth(),
+                    fontSize = 28.sp,
+                    fontFamily = FontFamily(
+                        mavenProFontFamily.first, mavenProFontFamily.second
+                    ),
+                    fontWeight = FontWeight.Bold,
+                    color = androidx.compose.ui.graphics.Color.White
                 )
-                Row {
-                    Text(text = "JoyCoin")
+                Spacer(modifier = Modifier.padding(5.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "JoyCoin", fontFamily = FontFamily(
+                            mavenProFontFamily.first, mavenProFontFamily.second
+                        ), fontSize = 16.sp, color = androidx.compose.ui.graphics.Color.White
+                    )
                     Text(
                         text = acc.get_wallet().toString(),
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.End
+                        textAlign = androidx.compose.ui.text.style.TextAlign.End,
+                        fontFamily = FontFamily(
+                            mavenProFontFamily.first, mavenProFontFamily.second
+                        ),
+                        fontSize = 16.sp,
+                        color = androidx.compose.ui.graphics.Color.White
                     )
                 }
             }
@@ -121,13 +154,31 @@ fun Name_tag(acc: JoyhubAccount) {
 
 @Composable
 fun Edit_user_profile(acc: JoyhubAccount) {
-    Card {
+    Log.i("Profile_main_screen", "Edit_user_profile: ${acc.get_email()}")
+    val context = LocalContext.current
+    val editLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            val edited_acc = data?.getSerializableExtra("account") as JoyhubAccount
+            acc.set_username(edited_acc.get_username())
+            acc.set_email(edited_acc.get_email())
+            acc.set_phone(edited_acc.get_phone())
+        }
+    }
+    Card(modifier = Modifier.clickable {
+        val bundle = Bundle()
+        val intent = android.content.Intent(context, edit_profile_act::class.java)
+        bundle.putSerializable("ACCOUNT", acc)
+        Log.i("Profile_main_screen", "Edit_user_profile: ${acc.get_email()}")
+        intent.putExtras(bundle)
+        editLauncher.launch(intent)
+    }) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(0.dp, 0.dp, 16.dp, 0.dp),
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "Edit user profile", modifier = Modifier.padding(16.dp), fontSize = 20.sp
@@ -147,8 +198,8 @@ fun Recharge_joycoin(acc: JoyhubAccount) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(0.dp, 0.dp, 16.dp, 0.dp),
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "Recharge JoyCoin", modifier = Modifier.padding(16.dp), fontSize = 20.sp
@@ -168,8 +219,8 @@ fun Recently_history(acc: JoyhubAccount) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(0.dp, 0.dp, 16.dp, 0.dp),
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "Recently history", modifier = Modifier.padding(16.dp), fontSize = 20.sp
@@ -207,15 +258,13 @@ fun Favorite_list(acc: JoyhubAccount) {
 fun Log_out(acc: JoyhubAccount) {
     Card {
         Row(
-            modifier = Modifier
+            Modifier
                 .fillMaxWidth()
                 .padding(0.dp, 0.dp, 16.dp, 0.dp),
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            Arrangement.SpaceBetween,
+            Alignment.CenterVertically,
         ) {
-            Text(
-                text = "Log out", modifier = Modifier.padding(16.dp), fontSize = 20.sp
-            )
+            Text(text = "Log out", modifier = Modifier.padding(16.dp), fontSize = 20.sp)
             Icon(Icons.Filled.ExitToApp, contentDescription = null)
         }
     }
