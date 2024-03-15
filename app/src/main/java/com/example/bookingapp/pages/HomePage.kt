@@ -75,9 +75,9 @@ fun HomePage(
                     .height(50.dp)
                     .align(Alignment.Start)
             )
-            com.example.bookingapp.SearchBar()
+            SearchBar()
         }
-        com.example.bookingapp.HotelList()
+        HotelList()
     }
 
 }
@@ -116,7 +116,8 @@ fun SearchBar() {
                 .fillMaxWidth()
                 .background(Color.Transparent),
             contentColor = MaterialTheme.colorScheme.onSurface,
-            color = Color.Transparent
+            color = Color.Transparent,
+            shape = RoundedCornerShape(10.dp)
         ) {
             androidx.compose.material3.SearchBar(
                 modifier = Modifier
@@ -148,14 +149,6 @@ fun HotelItem() {
         elevation = CardDefaults.cardElevation(10.dp),
     ) {
         Column {
-//            Image(
-//                painter = painterResource(id = R.drawable.hotel1),
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .height(200.dp)
-//                    .fillMaxWidth(),
-//                contentScale = ContentScale.Crop
-//            )
             Box(
                 modifier = Modifier
                     .height(200.dp)
