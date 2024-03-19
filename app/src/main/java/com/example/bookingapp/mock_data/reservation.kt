@@ -1,16 +1,7 @@
-package com.example.bookingapp.reservation
+package com.example.bookingapp.mock_data
 
 import com.example.bookingapp.R
-
-data class ReservationItem(
-    val id: Int, // New ID field
-    val name: String,
-    val status: String,
-    val date: String,
-    val price: String,
-    val roomType: String,
-    val imageResource: List<Int>
-)
+import com.example.bookingapp.models.ReservationItem
 
 object ReservationData {
     val sampleData: List<ReservationItem> = listOf(

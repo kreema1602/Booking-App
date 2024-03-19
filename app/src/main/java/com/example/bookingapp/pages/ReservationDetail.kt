@@ -1,4 +1,4 @@
-package com.example.bookingapp.reservation
+package com.example.bookingapp.pages
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -14,18 +14,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,20 +32,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bookingapp.R
+import androidx.navigation.NavController
+import com.example.bookingapp.mock_data.ReservationData
+import com.example.bookingapp.models.ReservationItem
 
 @Composable
-fun ReservationDetailScreen(hotelId: Int) {
+fun ReservationDetailScreen(hotelId: Int, navController: NavController) {
     val hotels = ReservationData.sampleData
+    Log.d("ReservationDetailScreen", "hotelId: $hotelId")
     val chosenHotel = hotels.find { it.id == hotelId}
 
     if (chosenHotel != null) {
         Surface(color = Color.White) {
             Column(modifier = Modifier.fillMaxSize()) {
-                DetailTopBar(chosenHotel)
+                DetailTopBar(chosenHotel, navController)
                 DetailContent(chosenHotel)
             }
         }
@@ -60,7 +57,7 @@ fun ReservationDetailScreen(hotelId: Int) {
 }
 
 @Composable
-fun DetailTopBar(chosenHotel: ReservationItem) {
+fun DetailTopBar(chosenHotel: ReservationItem, navController: NavController) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color.White,
@@ -75,7 +72,7 @@ fun DetailTopBar(chosenHotel: ReservationItem) {
             // Back Button
             IconButton(
                 onClick = {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 }
             ) {
                 Icon(
@@ -135,46 +132,46 @@ fun DetailContent(chosenHotel: ReservationItem) {
 @Composable
 fun CoreContent(images: List<Int>, hotelName: String, roomType: String) {
     val pagerState = rememberPagerState(pageCount = { images.size })
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 0.dp, start = 24.dp, end = 24.dp, bottom = 16.dp)
+    ) {
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 0.dp, start = 24.dp, end = 24.dp, bottom = 16.dp)
+                .height(200.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-            ) {
-                HorizontalPager(
-                    state = pagerState,
-                    key = { images[it] }
-                ) { index ->
-                    Image(
-                        painter = painterResource(id = images[index]),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(10.dp))
-                    )
-                }
+            HorizontalPager(
+                state = pagerState,
+                key = { images[it] }
+            ) { index ->
+                Image(
+                    painter = painterResource(id = images[index]),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(10.dp))
+                )
             }
-            Text(
-                text = hotelName,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 18.dp),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                text = roomType,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp),
-                fontSize = 22.sp,
-            )
         }
+        Text(
+            text = hotelName,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 18.dp),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+        )
+        Text(
+            text = roomType,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp),
+            fontSize = 22.sp,
+        )
+    }
 }
 
 @Composable
@@ -243,9 +240,4 @@ fun StatusButton(status: String) {
             )
         }
     }
-}
-@Preview
-@Composable
-fun ReservationDetailScreenPreview() {
-    ReservationDetailScreen(1)
 }

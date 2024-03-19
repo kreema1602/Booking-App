@@ -2,6 +2,7 @@ package com.example.bookingapp.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -14,6 +15,7 @@ import com.example.bookingapp.pages.HomePage
 import com.example.bookingapp.pages.NotificationPage
 import com.example.bookingapp.pages.NotificationViewModel
 import com.example.bookingapp.pages.ProfilePage
+import com.example.bookingapp.pages.ReservationDetailScreen
 import com.example.bookingapp.pages.ReservationPage
 
 @Composable
@@ -64,14 +66,23 @@ private fun NavGraphBuilder.addReservationsRoute(navController: NavController) {
         startDestination = LeafScreen.Reservations.route
     ) {
         showReservations(navController)
+        showReservationDetail(navController)
     }
 }
 
 private fun NavGraphBuilder.showReservations(navController: NavController) {
     composable(LeafScreen.Reservations.route) {
-        ReservationPage()
+        ReservationPage(navController)
     }
 }
+
+private fun NavGraphBuilder.showReservationDetail(navController: NavController) {
+    composable(LeafScreen.ReservationDetail.route + "/{hotelId}") {
+        val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
+        ReservationDetailScreen(hotelId, navController = navController)
+    }
+}
+
 // end of Reservations navigation
 
 // Notifications navigation
