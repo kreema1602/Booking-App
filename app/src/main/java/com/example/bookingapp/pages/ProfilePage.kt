@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.mock_data.AccountData
 import com.example.bookingapp.models.JoyhubAccount
 import com.example.bookingapp.pages.ProfileFieldEditor
 
@@ -49,12 +50,11 @@ val mavenProFontFamily = (Font(R.font.maven_pro_regular, FontWeight.Normal) to F
 ))
 
 @Composable
-fun ProfilePage() {
+fun ProfilePage(accId: Int, onClickEdit: (Int) -> Unit) {
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        val acc = JoyhubAccount(
-            "Thieuquancute", "123", "thieuquan@gmail.com", "1234567890", 123)
+        val acc = AccountData.sampleData.find { it.id == accId }!!
         Text(
             text = "Profile",
             fontSize = 30.sp,
@@ -63,16 +63,16 @@ fun ProfilePage() {
         )
         NameTag(acc)
         Spacer(modifier = Modifier.padding(16.dp))
-        ConfigCard(acc)
+        ConfigCard(acc, onClickEdit)
     }
 }
 
 
 @Composable
-fun ConfigCard(acc: JoyhubAccount) {
+fun ConfigCard(acc: JoyhubAccount, onClickEdit: (Int) -> Unit) {
     Card {
         Column {
-            ProfileEditor(acc)
+            ProfileEditor(acc, onClickEdit)
             RechargeJoycoin(acc)
             RecentlyHistory(acc)
             FavoriteList(acc)
@@ -135,7 +135,7 @@ fun NameTag(acc: JoyhubAccount) {
 }
 
 @Composable
-fun ProfileEditor(acc: JoyhubAccount) {
+fun ProfileEditor(acc: JoyhubAccount, onClickEdit: (Int) -> Unit) {
     Log.i("Profile_main_screen", "Edit_user_profile: ${acc.email}")
     val context = LocalContext.current
     val editLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -148,12 +148,7 @@ fun ProfileEditor(acc: JoyhubAccount) {
         }
     }
     Card(modifier = Modifier.clickable {
-//        val bundle = Bundle()
-//        val intent = Intent(context, ProfileFiel::class.java)
-//        bundle.putSerializable("ACCOUNT", acc)
-//        Log.i("Profile_main_screen", "Edit_user_profile: ${acc.email}")
-//        intent.putExtras(bundle)
-//        editLauncher.launch(intent)
+        onClickEdit(acc.id)
     }) {
         Row(
             modifier = Modifier

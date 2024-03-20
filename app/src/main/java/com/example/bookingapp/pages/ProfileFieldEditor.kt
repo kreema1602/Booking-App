@@ -15,11 +15,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bookingapp.models.JoyhubAccount
+import com.example.bookingapp.mock_data.AccountData
 
 @Composable
-fun ProfileFieldEditor(acc: JoyhubAccount, onBack: () -> Unit) {
-    val acc_tmp = acc
+fun ProfileFieldEditor(accId: Int, onBack: () -> Unit) {
+    val accTmp = AccountData.sampleData.find { it.id == accId }!!
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.size(16.dp))
         Text(
@@ -30,20 +30,20 @@ fun ProfileFieldEditor(acc: JoyhubAccount, onBack: () -> Unit) {
             modifier = Modifier.padding(16.dp)
         )
         TextField(
-            value = acc_tmp.username,
-            onValueChange = { acc_tmp.username = it },
+            value = accTmp.username,
+            onValueChange = { accTmp.username = it },
             label = { Text("Username") },
             modifier = Modifier.padding(16.dp)
         )
         TextField(
-            value = acc_tmp.email,
-            onValueChange = { acc_tmp.email = it },
+            value = accTmp.email,
+            onValueChange = { accTmp.email = it },
             label = { Text("Email") },
             modifier = Modifier.padding(16.dp)
         )
         TextField(
-            value = acc_tmp.phone,
-            onValueChange = { acc_tmp.phone = it },
+            value = accTmp.phone,
+            onValueChange = { accTmp.phone = it },
             label = { Text("Phone") },
             modifier = Modifier.padding(16.dp)
         )

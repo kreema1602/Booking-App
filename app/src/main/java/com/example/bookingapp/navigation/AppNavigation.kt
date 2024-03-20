@@ -10,10 +10,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.example.bookingapp.models.JoyhubAccount
 import com.example.bookingapp.pages.HomeDetailsPage
 import com.example.bookingapp.pages.HomePage
 import com.example.bookingapp.pages.NotificationPage
 import com.example.bookingapp.pages.NotificationViewModel
+import com.example.bookingapp.pages.ProfileFieldEditor
 import com.example.bookingapp.pages.ProfilePage
 import com.example.bookingapp.pages.ReservationDetailScreen
 import com.example.bookingapp.pages.ReservationPage
@@ -51,7 +53,7 @@ private fun NavGraphBuilder.showHome(navController: NavController) {
 
 private fun NavGraphBuilder.showDetails(navController: NavController) {
     composable(LeafScreen.Details.route) {
-        HomeDetailsPage (
+        HomeDetailsPage(
             onBack = {
                 navController.navigateUp()
             }
@@ -98,7 +100,10 @@ private fun NavGraphBuilder.addNotificationsRoute(navController: NavController) 
 private fun NavGraphBuilder.showNotifications(navController: NavController) {
     composable(LeafScreen.Notifications.route) {
         NotificationPage(
-            viewModel = NotificationViewModel(savedStateHandle = SavedStateHandle(), notificationList = arrayListOf())
+            viewModel = NotificationViewModel(
+                savedStateHandle = SavedStateHandle(),
+                notificationList = arrayListOf()
+            )
         )
     }
 }
@@ -111,11 +116,23 @@ private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
         startDestination = LeafScreen.Profile.route
     ) {
         showProfile(navController)
+        showProfileEditor(navController)
     }
 }
 
 private fun NavGraphBuilder.showProfile(navController: NavController) {
     composable(LeafScreen.Profile.route) {
-        ProfilePage()
+        ProfilePage(accId = 1, onClickEdit = {
+            navController.navigate(LeafScreen.ProfileEditor.route + "/$it")
+        })
+    }
+}
+
+private fun NavGraphBuilder.showProfileEditor(navController: NavController) {
+    composable(LeafScreen.ProfileEditor.route + "/{accId}") {
+        val accId = it.arguments?.getString("accId")?.toInt() ?: 0
+        ProfileFieldEditor(accId = accId, onBack = {
+            navController.navigateUp()
+        })
     }
 }
