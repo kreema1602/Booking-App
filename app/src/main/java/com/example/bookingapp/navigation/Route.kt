@@ -14,5 +14,6 @@ sealed class LeafScreen(val route: String) {
     object ReservationDetail : LeafScreen("reservation_detail")
     object Notifications : LeafScreen("notifications")
     object Profile : LeafScreen("profile")
+    object ProfileEditor : LeafScreen("profile_editor")
     object Details : LeafScreen("details")
 }
