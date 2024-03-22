@@ -42,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bookingapp.R
 
@@ -155,7 +156,7 @@ fun HotelItem() {
                     .fillMaxWidth()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.hotel1),
+                    painter = painterResource(id = R.drawable.hotel2),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -229,4 +230,10 @@ fun HotelDescription(modifier: Modifier) {
             )
         }
     }
+}
+
+@Composable
+@Preview
+fun HomePagePreview() {
+    HomePage(showDetail = {})
 }
