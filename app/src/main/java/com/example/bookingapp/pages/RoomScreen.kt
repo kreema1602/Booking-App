@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,9 +37,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
+import com.example.bookingapp.core.compose.BookMarkIcon
 import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.RatingBar
+import com.example.bookingapp.core.compose.TonalButton
 import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.models.Hotel
 
@@ -279,7 +283,7 @@ fun RoomListItem() {
                                 "Bathroom" -> R.drawable.ic_bathroom
                                 else -> R.drawable.ic_zoom_out
                             }
-                            Row (
+                            Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(end = 8.dp)
                             ) {
@@ -306,29 +310,51 @@ fun RoomListItem() {
 
 @Composable
 fun CommentsList() {
-    Column (
-        modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 8.dp,
+                bottom = 8.dp
+            )
     ) {
-        Comment()
-        Comment()
-        Comment()
-        Comment()
-        Comment()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "4.8",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 40.sp
+                ),
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Column {
+                Text(text = "Rating", style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ))
+                Text(text = "520 reviews", style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+        repeat(5) {
+            Comment()
+        }
     }
 }
 
 @Composable
 fun Comment() {
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                start = 16.dp,
-                end = 16.dp,
                 top = 16.dp
             )
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -368,5 +394,6 @@ fun PreviewRoomScreen() {
                 listOf("Free Wi-Fi", "Parking", "Swimming", "Gym")
             )
         )
+//        CommentsList()
     }
 }

@@ -41,6 +41,7 @@ fun FilledButton(
 @Composable
 fun TonalButton(
     modifier: Modifier = Modifier,
+    color: Color = Color.White,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     onClick: () -> Unit,
     content: @Composable () -> Unit,
@@ -48,7 +49,7 @@ fun TonalButton(
     modifier = modifier,
     contentPadding = contentPadding,
     shape = MaterialTheme.shapes.small,
-    onClick = onClick
+    onClick = onClick,
 ) {
     content()
 }
