@@ -2,6 +2,7 @@ package com.example.bookingapp.pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
-import com.example.bookingapp.core.compose.BookMarkIcon
+import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.RatingBar
@@ -47,20 +48,30 @@ import com.example.bookingapp.models.Hotel
 
 @Composable
 fun RoomScreen(hotel: Hotel) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        item { HotelImage(imageUrl = hotel.imageUrl) }
-        item { MySpacer(height = 8.dp) }
-        item { HotelInfo(hotel = hotel) }
-        item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
-        item { HotelFacilities(facilities = hotel.facilities) }
-        item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
-        item { RoomList(title = "Standard") }
-        item { MySpacer(height = 8.dp) }
-        item { RoomList(title = "Deluxe") }
-        item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
-        item { CommentsList() }
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            item { HotelImage(imageUrl = hotel.imageUrl) }
+            item { MySpacer(height = 8.dp) }
+            item { HotelInfo(hotel = hotel) }
+            item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
+            item { HotelFacilities(facilities = hotel.facilities) }
+            item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
+            item { RoomList(title = "Standard") }
+            item { MySpacer(height = 8.dp) }
+            item { RoomList(title = "Deluxe") }
+            item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
+            item { CommentsList() }
+            item { MySpacer(height = 100.dp, color = Color.Transparent) }
+        }
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .background(Color.White)
+        ) {
+            BottomSection()
+        }
     }
 }
 
@@ -72,13 +83,47 @@ fun HotelImage(imageUrl: String) {
             .clip(shape = RoundedCornerShape(0.dp))
     ) {
         Image(
-            //        painter = rememberAsyncImagePainter(model = imageUrl),
+            // painter = rememberAsyncImagePainter(model = imageUrl),
             painter = painterResource(id = R.drawable.hotel2),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth(),
             contentScale = ContentScale.Crop,
         )
+        TonalButton(
+            onClick = { },
+            modifier = Modifier
+                .widthIn(min = 32.dp)
+                .align(Alignment.TopStart)
+                .padding(
+                    start = 8.dp,
+                    top = 8.dp
+                ),
+            contentPadding = PaddingValues(horizontal = 8.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_back),
+                contentDescription = null,
+                tint = OrangePrimary
+            )
+        }
+        TonalButton(
+            onClick = { },
+            modifier = Modifier
+                .widthIn(min = 32.dp)
+                .align(Alignment.TopEnd)
+                .padding(
+                    end = 8.dp,
+                    top = 8.dp
+                ),
+            contentPadding = PaddingValues(horizontal = 8.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_heart_outlined),
+                contentDescription = null,
+                tint = OrangePrimary
+            )
+        }
     }
 }
 
@@ -117,7 +162,7 @@ fun HotelInfo(hotel: Hotel) {
                 )
                 Text(
                     text = "4.5",
-                    style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }
@@ -333,9 +378,11 @@ fun CommentsList() {
                 modifier = Modifier.padding(end = 8.dp)
             )
             Column {
-                Text(text = "Rating", style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ))
+                Text(
+                    text = "Rating", style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
                 Text(text = "520 reviews", style = MaterialTheme.typography.bodyMedium)
             }
         }
@@ -375,6 +422,46 @@ fun Comment() {
             modifier = Modifier.padding(bottom = 8.dp)
         )
         MySpacer(height = 0.5.dp, color = Color.Black)
+    }
+}
+
+@Composable
+fun BottomSection() {
+    Row(
+        modifier = Modifier
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 20.dp,
+                bottom = 20.dp
+            )
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(30.dp))
+            .border(1.dp, OrangePrimary, RoundedCornerShape(30.dp))
+            .background(OrangePrimary.copy(alpha = 0.08f)),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_calendar_month),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(
+                    top = 8.dp,
+                    bottom = 8.dp,
+                    end = 8.dp
+                )
+                .size(30.dp),
+            tint = OrangePrimary,
+        )
+        Text(
+            text = "Thu, 4/6/2023 - Sat, 6/6/2023",
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(
+                top = 8.dp,
+                bottom = 8.dp
+            )
+        )
     }
 }
 
