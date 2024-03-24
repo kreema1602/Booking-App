@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,6 +41,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.core.ui.theme.WarningPrimary
+import com.example.bookingapp.core.ui.theme.WarningSecondary
 import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.RatingBar
@@ -260,7 +264,7 @@ fun RoomListItem() {
     Card(
         modifier = Modifier
             .padding(12.dp)
-            .fillMaxWidth(),
+            .width(320.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(10.dp),
     ) {
@@ -276,6 +280,36 @@ fun RoomListItem() {
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Crop
                 )
+                // State
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(43.dp)
+                        .align(Alignment.TopEnd)
+                        .padding(
+                            top = 12.dp,
+                            end = 12.dp
+                        )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(70.dp)
+                            .align(Alignment.TopEnd)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(WarningSecondary),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_cancel),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp),
+                            tint = WarningPrimary
+                        )
+                        Text(text = "Full", color = WarningPrimary, style = MaterialTheme.typography.bodyLarge)
+                    }
+                }
             }
             Box(
                 modifier = Modifier
@@ -481,6 +515,6 @@ fun PreviewRoomScreen() {
                 listOf("Free Wi-Fi", "Parking", "Swimming", "Gym")
             )
         )
-//        CommentsList()
+//        RoomListItem()
     }
 }
