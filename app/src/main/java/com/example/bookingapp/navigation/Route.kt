@@ -6,6 +6,7 @@ sealed class RootScreen(val route: String) {
     object Reservations : RootScreen("reservations_root")
     object Notifications : RootScreen("notifications_root")
     object Profile : RootScreen("profile_root")
+    object Login : RootScreen("login_root")
 }
 
 sealed class LeafScreen(val route: String) {
@@ -16,4 +17,5 @@ sealed class LeafScreen(val route: String) {
     object Profile : LeafScreen("profile")
     object ProfileEditor : LeafScreen("profile_editor")
     object Details : LeafScreen("details")
+    object Login : LeafScreen("login")
 }
