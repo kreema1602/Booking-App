@@ -1,5 +1,6 @@
 package com.example.bookingapp.pages
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,7 +55,9 @@ import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.Hotel
 
 @Composable
-fun RoomScreen(hotel: Hotel, onBack: () -> Unit) {
+fun RoomScreen(hotelId: Int, onBack: () -> Unit) {
+    Log.d("RoomScreen", "hotelId: $hotelId")
+    val hotel = HotelData.data[0]
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize()
@@ -534,7 +537,7 @@ fun BottomSection() {
 fun PreviewRoomScreen() {
     ThemedPreview {
         RoomScreen(
-            HotelData.data[0],
+            123,
             onBack = {}
         )
     }

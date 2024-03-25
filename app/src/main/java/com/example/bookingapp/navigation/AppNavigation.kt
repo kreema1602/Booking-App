@@ -47,15 +47,16 @@ private fun NavGraphBuilder.showHome(navController: NavController) {
     composable(LeafScreen.Home.route) {
         HomePage(
             showDetail = {
-                navController.navigate(LeafScreen.Details.route)
+                navController.navigate(LeafScreen.Details.route + "/$it")
             }
         )
     }
 }
 
 private fun NavGraphBuilder.showDetails(navController: NavController) {
-    composable(LeafScreen.Details.route) {
-        RoomScreen(hotel = HotelData.data[0], onBack = {
+    composable(LeafScreen.Details.route + "/{hotelId}") {
+        val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
+        RoomScreen(hotelId, onBack = {
             navController.navigateUp()
         })
     }

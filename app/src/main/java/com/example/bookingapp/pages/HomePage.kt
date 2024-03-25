@@ -48,7 +48,7 @@ import com.example.bookingapp.R
 
 @Composable
 fun HomePage(
-    showDetail : () -> Unit
+    showDetail : (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -84,7 +84,7 @@ fun HomePage(
 }
 
 @Composable
-fun HotelList(showDetail: () -> Unit) {
+fun HotelList(showDetail: (Int) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(
             top = 16.dp,
@@ -143,13 +143,13 @@ fun SearchBar() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HotelItem(showDetail: () -> Unit) {
+fun HotelItem(showDetail: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(10.dp),
-        onClick = showDetail
+        onClick = { showDetail(123) }
     ) {
         Column {
             Box(
