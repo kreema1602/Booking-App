@@ -1,6 +1,6 @@
 package com.example.bookingapp.core.compose
 
-import android.text.style.BackgroundColorSpan
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -49,7 +47,8 @@ fun TonalButton(
     onClick: () -> Unit,
     content: @Composable () -> Unit,
     backgroundColor: Color = Color.White,
-    contentColor: Color = OrangePrimary
+    contentColor: Color = OrangePrimary,
+    borderStroke: BorderStroke = BorderStroke(1.dp, OrangePrimary),
 ) = FilledTonalButton(
     modifier = modifier,
     contentPadding = contentPadding,
@@ -58,7 +57,8 @@ fun TonalButton(
     colors = ButtonDefaults.buttonColors(
         containerColor = backgroundColor,
         contentColor = contentColor
-    )
+    ),
+    border = borderStroke
 ) {
     content()
 }
