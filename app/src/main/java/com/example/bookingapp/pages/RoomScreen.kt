@@ -43,11 +43,14 @@ import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.core.ui.theme.WarningPrimary
 import com.example.bookingapp.core.ui.theme.WarningSecondary
+import com.example.bookingapp.core.ui.theme.SuccessPrimary
+import com.example.bookingapp.core.ui.theme.SuccessSecondary
 import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.RatingBar
 import com.example.bookingapp.core.compose.TonalButton
 import com.example.bookingapp.core.ui.ThemedPreview
+import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.Hotel
 
 @Composable
@@ -87,47 +90,62 @@ fun HotelImage(imageUrl: String) {
             .clip(shape = RoundedCornerShape(0.dp))
     ) {
         Image(
-            // painter = rememberAsyncImagePainter(model = imageUrl),
             painter = painterResource(id = R.drawable.hotel2),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth(),
             contentScale = ContentScale.Crop,
         )
+        TopBar()
+    }
+}
+
+@Composable
+fun TopBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                top = 16.dp,
+                bottom = 8.dp
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         TonalButton(
             onClick = { },
             modifier = Modifier
                 .widthIn(min = 32.dp)
-                .align(Alignment.TopStart)
                 .padding(
                     start = 8.dp,
                     top = 8.dp
                 ),
-            contentPadding = PaddingValues(horizontal = 8.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
-                contentDescription = null,
-                tint = OrangePrimary
-            )
-        }
+            contentPadding = PaddingValues(horizontal = 8.dp),
+            content = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_back),
+                    contentDescription = null,
+                    tint = OrangePrimary
+                )
+            }
+        )
         TonalButton(
             onClick = { },
             modifier = Modifier
                 .widthIn(min = 32.dp)
-                .align(Alignment.TopEnd)
                 .padding(
                     end = 8.dp,
                     top = 8.dp
                 ),
-            contentPadding = PaddingValues(horizontal = 8.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_heart_outlined),
-                contentDescription = null,
-                tint = OrangePrimary
-            )
-        }
+            contentPadding = PaddingValues(horizontal = 8.dp),
+            content = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_heart_outlined),
+                    contentDescription = null,
+                    tint = OrangePrimary
+                )
+            }
+        )
     }
 }
 
@@ -281,6 +299,7 @@ fun RoomListItem() {
                     contentScale = ContentScale.Crop
                 )
                 // State
+                val state = "Available"
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -294,20 +313,30 @@ fun RoomListItem() {
                     Row(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .width(70.dp)
+                            .widthIn(max = 110.dp)
                             .align(Alignment.TopEnd)
                             .clip(RoundedCornerShape(4.dp))
-                            .background(WarningSecondary),
+                            .background(if (state == "Full") WarningSecondary else SuccessSecondary)
+                            .padding(
+                                start = 4.dp,
+                                end = 4.dp
+                            ),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_cancel),
+                            painter = painterResource(id = if (state == "Full") R.drawable.ic_cancel else R.drawable.ic_check),
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = WarningPrimary
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(end = 4.dp),
+                            tint = if (state == "Full") WarningPrimary else SuccessPrimary
                         )
-                        Text(text = "Full", color = WarningPrimary, style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = state,
+                            color = if (state == "Full") WarningPrimary else SuccessPrimary,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 }
             }
@@ -505,16 +534,7 @@ fun BottomSection() {
 fun PreviewRoomScreen() {
     ThemedPreview {
         RoomScreen(
-            Hotel(
-                1,
-                "Hotel ABC",
-                4.5f,
-                "123 Main St, San Francisco, CA",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                "https://developer.android.com/images/brand/Android_Robot.png",
-                listOf("Free Wi-Fi", "Parking", "Swimming", "Gym")
-            )
+            HotelData.data[0]
         )
-//        RoomListItem()
     }
 }

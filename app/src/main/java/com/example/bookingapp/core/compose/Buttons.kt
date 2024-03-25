@@ -1,5 +1,6 @@
 package com.example.bookingapp.core.compose
 
+import android.text.style.BackgroundColorSpan
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,6 +27,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.ThemedPreview
+import com.example.bookingapp.core.ui.theme.OrangePrimary
 
 @Composable
 fun FilledButton(
@@ -45,12 +47,18 @@ fun TonalButton(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     onClick: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
+    backgroundColor: Color = Color.White,
+    contentColor: Color = OrangePrimary
 ) = FilledTonalButton(
     modifier = modifier,
     contentPadding = contentPadding,
     shape = MaterialTheme.shapes.small,
     onClick = onClick,
+    colors = ButtonDefaults.buttonColors(
+        containerColor = backgroundColor,
+        contentColor = contentColor
+    )
 ) {
     content()
 }
@@ -98,16 +106,17 @@ private fun PreviewButtons() {
             FilledButton(text = "Filled Button") {
 
             }
-            TonalButton(onClick = {  }) {
+            TonalButton(onClick = { }, content = {
                 Text(text = "Filled Tonal Button")
-            }
+            })
             TonalButton(
-                onClick = {  },
+                onClick = { },
                 modifier = Modifier.widthIn(min = 32.dp),
-                contentPadding = PaddingValues(horizontal = 8.dp)
-            ) {
-                BookMarkIcon()
-            }
+                contentPadding = PaddingValues(horizontal = 8.dp),
+                content = {
+                    Text(text = "Filled Tonal Button")
+                },
+            )
             FilledNetworkButton(
                 modifier = Modifier.width(200.dp),
                 text = "Login", loading = true,
