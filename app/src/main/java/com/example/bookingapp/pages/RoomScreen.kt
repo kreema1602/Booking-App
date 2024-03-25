@@ -54,12 +54,12 @@ import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.Hotel
 
 @Composable
-fun RoomScreen(hotel: Hotel) {
+fun RoomScreen(hotel: Hotel, onBack: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            item { HotelImage(imageUrl = hotel.imageUrl) }
+            item { HotelImage(imageUrl = hotel.imageUrl, onBack) }
             item { MySpacer(height = 8.dp) }
             item { HotelInfo(hotel = hotel) }
             item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
@@ -83,7 +83,7 @@ fun RoomScreen(hotel: Hotel) {
 }
 
 @Composable
-fun HotelImage(imageUrl: String) {
+fun HotelImage(imageUrl: String, onBack: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -96,12 +96,12 @@ fun HotelImage(imageUrl: String) {
                 .fillMaxWidth(),
             contentScale = ContentScale.Crop,
         )
-        TopBar()
+        TopBar(onBack)
     }
 }
 
 @Composable
-fun TopBar() {
+fun TopBar(onBack: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -113,7 +113,7 @@ fun TopBar() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         TonalButton(
-            onClick = { },
+            onClick = onBack,
             modifier = Modifier
                 .widthIn(min = 32.dp)
                 .padding(
@@ -534,7 +534,8 @@ fun BottomSection() {
 fun PreviewRoomScreen() {
     ThemedPreview {
         RoomScreen(
-            HotelData.data[0]
+            HotelData.data[0],
+            onBack = {}
         )
     }
 }

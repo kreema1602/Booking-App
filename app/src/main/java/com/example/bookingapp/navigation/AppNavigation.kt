@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.JoyhubAccount
 import com.example.bookingapp.pages.HomeDetailsPage
 import com.example.bookingapp.pages.HomePage
@@ -19,6 +20,7 @@ import com.example.bookingapp.pages.ProfileFieldEditor
 import com.example.bookingapp.pages.ProfilePage
 import com.example.bookingapp.pages.ReservationDetailScreen
 import com.example.bookingapp.pages.ReservationPage
+import com.example.bookingapp.pages.RoomScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
@@ -53,11 +55,9 @@ private fun NavGraphBuilder.showHome(navController: NavController) {
 
 private fun NavGraphBuilder.showDetails(navController: NavController) {
     composable(LeafScreen.Details.route) {
-        HomeDetailsPage(
-            onBack = {
-                navController.navigateUp()
-            }
-        )
+        RoomScreen(hotel = HotelData.data[0], onBack = {
+            navController.navigateUp()
+        })
     }
 }
 

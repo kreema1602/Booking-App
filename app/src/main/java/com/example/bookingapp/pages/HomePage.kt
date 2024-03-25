@@ -78,13 +78,13 @@ fun HomePage(
             )
             SearchBar()
         }
-        HotelList()
+        HotelList(showDetail)
     }
 
 }
 
 @Composable
-fun HotelList() {
+fun HotelList(showDetail: () -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(
             top = 16.dp,
@@ -93,7 +93,7 @@ fun HotelList() {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(10) {
-            HotelItem()
+            HotelItem(showDetail)
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
@@ -141,13 +141,15 @@ fun SearchBar() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HotelItem() {
+fun HotelItem(showDetail: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(10.dp),
+        onClick = showDetail
     ) {
         Column {
             Box(
