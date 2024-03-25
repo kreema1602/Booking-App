@@ -26,7 +26,7 @@ fun TopAppBar(
     title: String,
     modifier: Modifier = Modifier
         .fillMaxWidth()
-        .padding(top = 16.dp, bottom = 16.dp, start = 10.dp, end = 10.dp),
+        .padding(vertical = 16.dp),
     onClick: () -> Unit
 ) {
     Row(

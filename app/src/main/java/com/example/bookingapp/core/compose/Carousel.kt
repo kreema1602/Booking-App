@@ -3,6 +3,7 @@ package com.example.bookingapp.core.compose
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +17,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,9 +35,15 @@ fun Carousel(
     pageCount: Int = itemList.size,
     pagerState: PagerState = rememberPagerState(pageCount = { itemList.size }),
 ) {
-    Box {
+    Box(
+        modifier = Modifier.border(
+            width = 2.dp,
+            color = Color.Gray,
+            shape = RoundedCornerShape(8.dp)
+        ).clip(RoundedCornerShape(8.dp))
+    ) {
         HorizontalPager(
-            state = pagerState, contentPadding = PaddingValues(horizontal = 4.dp),
+            state = pagerState,
             pageSpacing = 16.dp
         ) { page ->
             CarouselItem(itemList[page])
@@ -59,7 +67,6 @@ fun CarouselItem(
 ) {
     Box(
         modifier = modifier
-            .background(Color.Gray)
     ) {
         Image(painter = painterResource(id = item), contentDescription = null)
     }
