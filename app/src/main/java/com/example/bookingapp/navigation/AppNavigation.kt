@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.JoyhubAccount
 import com.example.bookingapp.pages.HomeDetailsPage
 import com.example.bookingapp.pages.HomePage
@@ -21,6 +22,8 @@ import com.example.bookingapp.pages.ReservationDetailScreen
 import com.example.bookingapp.pages.ReservationPage
 import com.example.bookingapp.pages.SignUpForm
 import com.example.bookingapp.pages.SignUpPage
+import com.example.bookingapp.pages.RoomDetail
+import com.example.bookingapp.pages.RoomScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
@@ -40,27 +43,38 @@ private fun NavGraphBuilder.addHomeRoute(navController: NavController) {
         startDestination = LeafScreen.Home.route
     ) {
         showHome(navController)
-        showDetails(navController)
+        showRoomScreen(navController)
+        showRoomDetail(navController)
     }
 }
 
 private fun NavGraphBuilder.showHome(navController: NavController) {
     composable(LeafScreen.Home.route) {
         HomePage(
-            showDetail = {
-                navController.navigate(LeafScreen.Details.route)
+            showRoomScreen = {
+                navController.navigate(LeafScreen.RoomScreen.route + "/$it")
             }
         )
     }
 }
 
-private fun NavGraphBuilder.showDetails(navController: NavController) {
-    composable(LeafScreen.Details.route) {
-        HomeDetailsPage(
-            onBack = {
-                navController.navigateUp()
-            }
-        )
+private fun NavGraphBuilder.showRoomScreen(navController: NavController) {
+    composable(LeafScreen.RoomScreen.route + "/{hotelId}") { it ->
+        val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
+        RoomScreen(hotelId, onBack = {
+            navController.navigateUp()
+        }, showRoomDetail = {
+            navController.navigate(LeafScreen.RoomDetail.route + "/$it")
+        })
+    }
+}
+
+private fun NavGraphBuilder.showRoomDetail(navController: NavController) {
+    composable(LeafScreen.RoomDetail.route + "/{roomId}") {
+        val roomId = it.arguments?.getString("roomId")?.toInt() ?: 0
+        RoomDetail(roomId, onBack = {
+            navController.navigateUp()
+        })
     }
 }
 
