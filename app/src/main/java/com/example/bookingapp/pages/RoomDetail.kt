@@ -5,10 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,11 +37,12 @@ import com.example.bookingapp.mock_data.PaymentData
 fun RoomDetail() {
     val room = RoomData.data[0]
     Box {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            item {
                 TopAppBar(title = "Detail", onClick = {})
                 Carousel(itemList = room.images)
                 Text(
@@ -51,57 +54,59 @@ fun RoomDetail() {
                     modifier = Modifier.padding(top = 8.dp)
                 )
                 FacilityList()
-                // Room description
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
-                ) {
-                    Text(
-                        text = "Description",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight(500)
-                        ),
-                        fontSize = 20.sp
-                    )
-                    ExpandableText(
-                        text = room.desc,
-                        maxLines = 2,
-                        color = OrangePrimary,
-                        onClick = {})
-                }
+                Text(
+                    text = "Description",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight(500)
+                    ),
+                    fontSize = 20.sp
+                )
+                ExpandableText(
+                    text = room.desc,
+                    maxLines = 2,
+                    color = OrangePrimary,
+                    onClick = {}
+                )
             }
-            MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
-            Column(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
-                    .fillMaxWidth()
-            ) {
+
+            item {
+                MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
+            }
+
+            item {
                 PaymentInformation()
             }
-            MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth().background(Color.Red)
-            ) {
-                Text(
-                    text = "Cancellation Policy",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight(550),
-                        fontSize = 24.sp
-                    ),
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-                Text(
-                    text = "Free cancellation 1 hour before check-in time",
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 16.sp
-                    )
-                )
+
+            item {
+                MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
             }
-            MySpacer(height = 100.dp, color = Color.White)
+
+            item {
+                Column(
+                    modifier = Modifier.background(Color.Transparent)
+                ) {
+                    Text(
+                        text = "Cancellation Policy",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight(550),
+                            fontSize = 24.sp
+                        ),
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    Text(
+                        text = "Free cancellation 1 hour before check-in time",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = 16.sp
+                        )
+                    )
+                }
+            }
+
+            item {
+                MySpacer(height = 200.dp, color = Color.Transparent)
+            }
         }
+
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -115,7 +120,6 @@ fun RoomDetail() {
                 onClick = {}
             )
         }
-
     }
 }
 
