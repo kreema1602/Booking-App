@@ -20,6 +20,7 @@ import com.example.bookingapp.pages.ProfileFieldEditor
 import com.example.bookingapp.pages.ProfilePage
 import com.example.bookingapp.pages.ReservationDetailScreen
 import com.example.bookingapp.pages.ReservationPage
+import com.example.bookingapp.pages.RoomDetail
 import com.example.bookingapp.pages.RoomScreen
 
 @Composable
@@ -39,24 +40,36 @@ private fun NavGraphBuilder.addHomeRoute(navController: NavController) {
         startDestination = LeafScreen.Home.route
     ) {
         showHome(navController)
-        showDetails(navController)
+        showRoomScreen(navController)
+        showRoomDetail(navController)
     }
 }
 
 private fun NavGraphBuilder.showHome(navController: NavController) {
     composable(LeafScreen.Home.route) {
         HomePage(
-            showDetail = {
-                navController.navigate(LeafScreen.Details.route + "/$it")
+            showRoomScreen = {
+                navController.navigate(LeafScreen.RoomScreen.route + "/$it")
             }
         )
     }
 }
 
-private fun NavGraphBuilder.showDetails(navController: NavController) {
-    composable(LeafScreen.Details.route + "/{hotelId}") {
+private fun NavGraphBuilder.showRoomScreen(navController: NavController) {
+    composable(LeafScreen.RoomScreen.route + "/{hotelId}") { it ->
         val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
         RoomScreen(hotelId, onBack = {
+            navController.navigateUp()
+        }, showRoomDetail = {
+            navController.navigate(LeafScreen.RoomDetail.route + "/$it")
+        })
+    }
+}
+
+private fun NavGraphBuilder.showRoomDetail(navController: NavController) {
+    composable(LeafScreen.RoomDetail.route + "/{roomId}") {
+        val roomId = it.arguments?.getString("roomId")?.toInt() ?: 0
+        RoomDetail(roomId, onBack = {
             navController.navigateUp()
         })
     }

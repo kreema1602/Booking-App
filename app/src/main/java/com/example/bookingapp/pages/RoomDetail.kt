@@ -34,7 +34,7 @@ import com.example.bookingapp.mock_data.PaymentData
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RoomDetail() {
+fun RoomDetail(roomId: Int, onBack: () -> Unit) {
     val room = RoomData.data[0]
     Box {
         LazyColumn(
@@ -43,7 +43,7 @@ fun RoomDetail() {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                TopAppBar(title = "Detail", onClick = {})
+                TopAppBar(title = "Detail", onClick = onBack)
                 Carousel(itemList = room.images)
                 Text(
                     text = room.name + " (" + room.type + ")",
@@ -183,7 +183,7 @@ fun PaymentDetail(
 @Composable
 fun RoomDetailPreview() {
     ThemedPreview {
-        RoomDetail()
+        RoomDetail(123, {})
 //        PaymentInformation()
     }
 }

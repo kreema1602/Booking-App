@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,7 +58,7 @@ import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.Hotel
 
 @Composable
-fun RoomScreen(hotelId: Int, onBack: () -> Unit) {
+fun RoomScreen(hotelId: Int, onBack: () -> Unit, showRoomDetail: (Int) -> Unit) {
     val hotel = HotelData.data[0]
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -69,9 +70,9 @@ fun RoomScreen(hotelId: Int, onBack: () -> Unit) {
             item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
             item { HotelFacilities(facilities = hotel.facilities) }
             item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
-            item { RoomList(title = "Standard") }
+            item { RoomList(title = "Standard", showRoomDetail) }
             item { MySpacer(height = 8.dp) }
-            item { RoomList(title = "Deluxe") }
+            item { RoomList(title = "Deluxe", showRoomDetail) }
             item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
             item { CommentsList() }
             item { MySpacer(height = 100.dp, color = Color.Transparent) }
@@ -258,7 +259,7 @@ fun HotelFacilities(facilities: List<String>) {
 }
 
 @Composable
-fun RoomList(title: String) {
+fun RoomList(title: String, showRoomDetail: (Int) -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -274,21 +275,23 @@ fun RoomList(title: String) {
         LazyRow(
             content = {
                 items(5) {
-                    RoomListItem()
+                    RoomListItem(showRoomDetail)
                 }
             }
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RoomListItem() {
+fun RoomListItem(showRoomDetail: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .padding(12.dp)
             .width(320.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(10.dp),
+        onClick = { showRoomDetail(123) }
     ) {
         Column {
             Box(
@@ -499,7 +502,8 @@ fun PreviewRoomScreen() {
     ThemedPreview {
         RoomScreen(
             123,
-            onBack = {}
+            onBack = {},
+            showRoomDetail = {}
         )
     }
 }
