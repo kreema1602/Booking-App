@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
+import com.example.bookingapp.core.compose.BottomSection
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.core.ui.theme.WarningPrimary
 import com.example.bookingapp.core.ui.theme.WarningSecondary
@@ -80,7 +81,7 @@ fun RoomScreen(hotelId: Int, onBack: () -> Unit) {
                 .align(Alignment.BottomCenter)
                 .background(Color.White)
         ) {
-            BottomSection()
+            BottomSection(from = "Thu, 4/6/2023", to = "Sat, 6/6/2023", onClick = {})
         }
     }
 }
@@ -451,45 +452,45 @@ fun Comment() {
     }
 }
 
-@Composable
-fun BottomSection() {
-    Row(
-        modifier = Modifier
-            .padding(
-                start = 16.dp,
-                end = 16.dp,
-                top = 20.dp,
-                bottom = 20.dp
-            )
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(30.dp))
-            .border(1.dp, OrangePrimary, RoundedCornerShape(30.dp))
-            .background(OrangePrimary.copy(alpha = 0.08f)),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_calendar_month),
-            contentDescription = null,
-            modifier = Modifier
-                .padding(
-                    top = 8.dp,
-                    bottom = 8.dp,
-                    end = 8.dp
-                )
-                .size(30.dp),
-            tint = OrangePrimary,
-        )
-        Text(
-            text = "Thu, 4/6/2023 - Sat, 6/6/2023",
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(
-                top = 8.dp,
-                bottom = 8.dp
-            )
-        )
-    }
-}
+//@Composable
+//fun BottomSection() {
+//    Row(
+//        modifier = Modifier
+//            .padding(
+//                start = 16.dp,
+//                end = 16.dp,
+//                top = 20.dp,
+//                bottom = 20.dp
+//            )
+//            .fillMaxWidth()
+//            .clip(RoundedCornerShape(30.dp))
+//            .border(1.dp, OrangePrimary, RoundedCornerShape(30.dp))
+//            .background(OrangePrimary.copy(alpha = 0.08f)),
+//        verticalAlignment = Alignment.CenterVertically,
+//        horizontalArrangement = Arrangement.Center
+//    ) {
+//        Icon(
+//            painter = painterResource(id = R.drawable.ic_calendar_month),
+//            contentDescription = null,
+//            modifier = Modifier
+//                .padding(
+//                    top = 8.dp,
+//                    bottom = 8.dp,
+//                    end = 8.dp
+//                )
+//                .size(30.dp),
+//            tint = OrangePrimary,
+//        )
+//        Text(
+//            text = "Thu, 4/6/2023 - Sat, 6/6/2023",
+//            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+//            modifier = Modifier.padding(
+//                top = 8.dp,
+//                bottom = 8.dp
+//            )
+//        )
+//    }
+//}
 
 
 @Preview

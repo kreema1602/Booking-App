@@ -16,9 +16,10 @@ object RoomData {
                 R.drawable.hotel3,
             ),
             listOf(
-                "Facility 1",
-                "Facility 2",
-                "Facility 3"
+                "Area" to "30m²",
+                "Bed" to "1",
+                "Capacity" to "2",
+                "Bathroom" to "1",
             ),
             "Deluxe"
         ),

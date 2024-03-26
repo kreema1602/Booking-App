@@ -14,25 +14,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.bookingapp.R
+import com.example.bookingapp.mock_data.RoomData
 
 @Composable
 fun FacilityList() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp)
+            .padding(bottom = 4.dp)
     ) {
         data class Facility(val type: String, val value: String)
 
-        val facilities = listOf(
-            Facility("Area", "30m²"),
-            Facility("Bed", "1"),
-            Facility("Capacity", "2"),
-            Facility("Bathroom", "1")
-        )
+        val facilities = RoomData.data[0].facilities
         // Loop through facilities
         facilities.forEach { facility ->
-            val icon = when (facility.type) {
+            val icon = when (facility.first) {
                 "Area" -> R.drawable.ic_zoom_out
                 "Bed" -> R.drawable.ic_bed
                 "Capacity" -> R.drawable.ic_person
@@ -48,11 +44,11 @@ fun FacilityList() {
                     contentDescription = null,
                     modifier = Modifier
                         .size(30.dp)
-                        .padding(4.dp),
+                        .padding(end = 4.dp, top = 4.dp, bottom = 4.dp),
                     tint = Color.Black
                 )
                 Text(
-                    text = facility.value,
+                    text = facility.second,
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

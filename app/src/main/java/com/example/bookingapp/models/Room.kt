@@ -9,6 +9,6 @@ data class Room(
     var address: String,
     var desc: String,
     var images: List<Int>,
-    var facilities: List<String>,
+    var facilities: List<Pair<String, String>>,
     var type: String,
 ) : Serializable

@@ -1,7 +1,9 @@
 package com.example.bookingapp.pages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,12 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bookingapp.core.compose.BottomSection
 import com.example.bookingapp.core.compose.Carousel
 import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.FacilityList
@@ -24,35 +28,94 @@ import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.mock_data.RoomData
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.mock_data.PaymentData
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RoomDetail() {
     val room = RoomData.data[0]
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        TopAppBar(title = "Detail", onClick = {})
-        Carousel(itemList = room.images)
-        Text(
-            text = room.name + " (" + room.type + ")",
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight(650),
-                fontSize = 26.sp
-            ),
-        )
-        FacilityList()
-        // Room description
+    Box {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-            Text(text = "Description", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight(700)))
-            ExpandableText(text = room.desc, maxLines = 2, color = OrangePrimary, onClick = {})
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                TopAppBar(title = "Detail", onClick = {})
+                Carousel(itemList = room.images)
+                Text(
+                    text = room.name + " (" + room.type + ")",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight(650),
+                        fontSize = 26.sp
+                    ),
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+                FacilityList()
+                // Room description
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                ) {
+                    Text(
+                        text = "Description",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight(500)
+                        ),
+                        fontSize = 20.sp
+                    )
+                    ExpandableText(
+                        text = room.desc,
+                        maxLines = 2,
+                        color = OrangePrimary,
+                        onClick = {})
+                }
+            }
+            MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
+            Column(
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                    .fillMaxWidth()
+            ) {
+                PaymentInformation()
+            }
+            MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth().background(Color.Red)
+            ) {
+                Text(
+                    text = "Cancellation Policy",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight(550),
+                        fontSize = 24.sp
+                    ),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                Text(
+                    text = "Free cancellation 1 hour before check-in time",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 16.sp
+                    )
+                )
+            }
+            MySpacer(height = 100.dp, color = Color.White)
+        }
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .background(Color.White)
+        ) {
+            BottomSection(
+                from = "Thu, 4/6/2023",
+                to = "Sat, 6/6/2023",
+                price = "400.000",
+                buttonText = "Book",
+                onClick = {}
+            )
         }
 
-        MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
     }
 }
 
@@ -60,35 +123,54 @@ fun RoomDetail() {
 fun PaymentInformation() {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
     ) {
         Text(
             text = "Payment Information",
             style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight(650),
-                fontSize = 26.sp
+                fontWeight = FontWeight(550),
+                fontSize = 24.sp
+            ),
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+        val payment = PaymentData.data[0]
+        val total = payment.perNight * payment.nights
+        PaymentDetail(Pair("Per Night", "$" + payment.perNight))
+        PaymentDetail(Pair("From", payment.from))
+        PaymentDetail(Pair("To", payment.to))
+        PaymentDetail(Pair("Nights", payment.nights.toString()))
+        PaymentDetail(Pair("Total", "$$total"), OrangePrimary, FontWeight.Bold)
+    }
+}
+
+@Composable
+fun PaymentDetail(
+    data: Pair<String, String>,
+    color: Color = Color.Black,
+    fontWeight: FontWeight = FontWeight.Normal
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(2.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = data.first,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontSize = 18.sp,
+                fontWeight = fontWeight,
+                color = color
             ),
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Per night",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight(700),
-                    fontSize = 20.sp
-                ),
-            )
-            Text(
-                text = "$100",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight(700),
-                    fontSize = 20.sp
-                ),
-            )
-        }
+        Text(
+            text = data.second,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontSize = 18.sp,
+                fontWeight = fontWeight,
+                color = color
+            ),
+        )
     }
 }
 
@@ -97,7 +179,7 @@ fun PaymentInformation() {
 @Composable
 fun RoomDetailPreview() {
     ThemedPreview {
-//        RoomDetail()
-        PaymentInformation()
+        RoomDetail()
+//        PaymentInformation()
     }
 }
