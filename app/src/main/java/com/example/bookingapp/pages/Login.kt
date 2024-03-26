@@ -1,6 +1,7 @@
 package com.example.bookingapp.pages
 
 import android.util.Log
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -48,142 +50,153 @@ fun LoginPage() {
         Font(R.font.maven_pro_medium, FontWeight.Medium),
         Font(R.font.maven_pro_semibold, FontWeight.SemiBold)
     )
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp, vertical = 100.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        AsyncImage(
-            model = R.drawable.img_logo, contentDescription = null, modifier = Modifier.size(150.dp)
-        )
-
-        AsyncImage(
-            model = R.drawable.logo,
-            contentDescription = null,
-            modifier = Modifier.size(180.dp, 60.dp)
-        )
-
-        Text(
-            text = "where you can discover, book",
-            fontFamily = mavenProFamily,
-            fontWeight = FontWeight.Normal,
-        )
-
-        Text(
-            text = "or host a room",
-            fontFamily = mavenProFamily,
-            fontWeight = FontWeight.Normal,
-            modifier = Modifier.padding(bottom = 20.dp)
-        )
-
-
-        Text(
-            text = "Username",
+    Surface(color = Color.White) {
+        Column(
             modifier = Modifier
-                .align(Alignment.Start)
-                .padding(start = 50.dp, bottom = 3.dp),
-            fontFamily = mavenProFamily,
-            fontWeight = FontWeight.Normal,
-            fontSize = 16.sp
-        )
+                .fillMaxSize()
+                .padding(horizontal = 20.dp, vertical = 90.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+                model = R.drawable.img_logo,
+                contentDescription = null,
+                modifier = Modifier.size(150.dp)
+            )
+
+            AsyncImage(
+                model = R.drawable.logo,
+                contentDescription = null,
+                modifier = Modifier.size(180.dp, 60.dp)
+            )
+
+            Text(
+                text = "where you can discover, book",
+                fontFamily = mavenProFamily,
+                fontWeight = FontWeight.Normal,
+            )
+
+            Text(
+                text = "or host a room",
+                fontFamily = mavenProFamily,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier.padding(bottom = 20.dp)
+            )
+
+            Text(
+                text = "Username",
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(start = 50.dp, bottom = 3.dp),
+                fontFamily = mavenProFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            )
 
 
-        var username by remember { mutableStateOf("Enter username") }
-        TextField(
-            value = username,
-            onValueChange = { username = it },
-            shape = RoundedCornerShape(80.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                unfocusedContainerColor = Color.Gray
-            ),
-            modifier = Modifier.padding(bottom = 20.dp)
-        )
-
-        Text(
-            text = "Password",
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(start = 50.dp, bottom = 3.dp),
-            fontFamily = mavenProFamily,
-            fontWeight = FontWeight.Normal,
-            fontSize = 16.sp
-        )
-
-        var password by remember { mutableStateOf("Enter password") }
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            shape = RoundedCornerShape(80.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                unfocusedContainerColor = Color.Gray
-            ),
-            modifier = Modifier.padding(bottom = 10.dp)
-        )
-
-
-        ClickableText(
-            text = buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        color = OrangePrimary,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
+            var username by remember { mutableStateOf("Enter username") }
+            TextField(
+                value = username,
+                onValueChange = { username = it },
+                shape = RoundedCornerShape(80.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    unfocusedContainerColor = Color.White
+                ),
+                modifier = Modifier
+                    .padding(bottom = 20.dp)
+                    .border(
+                        1.dp, Color.Gray, RoundedCornerShape(100)
                     )
-                ) {
-                    append("Forgot password?")
-                }
-            },
-            onClick = { Log.d("LoginPage", "Forgot password clicked") },
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(end = 50.dp, bottom = 20.dp),
-
             )
 
-        Button(
-            onClick = { /*TODO*/ },
-            colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 45.dp, end = 45.dp, bottom = 10.dp)
-                .height(50.dp)
-        ) {
             Text(
-                text = "Log in",
+                text = "Password",
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(start = 50.dp, bottom = 3.dp),
                 fontFamily = mavenProFamily,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Normal,
                 fontSize = 16.sp
             )
-        }
 
-        TextButton(
-            onClick = { /*TODO*/ },
-            colors = ButtonDefaults.textButtonColors(contentColor = OrangePrimary),
-            modifier = Modifier.size(200.dp, 50.dp)
-        ) {
-            Text(
-                text = "Log in as guest",
-                fontFamily = mavenProFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+            var password by remember { mutableStateOf("Enter password") }
+            TextField(
+                value = password,
+                onValueChange = { password = it },
+                shape = RoundedCornerShape(80.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    unfocusedContainerColor = Color.White
+                ),
+                modifier = Modifier
+                    .padding(bottom = 10.dp)
+                    .border(
+                        1.dp, Color.Gray, RoundedCornerShape(100)
+                    )
             )
-            Icon(Icons.Default.ArrowForward, contentDescription = null, tint = OrangePrimary)
+
+
+            ClickableText(
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = OrangePrimary,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append("Forgot password?")
+                    }
+                },
+                onClick = { Log.d("LoginPage", "Forgot password clicked") },
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(end = 50.dp, bottom = 20.dp),
+
+                )
+
+            Button(
+                onClick = { /*TODO*/ },
+                colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 45.dp, end = 45.dp, bottom = 10.dp)
+                    .height(50.dp)
+            ) {
+                Text(
+                    text = "Log in",
+                    fontFamily = mavenProFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
+
+            TextButton(
+                onClick = { /*TODO*/ },
+                colors = ButtonDefaults.textButtonColors(contentColor = OrangePrimary),
+                modifier = Modifier.size(200.dp, 50.dp)
+            ) {
+                Text(
+                    text = "Log in as guest",
+                    fontFamily = mavenProFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+                Icon(Icons.Default.ArrowForward, contentDescription = null, tint = OrangePrimary)
+            }
+
+            Divider(
+                color = Color.Black, thickness = 1.dp, modifier = Modifier.padding(16.dp)
+            )
+
+            Text(
+                text = "If you don't have an account, Create one",
+                fontFamily = mavenProFamily,
+                fontWeight = FontWeight.Normal
+            )
         }
-
-        Divider(
-            color = Color.Black, thickness = 1.dp, modifier = Modifier.padding(16.dp)
-        )
-
-        Text(
-            text = "If you don't have an account, Create one",
-            fontFamily = mavenProFamily,
-            fontWeight = FontWeight.Normal
-        )
     }
 }
 
