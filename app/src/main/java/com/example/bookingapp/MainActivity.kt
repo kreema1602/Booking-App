@@ -19,6 +19,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -29,6 +30,7 @@ import com.example.bookingapp.core.compose.NotificationIcon
 import com.example.bookingapp.core.compose.ProfileIcon
 import com.example.bookingapp.core.ui.theme.BookingAppTheme
 import com.example.bookingapp.navigation.AppNavGraph
+import com.example.bookingapp.navigation.LeafScreen
 import com.example.bookingapp.navigation.RootScreen
 
 class MainActivity : ComponentActivity() {
@@ -55,10 +57,16 @@ fun MyApp() {
     val navController = rememberNavController()
     val currentSelectedPage by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
-    
+
     Scaffold (
-        bottomBar = { BottomNavBar(navController, currentSelectedPage)}, modifier = Modifier.fillMaxSize()
-    ){
+        bottomBar = {
+            Log.d("AppNavGraph", "currentRoute: $currentRoute")
+            if (currentRoute in listOf(LeafScreen.Home.route, LeafScreen.Reservations.route, LeafScreen.Notifications.route, LeafScreen.Profile.route)) {
+                BottomNavBar(navController, currentSelectedPage)
+            }
+        },
+        modifier = Modifier.fillMaxSize()
+    ) {
         Box(modifier = Modifier
             .fillMaxSize()
             .padding(it)) {
