@@ -93,7 +93,7 @@ fun LoginPage() {
             )
 
 
-            var username by remember { mutableStateOf("Enter username") }
+            var username by remember { mutableStateOf("") }
             TextField(
                 value = username,
                 onValueChange = { username = it },
@@ -107,7 +107,8 @@ fun LoginPage() {
                     .padding(bottom = 20.dp)
                     .border(
                         1.dp, Color.Gray, RoundedCornerShape(100)
-                    )
+                    ),
+                placeholder = { Text(text = "Enter username") }
             )
 
             Text(
@@ -120,7 +121,7 @@ fun LoginPage() {
                 fontSize = 16.sp
             )
 
-            var password by remember { mutableStateOf("Enter password") }
+            var password by remember { mutableStateOf("") }
             TextField(
                 value = password,
                 onValueChange = { password = it },
@@ -134,7 +135,8 @@ fun LoginPage() {
                     .padding(bottom = 10.dp)
                     .border(
                         1.dp, Color.Gray, RoundedCornerShape(100)
-                    )
+                    ),
+                placeholder = { Text(text = "Enter password") }
             )
 
 
