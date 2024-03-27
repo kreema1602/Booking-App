@@ -20,6 +20,8 @@ import com.example.bookingapp.pages.ProfileFieldEditor
 import com.example.bookingapp.pages.ProfilePage
 import com.example.bookingapp.pages.ReservationDetailScreen
 import com.example.bookingapp.pages.ReservationPage
+import com.example.bookingapp.pages.SignUpForm
+import com.example.bookingapp.pages.SignUpPage
 import com.example.bookingapp.pages.RoomDetail
 import com.example.bookingapp.pages.RoomScreen
 
@@ -30,6 +32,7 @@ fun AppNavGraph(navController: NavHostController) {
         addReservationsRoute(navController)
         addNotificationsRoute(navController)
         addProfileRoute(navController)
+        addLoginRoute(navController)
     }
 }
 
@@ -150,3 +153,43 @@ private fun NavGraphBuilder.showProfileEditor(navController: NavController) {
         })
     }
 }
+// end of Profile navigation
+
+// Login navigation
+private fun NavGraphBuilder.addLoginRoute(navController: NavController) {
+    navigation(
+        route = RootScreen.Login.route,
+        startDestination = LeafScreen.SignUp.route
+    ) {
+        showLogin(navController)
+        showSignUp(navController)
+        showSignUpForm(navController)
+        showForgotPassword(navController)
+    }
+}
+
+private fun NavGraphBuilder.showLogin(navController: NavController) {
+    composable(LeafScreen.Login.route) {
+
+    }
+}
+
+private fun NavGraphBuilder.showSignUp(navController: NavController) {
+    composable(LeafScreen.SignUp.route) {
+        SignUpPage(navController = navController)
+    }
+}
+
+private fun NavGraphBuilder.showSignUpForm(navController: NavController) {
+    composable(LeafScreen.SignUpForm.route + "/{role}") {
+        val role = it.arguments?.getString("role") ?: ""
+        SignUpForm(navController = navController, role = role)
+    }
+}
+
+private fun NavGraphBuilder.showForgotPassword(navController: NavController) {
+    composable(LeafScreen.ForgotPassword.route) {
+
+    }
+}
+// end of Login navigation
