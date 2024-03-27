@@ -126,6 +126,33 @@ fun SimpleButton(text: String, onClick: () -> Unit, color: Color = OrangePrimary
     }
 }
 
+@Composable
+fun FilledClipButton(
+    text: String,
+    onClick: () -> Unit,
+    color: Color = OrangePrimary
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(100))
+            .background(color)
+            .clickable {
+                onClick()
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFFFFFFFF),
+            modifier = Modifier
+                .padding(vertical = 14.dp, horizontal = 0.dp),
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun PreviewButtons() {
@@ -154,6 +181,7 @@ private fun PreviewButtons() {
             ) {
 
             }
+            FilledClipButton(text = "Register" ,onClick = { /*TODO*/ })
         }
     }
 }

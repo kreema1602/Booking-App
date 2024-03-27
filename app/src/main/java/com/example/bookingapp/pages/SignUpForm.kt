@@ -23,6 +23,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -48,22 +49,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.bookingapp.R
-
-//@Composable
-//fun SignUpForm(navController: NavController, role: String) {
-//    Surface(
-//        color = Color(0xFFF9F9F9),
-//    ) {
-//        Column( // Use Column with Modifier.fillMaxSize()  */
-//            modifier = Modifier.fillMaxSize()
-//        ) {
-//            TopBar(navController = navController) // Place TopBar at the top
-//            Title(role = role) // Place Title below TopBar
-//            RegisterForm(navController = navController, role = role)
-//        }
-//    }
-//}
-//
+import com.example.bookingapp.core.compose.FilledClipButton
+import com.example.bookingapp.core.compose.TopAppBar
 @Composable
 fun Title(role: String) {
     val description = when (role) {
@@ -114,152 +101,6 @@ fun Title(role: String) {
         )
     }
 }
-//
-//@Composable
-//fun RegisterForm(navController: NavController, role: String) {
-//    val formFields = when (role.lowercase()) {
-//        "customer" -> listOf("Username", "Fullname", "Password", "Confirm Password")
-//        "moderator" -> listOf("Username", "Hotel's name", "Password", "Confirm Password", "Hotel's address", "Description")
-//        // Add more cases for other roles if needed
-//        else -> listOf("Username", "Fullname", "Password", "Confirm Password")
-//    }
-//    LazyColumn (
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(top = 10.dp)
-//    ) {
-//        items(formFields.size) { index ->
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(vertical = 5.dp, horizontal = 20.dp)
-//            ) {
-//                Text(
-//                    text = formFields[index],
-//                    fontSize = 16.sp,
-//                    fontWeight = FontWeight.Bold,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(vertical = 5.dp, horizontal = 0.dp),
-//                )
-//                TextFieldComponent(formFields[index])
-//            }
-//        }
-//        item {
-//            Column (
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(vertical = 5.dp, horizontal = 20.dp),
-//                verticalArrangement = Arrangement.Center
-//            ) {
-//                CheckBoxAcceptTerm()
-//                ButtonComponent(navController = navController)
-//            }
-//        }
-//
-//    }
-//}
-//
-//@Composable
-//fun TextFieldComponent(label : String) {
-//    var textValue by remember { mutableStateOf("") }
-//    var isPassword by remember { mutableStateOf(false) }
-//    var passwordVisible by remember { mutableStateOf(false) }
-//    if(label.lowercase().contains("password")) {
-//        isPassword = true
-//    }
-//
-//    TextField(
-//        value = textValue,
-//        onValueChange = { textValue = it },
-//        placeholder = { Text(text = "Enter ${label.lowercase()}") },
-//        singleLine = true,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(vertical = 5.dp, horizontal = 0.dp)
-//            .border(1.dp, Color(0xFFDEE7F5), shape = RoundedCornerShape(100)),
-//        colors = TextFieldDefaults.textFieldColors(
-//            backgroundColor = Color(0xFFf9f9f9), // Modify background color
-//            focusedIndicatorColor = Color.Transparent, // Remove the focus indicator
-//            unfocusedIndicatorColor = Color.Transparent, // Remove the unfocused indicator
-//            cursorColor = Color(0xFFff6400), // Modify cursor color
-//            textColor = Color(0xFF000000), // Modify text color
-//        ),
-//        visualTransformation = if (isPassword && !passwordVisible) {
-//            PasswordVisualTransformation()
-//        } else {
-//            VisualTransformation.None
-//        },
-//        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-//        trailingIcon = {
-//            if(!isPassword) return@TextField
-//            val image = if (passwordVisible)
-//                Icons.Filled.Visibility
-//            else Icons.Filled.VisibilityOff
-//
-//            val description = if (passwordVisible) "Hide password" else "Show password"
-//
-//            IconButton(onClick = {passwordVisible = !passwordVisible}){
-//                Icon(imageVector  = image, description)
-//            }
-//        }
-//    )
-//}
-//
-//@Composable
-//fun CheckBoxAcceptTerm(){
-//    val acceptTermState = remember { mutableStateOf(false) }
-//    Row(
-//        verticalAlignment = Alignment.CenterVertically,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(bottom = 15.dp, top = 0.dp, start = 0.dp, end = 0.dp),
-//        horizontalArrangement = Arrangement.Center
-//    ) {
-//        Checkbox(
-//            checked = acceptTermState.value,
-//            onCheckedChange = { isChecked -> acceptTermState.value = isChecked },
-//            colors = CheckboxDefaults.colors(
-//                checkedColor = Color(0xFFff6400),
-//                uncheckedColor = Color(0xFFff6400),
-//                checkmarkColor = Color(0xFFFFFFFF),
-//            )
-//        )
-//        Text(
-//            text = "I accept the ",
-//            fontSize = 16.sp,
-//            fontWeight = FontWeight(400),
-//        )
-//        Text(
-//            text = "Terms of Service",
-//            fontSize = 16.sp,
-//            fontWeight = FontWeight(400),
-//            color = Color(0xFFff6400),
-//        )
-//    }
-//}
-//
-//@Composable
-//fun ButtonComponent(navController: NavController) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .clip(RoundedCornerShape(100))
-//                .background(Color(0xFFff6400))
-//                .clickable {
-//                },
-//            contentAlignment = Alignment.Center
-//        ) {
-//            Text(
-//                text = "Register",
-//                fontSize = 16.sp,
-//                fontWeight = FontWeight.Bold,
-//                color = Color(0xFFFFFFFF),
-//                modifier = Modifier
-//                    .padding(vertical = 14.dp, horizontal = 0.dp),
-//            )
-//        }
-//}
 
 @Composable
 fun SignUpForm(navController: NavController, role: String) {
@@ -282,7 +123,13 @@ fun SignUpForm(navController: NavController, role: String) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            TopBar(navController = navController)
+            TopAppBar (
+                title = "",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                onClick = { navController.popBackStack() },
+            )
             Title(role = role)
             RegisterFormContent(
                 role = role,
@@ -319,7 +166,7 @@ fun RegisterFormContent(
                 verticalArrangement = Arrangement.Center
             ) {
                 CheckBoxAcceptTerm(acceptTermState)
-                ButtonComponent(onRegisterClicked = onRegisterClicked)
+                FilledClipButton(text = "Register", onClick = { onRegisterClicked() })
             }
         }
     }
@@ -415,30 +262,6 @@ fun CheckBoxAcceptTerm(acceptTermState: MutableState<Boolean>) {
         )
     }
 }
-
-@Composable
-fun ButtonComponent(onRegisterClicked: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(100))
-            .background(Color(0xFFff6400))
-            .clickable {
-                onRegisterClicked()
-            },
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Register",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFFFFFFFF),
-            modifier = Modifier
-                .padding(vertical = 14.dp, horizontal = 0.dp),
-        )
-    }
-}
-
 
 fun getFormFields(role: String): List<String> {
     return when (role.lowercase()) {
