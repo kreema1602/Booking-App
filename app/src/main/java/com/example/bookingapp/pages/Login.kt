@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -186,17 +187,35 @@ fun LoginPage() {
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
-                Icon(Icons.Default.ArrowForward, contentDescription = null, tint = OrangePrimary)
+                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = OrangePrimary)
             }
 
             Divider(
                 color = Color.Black, thickness = 1.dp, modifier = Modifier.padding(16.dp)
             )
 
-            Text(
-                text = "If you don't have an account, Create one",
-                fontFamily = mavenProFamily,
-                fontWeight = FontWeight.Normal
+            ClickableText(
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color.Black,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal
+                        )
+                    ) {
+                        append("If you don't have an account, ")
+                    }
+                    withStyle(
+                        style = SpanStyle(
+                            color = OrangePrimary,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append("Create one")
+                    }
+                },
+                onClick = { Log.d("LoginPage", "Create account clicked") },
             )
         }
     }
