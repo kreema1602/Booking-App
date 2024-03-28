@@ -12,8 +12,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.JoyhubAccount
+import com.example.bookingapp.pages.ForgotPasswordPage
 import com.example.bookingapp.pages.HomeDetailsPage
 import com.example.bookingapp.pages.HomePage
+import com.example.bookingapp.pages.NewPasswordPage
 import com.example.bookingapp.pages.NotificationPage
 import com.example.bookingapp.pages.NotificationViewModel
 import com.example.bookingapp.pages.ProfileFieldEditor
@@ -165,6 +167,7 @@ private fun NavGraphBuilder.addLoginRoute(navController: NavController) {
         showSignUp(navController)
         showSignUpForm(navController)
         showForgotPassword(navController)
+        showNewPassword(navController)
     }
 }
 
@@ -189,7 +192,13 @@ private fun NavGraphBuilder.showSignUpForm(navController: NavController) {
 
 private fun NavGraphBuilder.showForgotPassword(navController: NavController) {
     composable(LeafScreen.ForgotPassword.route) {
+        ForgotPasswordPage(navController = navController)
+    }
+}
 
+private fun NavGraphBuilder.showNewPassword(navController: NavController) {
+    composable(LeafScreen.NewPassword.route) {
+        NewPasswordPage(navController = navController)
     }
 }
 // end of Login navigation

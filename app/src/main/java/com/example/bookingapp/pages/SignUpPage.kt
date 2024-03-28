@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.example.bookingapp.R
+import com.example.bookingapp.core.compose.TopAppBar
 
 @Composable
 fun SignUpPage(navController: NavController) {
@@ -48,40 +49,16 @@ fun SignUpPage(navController: NavController) {
         Column( // Use Column with Modifier.fillMaxSize()  */
             modifier = Modifier.fillMaxSize()
         ) {
-            TopBar(navController = navController) // Place TopBar at the top
+            TopAppBar (
+                title = "",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                onClick = { navController.popBackStack() },
+            )
             Spacer(modifier = Modifier.weight(0.5f)) // Add Spacer to fill remaining space vertically
             SignUpOption(navController = navController) // Place SignUpOption at the bottom center
             Spacer(modifier = Modifier.weight(1f)) // Add Spacer to fill remaining space vertically
-        }
-    }
-}
-
-@Composable
-fun TopBar(navController: NavController) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp),
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .background(Color.White)
-                .border(1.dp, Color.LightGray, shape = RoundedCornerShape(8.dp))
-
-        ) {
-            IconButton(
-                onClick = { navController.navigateUp() },
-                modifier = Modifier.size(36.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    modifier = Modifier.size(20.dp),
-                    tint = Color(0xFFFF6400) // Adjust color as per your requirement
-                )
-            }
         }
     }
 }
