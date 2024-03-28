@@ -130,7 +130,8 @@ fun SimpleButton(text: String, onClick: () -> Unit, color: Color = OrangePrimary
 fun FilledClipButton(
     text: String,
     onClick: () -> Unit,
-    color: Color = OrangePrimary
+    color: Color = OrangePrimary,
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = Modifier

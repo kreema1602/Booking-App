@@ -249,7 +249,7 @@ fun ShowOTPDialog(
                 FilledClipButton(
                     text = "Verify",
                     onClick = {
-
+                        navController.navigate("new_password")
                     }
                 )
 

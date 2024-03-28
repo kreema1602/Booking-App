@@ -21,6 +21,7 @@ sealed class LeafScreen(val route: String) {
     object SignUp : LeafScreen("sign_up")
     object SignUpForm : LeafScreen("sign_up_form")
     object ForgotPassword : LeafScreen("forgot_password")
+    object NewPassword : LeafScreen("new_password")
     object RoomScreen : LeafScreen("room_screen")
     object RoomDetail : LeafScreen("room_detail")
 }
