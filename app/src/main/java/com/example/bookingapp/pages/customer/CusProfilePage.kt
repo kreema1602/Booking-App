@@ -1,8 +1,7 @@
-package com.example.bookingapp.pages
+package com.example.bookingapp.pages.customer
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -43,14 +42,13 @@ import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.AccountData
 import com.example.bookingapp.models.JoyhubAccount
-import com.example.bookingapp.pages.ProfileFieldEditor
 
 val mavenProFontFamily = (Font(R.font.maven_pro_regular, FontWeight.Normal) to Font(
     R.font.maven_pro_bold, FontWeight.Bold
 ))
 
 @Composable
-fun ProfilePage(accId: Int, onClickEdit: (Int) -> Unit) {
+fun CusProfilePage(accId: Int, onClickEdit: (Int) -> Unit) {
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {

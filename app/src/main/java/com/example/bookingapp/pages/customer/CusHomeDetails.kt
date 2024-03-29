@@ -1,4 +1,4 @@
-package com.example.bookingapp.pages
+package com.example.bookingapp.pages.customer
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

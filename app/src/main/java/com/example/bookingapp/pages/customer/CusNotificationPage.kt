@@ -1,4 +1,4 @@
-package com.example.bookingapp.pages
+package com.example.bookingapp.pages.customer
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -113,7 +113,7 @@ class NotificationViewModel(
 }
 
 @Composable
-fun NotificationPage(viewModel: NotificationViewModel) {
+fun CusNotificationPage(viewModel: NotificationViewModel) {
     Surface(
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         color = MaterialTheme.colorScheme.background
@@ -172,6 +172,6 @@ fun NotificationContent() {
 
 @Preview
 @Composable
-fun NotificationPagePreview() {
-    NotificationPage(NotificationViewModel(SavedStateHandle(), arrayListOf("")))
+fun CusNotificationPagePreview() {
+    CusNotificationPage(NotificationViewModel(SavedStateHandle(), arrayListOf("")))
 }

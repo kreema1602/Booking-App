@@ -1,4 +1,4 @@
-package com.example.bookingapp.pages
+package com.example.bookingapp.pages.customer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.example.bookingapp.R
 
 @Composable
-fun HomePage(
+fun CusHomePage(
     showRoomScreen : (Int) -> Unit
 ) {
     Column(
@@ -236,6 +236,6 @@ fun HotelDescription(modifier: Modifier) {
 
 @Composable
 @Preview
-fun HomePagePreview() {
-    HomePage(showRoomScreen = {})
+fun CusHomePagePreview() {
+    CusHomePage(showRoomScreen = {})
 }

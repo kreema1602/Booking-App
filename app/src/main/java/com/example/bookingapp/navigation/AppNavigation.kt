@@ -1,8 +1,6 @@
 package com.example.bookingapp.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -10,158 +8,40 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.bookingapp.mock_data.HotelData
-import com.example.bookingapp.models.JoyhubAccount
 import com.example.bookingapp.pages.ForgotPasswordPage
-import com.example.bookingapp.pages.HomeDetailsPage
-import com.example.bookingapp.pages.HomePage
+import com.example.bookingapp.pages.LoginPage
+import com.example.bookingapp.pages.customer.CusHomePage
 import com.example.bookingapp.pages.NewPasswordPage
-import com.example.bookingapp.pages.NotificationPage
-import com.example.bookingapp.pages.NotificationViewModel
-import com.example.bookingapp.pages.ProfileFieldEditor
-import com.example.bookingapp.pages.ProfilePage
-import com.example.bookingapp.pages.ReservationDetailScreen
-import com.example.bookingapp.pages.ReservationPage
+import com.example.bookingapp.pages.customer.CusNotificationPage
+import com.example.bookingapp.pages.customer.NotificationViewModel
+import com.example.bookingapp.pages.customer.CusProfileFieldEditor
+import com.example.bookingapp.pages.customer.CusProfilePage
+import com.example.bookingapp.pages.customer.CusReservationDetail
+import com.example.bookingapp.pages.customer.CusReservationPage
 import com.example.bookingapp.pages.SignUpForm
 import com.example.bookingapp.pages.SignUpPage
-import com.example.bookingapp.pages.RoomDetail
-import com.example.bookingapp.pages.RoomScreen
+import com.example.bookingapp.pages.customer.CusRoomDetail
+import com.example.bookingapp.pages.customer.CusRoomScreen
+import com.example.bookingapp.pages.hotelier.ModRoomPage
 
 @Composable
-fun AppNavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = RootScreen.Home.route) {
-        addHomeRoute(navController)
-        addReservationsRoute(navController)
-        addNotificationsRoute(navController)
-        addProfileRoute(navController)
+fun AppNavGraph(navController: NavHostController, role : String) {
+    val startDes = when (role) {
+        "customer" -> RootScreen.Customer.route
+        "moderator" -> RootScreen.Moderator.route
+        else -> RootScreen.Login.route
+    }
+    NavHost(navController = navController, startDestination = startDes) {
         addLoginRoute(navController)
+        addCustomerRoute(navController)
+        addModeratorRoute(navController)
     }
 }
-
-// Home navigation
-private fun NavGraphBuilder.addHomeRoute(navController: NavController) {
-    navigation(
-        route = RootScreen.Home.route,
-        startDestination = LeafScreen.Home.route
-    ) {
-        showHome(navController)
-        showRoomScreen(navController)
-        showRoomDetail(navController)
-    }
-}
-
-private fun NavGraphBuilder.showHome(navController: NavController) {
-    composable(LeafScreen.Home.route) {
-        HomePage(
-            showRoomScreen = {
-                navController.navigate(LeafScreen.RoomScreen.route + "/$it")
-            }
-        )
-    }
-}
-
-private fun NavGraphBuilder.showRoomScreen(navController: NavController) {
-    composable(LeafScreen.RoomScreen.route + "/{hotelId}") { it ->
-        val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
-        RoomScreen(hotelId, onBack = {
-            navController.navigateUp()
-        }, showRoomDetail = {
-            navController.navigate(LeafScreen.RoomDetail.route + "/$it")
-        })
-    }
-}
-
-private fun NavGraphBuilder.showRoomDetail(navController: NavController) {
-    composable(LeafScreen.RoomDetail.route + "/{roomId}") {
-        val roomId = it.arguments?.getString("roomId")?.toInt() ?: 0
-        RoomDetail(roomId, onBack = {
-            navController.navigateUp()
-        })
-    }
-}
-
-// Reservations navigation
-private fun NavGraphBuilder.addReservationsRoute(navController: NavController) {
-    navigation(
-        route = RootScreen.Reservations.route,
-        startDestination = LeafScreen.Reservations.route
-    ) {
-        showReservations(navController)
-        showReservationDetail(navController)
-    }
-}
-
-private fun NavGraphBuilder.showReservations(navController: NavController) {
-    composable(LeafScreen.Reservations.route) {
-        ReservationPage(navController)
-    }
-}
-
-private fun NavGraphBuilder.showReservationDetail(navController: NavController) {
-    composable(LeafScreen.ReservationDetail.route + "/{hotelId}") {
-        val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
-        ReservationDetailScreen(hotelId, navController = navController)
-    }
-}
-
-// end of Reservations navigation
-
-// Notifications navigation
-private fun NavGraphBuilder.addNotificationsRoute(navController: NavController) {
-    navigation(
-        route = RootScreen.Notifications.route,
-        startDestination = LeafScreen.Notifications.route
-    ) {
-        showNotifications(navController)
-    }
-}
-
-private fun NavGraphBuilder.showNotifications(navController: NavController) {
-    composable(LeafScreen.Notifications.route) {
-        NotificationPage(
-            viewModel = NotificationViewModel(
-                savedStateHandle = SavedStateHandle(),
-                notificationList = arrayListOf()
-            )
-        )
-    }
-}
-// end of Notifications navigation
-
-// Profile navigation
-private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
-    navigation(
-        route = RootScreen.Profile.route,
-        startDestination = LeafScreen.Profile.route
-    ) {
-        showProfile(navController)
-        showProfileEditor(navController)
-    }
-}
-
-private fun NavGraphBuilder.showProfile(navController: NavController) {
-    composable(LeafScreen.Profile.route) {
-        ProfilePage(accId = 1, onClickEdit = {
-            navController.navigate(LeafScreen.ProfileEditor.route + "/$it")
-        })
-    }
-}
-
-private fun NavGraphBuilder.showProfileEditor(navController: NavController) {
-    composable(LeafScreen.ProfileEditor.route + "/{accId}") {
-        val accId = it.arguments?.getString("accId")?.toInt() ?: 0
-        ProfileFieldEditor(accId = accId, onBack = {
-            navController.navigateUp()
-        })
-    }
-}
-// end of Profile navigation
-
-// Login navigation
+// -------------- Login navigation ------------------- //
 private fun NavGraphBuilder.addLoginRoute(navController: NavController) {
     navigation(
         route = RootScreen.Login.route,
-        startDestination = LeafScreen.SignUp.route
+        startDestination = GeneralLeafScreen.SignUp.route
     ) {
         showLogin(navController)
         showSignUp(navController)
@@ -170,35 +50,127 @@ private fun NavGraphBuilder.addLoginRoute(navController: NavController) {
         showNewPassword(navController)
     }
 }
-
 private fun NavGraphBuilder.showLogin(navController: NavController) {
-    composable(LeafScreen.Login.route) {
-
+    composable(GeneralLeafScreen.Login.route) {
+//        LoginPage(navController = navController, )
     }
 }
-
 private fun NavGraphBuilder.showSignUp(navController: NavController) {
-    composable(LeafScreen.SignUp.route) {
+    composable(GeneralLeafScreen.SignUp.route) {
         SignUpPage(navController = navController)
     }
 }
-
 private fun NavGraphBuilder.showSignUpForm(navController: NavController) {
-    composable(LeafScreen.SignUpForm.route + "/{role}") {
+    composable(GeneralLeafScreen.SignUpForm.route + "/{role}") {
         val role = it.arguments?.getString("role") ?: ""
         SignUpForm(navController = navController, role = role)
     }
 }
-
 private fun NavGraphBuilder.showForgotPassword(navController: NavController) {
-    composable(LeafScreen.ForgotPassword.route) {
+    composable(GeneralLeafScreen.ForgotPassword.route) {
         ForgotPasswordPage(navController = navController)
     }
 }
-
 private fun NavGraphBuilder.showNewPassword(navController: NavController) {
-    composable(LeafScreen.NewPassword.route) {
+    composable(GeneralLeafScreen.NewPassword.route) {
         NewPasswordPage(navController = navController)
     }
 }
-// end of Login navigation
+// -------------- End of Login navigation ------------------- //
+
+// -------------- Customer navigation ------------------- //
+private fun NavGraphBuilder.addCustomerRoute(navController: NavController) {
+    navigation(
+        route = RootScreen.Customer.route,
+        startDestination = CustomerLeafScreen.Home.route
+    ) {
+        showCusHome(navController)
+        showCusRoomScreen(navController)
+        showCusRoomDetail(navController)
+        showCusReservations(navController)
+        showCusReservationDetail(navController)
+        showCusNotifications(navController)
+        showCusProfile(navController)
+        showCusProfileEditor(navController)
+    }
+}
+private fun NavGraphBuilder.showCusHome(navController: NavController) {
+    composable(CustomerLeafScreen.Home.route) {
+        CusHomePage(
+            showRoomScreen = {
+                navController.navigate(CustomerLeafScreen.Room.route + "/$it")
+            }
+        )
+    }
+}
+private fun NavGraphBuilder.showCusRoomScreen(navController: NavController) {
+    composable(CustomerLeafScreen.Room.route + "/{hotelId}") { it ->
+        val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
+        CusRoomScreen(hotelId, onBack = {
+            navController.navigateUp()
+        }, showRoomDetail = {
+            navController.navigate(CustomerLeafScreen.RoomDetail.route + "/$it")
+        })
+    }
+}
+private fun NavGraphBuilder.showCusRoomDetail(navController: NavController) {
+    composable(CustomerLeafScreen.RoomDetail.route + "/{roomId}") {
+        val roomId = it.arguments?.getString("roomId")?.toInt() ?: 0
+        CusRoomDetail(roomId, onBack = {
+            navController.navigateUp()
+        })
+    }
+}
+private fun NavGraphBuilder.showCusReservations(navController: NavController) {
+    composable(CustomerLeafScreen.Reservation.route) {
+        CusReservationPage(navController)
+    }
+}
+private fun NavGraphBuilder.showCusReservationDetail(navController: NavController) {
+    composable(CustomerLeafScreen.ReservationDetail.route + "/{hotelId}") {
+        val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
+        CusReservationDetail(hotelId, navController = navController)
+    }
+}
+private fun NavGraphBuilder.showCusNotifications(navController: NavController) {
+    composable(CustomerLeafScreen.Notification.route) {
+        CusNotificationPage(
+            viewModel = NotificationViewModel(
+                savedStateHandle = SavedStateHandle(),
+                notificationList = arrayListOf()
+            )
+        )
+    }
+}
+private fun NavGraphBuilder.showCusProfile(navController: NavController) {
+    composable(CustomerLeafScreen.Profile.route) {
+        CusProfilePage(accId = 1, onClickEdit = {
+            navController.navigate(CustomerLeafScreen.ProfileEditor.route + "/$it")
+        })
+    }
+}
+private fun NavGraphBuilder.showCusProfileEditor(navController: NavController) {
+    composable(CustomerLeafScreen.ProfileEditor.route + "/{accId}") {
+        val accId = it.arguments?.getString("accId")?.toInt() ?: 0
+        CusProfileFieldEditor(accId = accId, onBack = {
+            navController.navigateUp()
+        })
+    }
+}
+// -------------- End of Customer navigation ------------------- //
+
+// -------------- Moderator navigation ------------------- //
+private fun NavGraphBuilder.addModeratorRoute(navController: NavController) {
+    navigation(
+        route = RootScreen.Moderator.route,
+        startDestination = ModeratorLeafScreen.Room.route
+    ) {
+        showModReservations(navController)
+    }
+}
+private fun NavGraphBuilder.showModReservations(navController: NavController) {
+    composable(ModeratorLeafScreen.Room.route) {
+        ModRoomPage(navController)
+    }
+}
+// -------------- End of Moderator navigation ------------------- //
