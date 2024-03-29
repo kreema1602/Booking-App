@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
@@ -127,16 +128,10 @@ fun SimpleButton(text: String, onClick: () -> Unit, color: Color = OrangePrimary
 }
 
 @Composable
-fun FilledClipButton(
-    text: String,
-    onClick: () -> Unit,
-    color: Color = OrangePrimary,
-    modifier: Modifier = Modifier,
-) {
+fun FilledClipButton(text: String, onClick: () -> Unit, color: Color = OrangePrimary, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(100))
+        modifier = modifier
+            .clip(RoundedCornerShape(24.dp))
             .background(color)
             .clickable {
                 onClick()
@@ -144,12 +139,13 @@ fun FilledClipButton(
         contentAlignment = Alignment.Center
     ) {
         Text(
+            textAlign = TextAlign.Center,
             text = text,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFFFFFFFF),
             modifier = Modifier
-                .padding(vertical = 14.dp, horizontal = 0.dp),
+                .padding(vertical = 10.dp, horizontal = 0.dp).fillMaxWidth(),
         )
     }
 }

@@ -15,6 +15,7 @@ val Green = Color(0xFF36D000)
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF121212)
 val Orange = Color(0xFFFF6400)
+val Grey = Color(0xFF878787)
 
 val WarningSecondary = Color(0xFFEEB0AE)
 val WarningPrimary = Color(0xFFD73B35)
