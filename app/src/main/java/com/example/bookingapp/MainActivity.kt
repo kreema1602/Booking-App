@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -15,11 +14,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -32,8 +35,10 @@ import com.example.bookingapp.core.ui.theme.BookingAppTheme
 import com.example.bookingapp.navigation.AppNavGraph
 import com.example.bookingapp.navigation.LeafScreen
 import com.example.bookingapp.navigation.RootScreen
+import com.example.bookingapp.pages.LoginPage
 
 class MainActivity : ComponentActivity() {
+    private val isLoggedIn = mutableStateOf(false)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,7 +49,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MyApp()
+                    if (isLoggedIn.value)
+                        MyApp()
+                    else
+                        LoginPage {
+                            isLoggedIn.value = true
+                        }
                 }
             }
         }
@@ -58,18 +68,26 @@ fun MyApp() {
     val currentSelectedPage by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
 
-    Scaffold (
+    Scaffold(
         bottomBar = {
             Log.d("AppNavGraph", "currentRoute: $currentRoute")
-            if (currentRoute in listOf(LeafScreen.Home.route, LeafScreen.Reservations.route, LeafScreen.Notifications.route, LeafScreen.Profile.route)) {
+            if (currentRoute in listOf(
+                    LeafScreen.Home.route,
+                    LeafScreen.Reservations.route,
+                    LeafScreen.Notifications.route,
+                    LeafScreen.Profile.route
+                )
+            ) {
                 BottomNavBar(navController, currentSelectedPage)
             }
         },
         modifier = Modifier.fillMaxSize()
     ) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(it)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
             AppNavGraph(navController = navController)
         }
     }
@@ -139,12 +157,15 @@ private fun NavController.currentScreenAsState(): State<RootScreen> {
                 destination.hierarchy.any { it.route == RootScreen.Home.route } -> {
                     selectedItem.value = RootScreen.Home
                 }
+
                 destination.hierarchy.any { it.route == RootScreen.Reservations.route } -> {
                     selectedItem.value = RootScreen.Reservations
                 }
+
                 destination.hierarchy.any { it.route == RootScreen.Notifications.route } -> {
                     selectedItem.value = RootScreen.Notifications
                 }
+
                 destination.hierarchy.any { it.route == RootScreen.Profile.route } -> {
                     selectedItem.value = RootScreen.Profile
                 }
