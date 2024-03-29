@@ -1,4 +1,4 @@
-package com.example.bookingapp.pages
+package com.example.bookingapp.pages.customer
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -39,9 +39,8 @@ import com.example.bookingapp.mock_data.ReservationData
 import com.example.bookingapp.models.ReservationItem
 
 @Composable
-fun ReservationDetailScreen(hotelId: Int, navController: NavController) {
+fun CusReservationDetail(hotelId: Int, navController: NavController) {
     val hotels = ReservationData.sampleData
-    Log.d("ReservationDetailScreen", "hotelId: $hotelId")
     val chosenHotel = hotels.find { it.id == hotelId}
 
     if (chosenHotel != null) {

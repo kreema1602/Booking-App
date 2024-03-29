@@ -1,27 +1,31 @@
 package com.example.bookingapp.navigation
 
-sealed class RootScreen(val route: String) {
-
-    object Home : RootScreen("home_root")
-    object Reservations : RootScreen("reservations_root")
-    object Notifications : RootScreen("notifications_root")
-    object Profile : RootScreen("profile_root")
+sealed class RootScreen (val route: String) {
     object Login : RootScreen("login_root")
+    object Customer : RootScreen("customer_root")
+    object Moderator : RootScreen("moderator_root")
 }
-
-sealed class LeafScreen(val route: String) {
-    object Home : LeafScreen("home")
-    object Reservations : LeafScreen("reservations")
-    object ReservationDetail : LeafScreen("reservation_detail")
-    object Notifications : LeafScreen("notifications")
-    object Profile : LeafScreen("profile")
-    object ProfileEditor : LeafScreen("profile_editor")
-    object Details : LeafScreen("details")
-    object Login : LeafScreen("login")
-    object SignUp : LeafScreen("sign_up")
-    object SignUpForm : LeafScreen("sign_up_form")
-    object ForgotPassword : LeafScreen("forgot_password")
-    object NewPassword : LeafScreen("new_password")
-    object RoomScreen : LeafScreen("room_screen")
-    object RoomDetail : LeafScreen("room_detail")
+sealed class CustomerLeafScreen(val route: String){
+    object Home : CustomerLeafScreen("cus_home")
+    object Reservation : CustomerLeafScreen("cus_reservation")
+    object ReservationDetail : CustomerLeafScreen("cus_reservation_detail")
+    object Notification : CustomerLeafScreen("cus_notification")
+    object Profile : CustomerLeafScreen("cus_profile")
+    object ProfileEditor : CustomerLeafScreen("cus_profile_editor")
+    object Room : CustomerLeafScreen("cus_room")
+    object RoomDetail : CustomerLeafScreen("cus_room_detail")
+}
+sealed class ModeratorLeafScreen(val route: String){
+    object Home : ModeratorLeafScreen("mod_home")
+    object Notification : ModeratorLeafScreen("mod_notification")
+    object Profile : ModeratorLeafScreen("mod_profile")
+    object ProfileEditor : ModeratorLeafScreen("mod_profile_editor")
+    object Room : ModeratorLeafScreen("mod_room")
+}
+sealed class GeneralLeafScreen(val route: String){
+    object Login : GeneralLeafScreen("login")
+    object SignUp : GeneralLeafScreen("sign_up")
+    object SignUpForm : GeneralLeafScreen("sign_up_form")
+    object ForgotPassword : GeneralLeafScreen("forgot_password")
+    object NewPassword : GeneralLeafScreen("new_password")
 }
