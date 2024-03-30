@@ -41,7 +41,7 @@ import com.example.bookingapp.pages.LoginPage
 
 class MainActivity : ComponentActivity() {
     private val isLoggedIn = mutableStateOf(false)
-    private val userRole = mutableStateOf("customer")
+    private val userRole = mutableStateOf("moderator")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

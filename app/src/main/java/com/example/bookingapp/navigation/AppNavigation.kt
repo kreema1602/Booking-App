@@ -22,6 +22,7 @@ import com.example.bookingapp.pages.SignUpForm
 import com.example.bookingapp.pages.SignUpPage
 import com.example.bookingapp.pages.customer.CusRoomDetail
 import com.example.bookingapp.pages.customer.CusRoomScreen
+import com.example.bookingapp.pages.hotelier.ModHomePage
 import com.example.bookingapp.pages.hotelier.ModRoomPage
 
 @Composable
@@ -163,9 +164,15 @@ private fun NavGraphBuilder.showCusProfileEditor(navController: NavController) {
 private fun NavGraphBuilder.addModeratorRoute(navController: NavController) {
     navigation(
         route = RootScreen.Moderator.route,
-        startDestination = ModeratorLeafScreen.Room.route
+        startDestination = ModeratorLeafScreen.Home.route
     ) {
+        showModHome(navController)
         showModReservations(navController)
+    }
+}
+private fun NavGraphBuilder.showModHome(navController: NavController) {
+    composable(ModeratorLeafScreen.Home.route) {
+        ModHomePage(navController = navController)
     }
 }
 private fun NavGraphBuilder.showModReservations(navController: NavController) {
