@@ -39,13 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
+import com.example.bookingapp.core.ui.mavenProFontFamily
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.AccountData
 import com.example.bookingapp.models.JoyhubAccount
-
-val mavenProFontFamily = (Font(R.font.maven_pro_regular, FontWeight.Normal) to Font(
-    R.font.maven_pro_bold, FontWeight.Bold
-))
 
 @Composable
 fun CusProfilePage(accId: Int, onClickEdit: (Int) -> Unit) {
