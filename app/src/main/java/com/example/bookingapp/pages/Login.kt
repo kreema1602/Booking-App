@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -44,7 +43,7 @@ import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 
 @Composable
-fun LoginPage() {
+fun LoginPage(onLoggedInSuccess: () -> Unit) {
     val mavenProFamily = FontFamily(
         Font(R.font.maven_pro_regular, FontWeight.Normal),
         Font(R.font.maven_pro_bold, FontWeight.Bold),
@@ -161,7 +160,9 @@ fun LoginPage() {
                 )
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    onLoggedInSuccess()
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -187,7 +188,11 @@ fun LoginPage() {
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
-                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = OrangePrimary)
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null,
+                    tint = OrangePrimary
+                )
             }
 
             Divider(
@@ -215,7 +220,9 @@ fun LoginPage() {
                         append("Create one")
                     }
                 },
-                onClick = { Log.d("LoginPage", "Create account clicked") },
+                onClick = {
+                    
+                },
             )
         }
     }
@@ -224,5 +231,5 @@ fun LoginPage() {
 @Preview
 @Composable
 fun LoginPagePreview() {
-    LoginPage()
+    LoginPage {}
 }

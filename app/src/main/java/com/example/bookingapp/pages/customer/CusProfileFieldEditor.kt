@@ -1,4 +1,4 @@
-package com.example.bookingapp.pages
+package com.example.bookingapp.pages.customer
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.example.bookingapp.mock_data.AccountData
 
 @Composable
-fun ProfileFieldEditor(accId: Int, onBack: () -> Unit) {
+fun CusProfileFieldEditor(accId: Int, onBack: () -> Unit) {
     val accTmp = AccountData.sampleData.find { it.id == accId }!!
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.size(16.dp))

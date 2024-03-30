@@ -1,4 +1,4 @@
-package com.example.bookingapp.pages
+package com.example.bookingapp.pages.customer
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -34,7 +34,7 @@ import com.example.bookingapp.mock_data.PaymentData
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RoomDetail(roomId: Int, onBack: () -> Unit) {
+fun CusRoomDetail(roomId: Int, onBack: () -> Unit) {
     val room = RoomData.data[0]
     Box {
         LazyColumn(
@@ -181,9 +181,9 @@ fun PaymentDetail(
 
 @Preview
 @Composable
-fun RoomDetailPreview() {
+fun CusRoomDetailPreview() {
     ThemedPreview {
-        RoomDetail(123, {})
+        CusRoomDetail(123, {})
 //        PaymentInformation()
     }
 }
