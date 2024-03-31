@@ -84,7 +84,7 @@ fun MyApp(role : String) {
         "moderator" -> {
             currentRouteListByRole = listOf(
                 ModeratorLeafScreen.Home.route,
-                ModeratorLeafScreen.Room.route,
+                ModeratorLeafScreen.Room.route + "/1",
                 ModeratorLeafScreen.Notification.route,
                 ModeratorLeafScreen.Profile.route
             )

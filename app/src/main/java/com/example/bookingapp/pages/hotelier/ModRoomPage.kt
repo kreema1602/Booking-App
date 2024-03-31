@@ -1,23 +1,29 @@
 package com.example.bookingapp.pages.hotelier
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,163 +33,385 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.bookingapp.models.ReservationItem
-import com.example.bookingapp.mock_data.ReservationData
-import com.example.bookingapp.navigation.CustomerLeafScreen
+import com.example.bookingapp.R
+import com.example.bookingapp.core.compose.BottomSection
+import com.example.bookingapp.core.compose.ExpandableText
+import com.example.bookingapp.core.compose.FacilityList
+import com.example.bookingapp.core.compose.MySpacer
+import com.example.bookingapp.core.compose.RatingBar
+import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.core.ui.theme.SuccessPrimary
+import com.example.bookingapp.core.ui.theme.SuccessSecondary
+import com.example.bookingapp.core.ui.theme.WarningPrimary
+import com.example.bookingapp.core.ui.theme.WarningSecondary
+import com.example.bookingapp.mock_data.HotelData
+import com.example.bookingapp.models.Hotel
+import com.example.bookingapp.navigation.ModeratorLeafScreen
 
 @Composable
-fun ModRoomPage(navController: NavController) {
-    ReservationList(navController)
+fun ModRoomPage(navController: NavController, hotelId : Int) {
+    val hotel = HotelData.data.find { it.id == hotelId }
+    if(hotel == null) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                text = "Hotel not found",
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    } else {
+        HotelDetail(hotel = hotel, navController = navController)
+    }
 }
-
 @Composable
-fun ReservationList(navController: NavController) {
-    val items = ReservationData.sampleData
-
-    LazyColumn (
-//        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFFF2F2F2))
-            .padding(top = 10.dp)
-    )
-    {
-        items(items = items) { item ->
-            ReservationListItem(item = item, viewDetail = {
-                Log.i("ReservationList", "View detail of ${item.id}")
-                navController.navigate(CustomerLeafScreen.ReservationDetail.route + "/${item.id}")
-            })
+fun HotelDetail(hotel: Hotel, navController: NavController) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        LazyColumn (
+            modifier = Modifier.fillMaxSize()
+        ) {
+            item {
+                HotelImageContainer(hotel.imageUrl)
+                MySpacer(height = 8.dp)
+                HotelInfo(hotel = hotel)
+                MySpacer(height = 8.dp)
+                HotelFacilities(facilities = hotel.facilities)
+                MySpacer(height = 8.dp)
+                RoomList(title = "Standard Rooms", showRoomEdit = {
+                     navController.navigate(ModeratorLeafScreen.RoomEdit.route + "/$it")
+                })
+                MySpacer(height = 8.dp)
+                CommentsList()
+                MySpacer(height = 8.dp)
+            }
+        }
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .background(Color.White)
+        ) {
+            BottomSection(from = "Thu, 4/6/2023", to = "Sat, 6/6/2023", onClick = {})
         }
     }
 }
-
 @Composable
-fun ReservationListItem(item: ReservationItem, viewDetail: () -> Unit = {}){
+fun HotelImageContainer(imgUrl: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(0.dp))
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.hotel2),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentScale = ContentScale.Crop,
+        )
+    }
+}
+@Composable
+fun HotelInfo (hotel: Hotel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
-            .padding(vertical = 5.dp, horizontal = 10.dp)
-            .clickable(onClick = viewDetail),
-//        verticalAlignment = Alignment.CenterVertically
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 8.dp,
+                bottom = 8.dp
+            )
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
-        ){
-            // Image
-            val imageSize = 100.dp
-            val imageModifier = Modifier
-                .size(imageSize, imageSize + 30.dp)
-                .clip(RoundedCornerShape(6.dp))
-            Box(
-                modifier = imageModifier
+        ) {
+            Text(
+                text = hotel.name,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            )
+            // Icon for rating
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(id = item.imageResource[0]),
-                    contentDescription = null, // Add proper content description
-                    contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.fillMaxSize()
+                Icon(
+                    imageVector = Icons.Filled.Star,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .padding(4.dp),
+                    tint = Color.Yellow
+                )
+                Text(
+                    text = "4.5",
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
-
-            // Details
-            ItemDetail(item = item, columnHeight = imageSize + 30.dp)
         }
-        // Rating Button Row
-        RatingButton(item.status)
-    }
-}
-@Composable
-fun StatusBox(status: String) {
-    val backgroundColor = when (status) {
-        "Completed" -> Color(0xFFC7EDD9)
-        "Waiting" -> Color(0xFFFFF3EB)
-        "Cancelled" -> Color(0xFFdddddd)
-        else -> Color.Gray
-    }
-
-    val textColor = when (status) {
-        "Completed" -> Color(0xFF41AF79)
-        "Waiting" -> Color(0xFFff6400)
-        "Cancelled" -> Color(0xFF878787)
-        else -> Color.Gray
-    }
-
-    Box(
-        modifier = Modifier
-            .background(backgroundColor, RoundedCornerShape(4.dp))
-            .padding(horizontal = 4.dp, vertical = 1.dp)
-    ) {
         Text(
-            text = status,
-            color = textColor,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp)
+            text = hotel.address,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
+        )
+        ExpandableText(
+            text = hotel.desc,
+            maxLines = 4,
+            onClick = {},
+            color = OrangePrimary
         )
     }
 }
 
 @Composable
-fun RatingButton(status: String){
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+fun HotelFacilities(facilities : List<String>) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 8.dp,
+                bottom = 8.dp
+            )
     ) {
-        if (status == "Completed") {
-            Button(
-                onClick = { /* Handle button click */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .clip(RoundedCornerShape(4.dp)),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color(0xFF2196F3)
-                )
-            ) {
-                Text(text = "Rating", color = Color(0xFFFFFFFF))
+        Text(
+            text = "Hotel facilities",
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+        )
+        Row {
+            facilities.forEach { facility ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(
+                        end = 24.dp,
+                        bottom = 8.dp,
+                        top = 8.dp
+                    )
+                ) {
+                    val icon = when (facility) {
+                        "Free Wi-Fi" -> R.drawable.ic_wifi
+                        "Parking" -> R.drawable.ic_parking
+                        "Swimming" -> R.drawable.ic_swimming_pool
+                        "Gym" -> R.drawable.ic_gym
+                        else -> R.drawable.ic_wifi
+                    }
+                    Icon(
+                        painter = painterResource(id = icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = facility,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun ItemDetail(item: ReservationItem, columnHeight: Dp){
+fun RoomList(title : String, showRoomEdit : (Int) -> Unit){
     Column(
-        modifier = Modifier
-            .padding(start = 16.dp)
-            .fillMaxWidth()
-            .heightIn(min = columnHeight),
-//                .background(Color.Red),
-        verticalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxSize()
     ) {
-        StatusBox(status = item.status)
         Text(
-            text = item.name,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF333333),
-            fontSize = 16.sp)
-        Text(text = item.roomType, color = Color(0xFF555555))
-        Text(text = item.date, color = Color(0xFF555555))
-        Text(
-            text = "${item.price} VNĐ",
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFFFF6400),
-            fontSize = 18.sp)
-
+            text = title,
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(
+                top = 16.dp,
+                start = 16.dp,
+                end = 16.dp,
+            )
+        )
+        LazyRow(
+            content = {
+                items(5) {
+                    RoomListItem (showRoomEdit)
+                }
+            }
+        )
     }
 }
 
-@Preview
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PreviewReservationList(){
-    ModRoomPage(navController = rememberNavController())
+fun RoomListItem(showRoomEdit: (Int) -> Unit) {
+    Card(
+        modifier = Modifier
+            .padding(12.dp)
+            .width(320.dp),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(10.dp),
+        onClick = { showRoomEdit(123) }
+    ) {
+        Column {
+            Box(
+                modifier = Modifier
+                    .height(200.dp)
+                    .width(320.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.hotel2),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Crop
+                )
+                // State
+                val state = "Available"
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(43.dp)
+                        .align(Alignment.TopEnd)
+                        .padding(
+                            top = 12.dp,
+                            end = 12.dp
+                        )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .widthIn(max = 110.dp)
+                            .align(Alignment.TopEnd)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(if (state == "Full") WarningSecondary else SuccessSecondary)
+                            .padding(
+                                start = 4.dp,
+                                end = 4.dp
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Icon(
+                            painter = painterResource(id = if (state == "Full") R.drawable.ic_cancel else R.drawable.ic_check),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(end = 4.dp),
+                            tint = if (state == "Full") WarningPrimary else SuccessPrimary
+                        )
+                        Text(
+                            text = state,
+                            color = if (state == "Full") WarningPrimary else SuccessPrimary,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .width(320.dp)
+                    .background(Color.White)
+            ) {
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Standard Room",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = Color.Black,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                        Text(
+                            text = "123.000 VND / night",
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 14.sp
+                            ),
+                            color = Color.Black,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                    FacilityList()
+                }
+            }
+        }
+    }
+}
+@Composable
+fun CommentsList() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 8.dp,
+                bottom = 8.dp
+            )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "4.8",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 40.sp
+                ),
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Column {
+                Text(
+                    text = "Rating", style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                Text(text = "520 reviews", style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+        repeat(5) {
+            Comment()
+        }
+    }
+}
+
+@Composable
+fun Comment() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                top = 16.dp
+            )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "John Doe",
+                color = Color(0xFF888888),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+            )
+            RatingBar(rating = 4.5, starsColor = Color.Yellow)
+        }
+        Text(
+            text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        MySpacer(height = 0.5.dp, color = Color.Black)
+    }
 }
