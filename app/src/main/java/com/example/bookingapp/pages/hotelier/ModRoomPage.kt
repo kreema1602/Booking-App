@@ -97,13 +97,6 @@ fun HotelDetail(hotel: Hotel, navController: NavController) {
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
             }
         }
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .background(Color.White)
-        ) {
-            BottomSection(from = "Thu, 4/6/2023", to = "Sat, 6/6/2023", onClick = {})
-        }
     }
 }
 @Composable
@@ -293,49 +286,6 @@ fun RoomListItem(showRoomEdit: (Int) -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Crop
                 )
-                // State
-                val state = Random.nextBoolean().let {
-                    if (it) "Full" else "Available"
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(43.dp)
-                        .align(Alignment.TopEnd)
-                        .padding(
-                            top = 12.dp,
-                            end = 12.dp
-                        )
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .widthIn(max = 110.dp)
-                            .align(Alignment.TopEnd)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(if (state == "Full") WarningSecondary else SuccessSecondary)
-                            .padding(
-                                start = 4.dp,
-                                end = 4.dp
-                            ),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Icon(
-                            painter = painterResource(id = if (state == "Full") R.drawable.ic_cancel else R.drawable.ic_check),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(24.dp)
-                                .padding(end = 4.dp),
-                            tint = if (state == "Full") WarningPrimary else SuccessPrimary
-                        )
-                        Text(
-                            text = state,
-                            color = if (state == "Full") WarningPrimary else SuccessPrimary,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
             }
             Box(
                 modifier = Modifier
