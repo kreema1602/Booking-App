@@ -33,13 +33,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.BottomSection
 import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.FacilityList
+import com.example.bookingapp.core.compose.FilledClipButton
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.RatingBar
 import com.example.bookingapp.core.ui.theme.OrangePrimary
@@ -71,7 +74,9 @@ fun ModRoomPage(navController: NavController, hotelId : Int) {
 @Composable
 fun HotelDetail(hotel: Hotel, navController: NavController) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
     ) {
         LazyColumn (
             modifier = Modifier.fillMaxSize()
@@ -80,15 +85,15 @@ fun HotelDetail(hotel: Hotel, navController: NavController) {
                 HotelImageContainer(hotel.imageUrl)
                 MySpacer(height = 8.dp)
                 HotelInfo(hotel = hotel)
-                MySpacer(height = 8.dp)
+                MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
                 HotelFacilities(facilities = hotel.facilities)
-                MySpacer(height = 8.dp)
-                RoomList(title = "Standard Rooms", showRoomEdit = {
+                MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
+                RoomList(title = "Standard Rooms", navController = navController, showRoomEdit = {
                      navController.navigate(ModeratorLeafScreen.RoomEdit.route + "/$it")
                 })
-                MySpacer(height = 8.dp)
+                MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
                 CommentsList()
-                MySpacer(height = 8.dp)
+                MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
             }
         }
         Column(
@@ -221,10 +226,30 @@ fun HotelFacilities(facilities : List<String>) {
 }
 
 @Composable
-fun RoomList(title : String, showRoomEdit : (Int) -> Unit){
+fun RoomList(title : String, showRoomEdit : (Int) -> Unit, navController: NavController){
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            FilledClipButton(
+                text = "Add Room",
+                onClick = { navController.navigate("mod_room_add") },
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp)
+                    .width(120.dp)
+            )
+            FilledClipButton(
+                text = "remove",
+                onClick = { navController.navigate("mod_room_remove") },
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 16.dp)
+                    .width(120.dp)
+            )
+        }
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
@@ -414,4 +439,10 @@ fun Comment() {
         )
         MySpacer(height = 0.5.dp, color = Color.Black)
     }
+}
+
+@Preview
+@Composable
+fun PreviewModRoomPage() {
+    ModRoomPage(navController = rememberNavController(), hotelId = 1)
 }
