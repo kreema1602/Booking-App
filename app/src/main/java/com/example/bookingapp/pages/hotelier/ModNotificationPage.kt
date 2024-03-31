@@ -1,4 +1,4 @@
-package com.example.bookingapp.pages.customer
+package com.example.bookingapp.pages.hotelier
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,9 +33,8 @@ import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.NotiCard
 import com.example.bookingapp.models.NotiContent
 
-
 @Composable
-fun CusNotificationPage(navController: NavController) {
+fun ModNotificationPage(navController: NavController) {
     Surface(
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         color = MaterialTheme.colorScheme.background
@@ -51,11 +50,11 @@ fun CusNotificationPage(navController: NavController) {
             )
             for (i in 1..5) {
                 // random content
-                val variant = if (i % 2 == 0) "booking" else "cancel"
-                val notification = if (variant == "cancel") {
-                    NotiContent("cancel", "Hotel A", "unforeseen circumstances")
+                val variant = if (i % 2 == 0) "order" else "alert"
+                val notification = if (variant == "order") {
+                    NotiContent("order", customer = "Customer A")
                 } else {
-                    NotiContent("booking", "Hotel A")
+                    NotiContent("alert")
                 }
                 NotiCard(variant, "Booking ID", notification, "Just now", false)
             }
