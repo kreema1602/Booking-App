@@ -18,8 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.ThemedPreview
 
@@ -28,7 +30,8 @@ fun EditText(
     modifier: Modifier = Modifier,
     hint: String = "",
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    singleLine: Boolean = true
+    singleLine: Boolean = true,
+    fontSize: TextUnit = MaterialTheme.typography.bodyMedium.fontSize
 ) {
     var text by remember { mutableStateOf(TextFieldValue("")) }
     TextField(
@@ -44,7 +47,8 @@ fun EditText(
             focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        textStyle = TextStyle(fontSize = fontSize)
     )
 }
 

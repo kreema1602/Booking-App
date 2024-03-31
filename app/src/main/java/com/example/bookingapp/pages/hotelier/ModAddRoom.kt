@@ -1,6 +1,5 @@
 package com.example.bookingapp.pages.hotelier
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +33,7 @@ import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.BottomSection
 import com.example.bookingapp.core.compose.EditCarousel
 import com.example.bookingapp.core.compose.EditText
+import com.example.bookingapp.core.compose.MyDropdownMenu
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.ui.ThemedPreview
@@ -52,13 +52,32 @@ fun ModAddRoom(onBack: () -> Unit) {
                 TopAppBar(title = "Detail", onClick = onBack)
                 EditCarousel(initialItems = room.images)
                 Text(
-                    text = room.name + " (" + room.type + ")",
+                    text = "Room",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight(650),
-                        fontSize = 26.sp
+                        fontSize = 20.sp
                     ),
                     modifier = Modifier.padding(top = 8.dp)
                 )
+                EditText(
+                    hint = "Room name", modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .height(60.dp), singleLine = true,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize
+                )
+                Text(
+                    text = "Type",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight(700)
+                    ),
+                    fontSize = 20.sp
+                )
+                Box(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                    MyDropdownMenu(
+                        items = listOf("Deluxe", "Standard", "Superior", "Suite"),
+                        onItemSelected = {}
+                    )
+                }
                 Text(
                     text = "Description",
                     style = MaterialTheme.typography.titleSmall.copy(
@@ -88,7 +107,7 @@ fun ModAddRoom(onBack: () -> Unit) {
             item {
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "Price per night", style = MaterialTheme.typography.bodyLarge, modifier = Modifier.fillMaxWidth(0.4f))
-                    EditText(keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                    EditText(keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), hint = "Price in VND")
                 }
             }
 
@@ -113,10 +132,12 @@ fun ModAddRoom(onBack: () -> Unit) {
 @Composable
 fun DetailInputField() {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
     ) {
         val properties = listOf(
-            "Area(m²)",
+            "Area",
             "People",
             "Bed"
         )
@@ -143,8 +164,13 @@ fun DetailInputField() {
                     )
                     Text(text = property, style = MaterialTheme.typography.bodyLarge)
                 }
-
-                EditText(keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                val hint = when (property) {
+                    "Area" -> "Area in m²"
+                    "People" -> "Number of people"
+                    "Bed" -> "Number of beds"
+                    else -> ""
+                }
+                EditText(hint = hint, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
             }
         }
     }
