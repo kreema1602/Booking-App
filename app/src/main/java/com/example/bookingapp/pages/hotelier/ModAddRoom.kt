@@ -62,8 +62,7 @@ fun ModAddRoom(onBack: () -> Unit) {
                 EditText(
                     hint = "Room name", modifier = Modifier
                         .padding(vertical = 8.dp)
-                        .height(60.dp), singleLine = true,
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize
+                        .height(60.dp), singleLine = true
                 )
                 Text(
                     text = "Type",
@@ -112,7 +111,7 @@ fun ModAddRoom(onBack: () -> Unit) {
             }
 
             item {
-                MySpacer(height = 200.dp, color = Color.Transparent)
+                MySpacer(height = 100.dp, color = Color.Transparent)
             }
         }
 
