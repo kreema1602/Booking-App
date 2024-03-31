@@ -53,6 +53,7 @@ import com.example.bookingapp.core.ui.theme.WarningSecondary
 import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.Hotel
 import com.example.bookingapp.navigation.ModeratorLeafScreen
+import kotlin.random.Random
 
 @Composable
 fun ModRoomPage(navController: NavController, hotelId : Int) {
@@ -243,7 +244,7 @@ fun RoomList(title : String, showRoomEdit : (Int) -> Unit, navController: NavCon
                     .width(120.dp)
             )
             FilledClipButton(
-                text = "remove",
+                text = "Remove",
                 onClick = { navController.navigate("mod_room_remove") },
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp)
@@ -293,7 +294,9 @@ fun RoomListItem(showRoomEdit: (Int) -> Unit) {
                     contentScale = ContentScale.Crop
                 )
                 // State
-                val state = "Available"
+                val state = Random.nextBoolean().let {
+                    if (it) "Full" else "Available"
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
