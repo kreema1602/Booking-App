@@ -45,8 +45,8 @@ fun Carousel(
     Box(
         modifier = Modifier
             .border(
-                width = 2.dp,
-                color = Color.Gray,
+                width = 1.dp,
+                color = OrangePrimary,
                 shape = RoundedCornerShape(8.dp)
             )
             .clip(RoundedCornerShape(8.dp))
@@ -75,7 +75,8 @@ fun CarouselItem(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier
+        modifier = modifier.fillMaxWidth().height(260.dp),
+        contentAlignment = Alignment.Center
     ) {
         Image(painter = painterResource(id = item), contentDescription = null)
     }
@@ -146,8 +147,8 @@ fun EditCarousel(
         Box(
             modifier = Modifier
                 .border(
-                    width = 2.dp,
-                    color = Color.Gray,
+                    width = 1.dp,
+                    color = OrangePrimary,
                     shape = RoundedCornerShape(8.dp)
                 )
                 .clip(RoundedCornerShape(8.dp))
