@@ -54,7 +54,7 @@ fun ModAddRoom(onBack: () -> Unit) {
                 Text(
                     text = "Room",
                     style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight(650),
+                        fontWeight = FontWeight(700),
                         fontSize = 20.sp
                     ),
                     modifier = Modifier.padding(top = 8.dp)
