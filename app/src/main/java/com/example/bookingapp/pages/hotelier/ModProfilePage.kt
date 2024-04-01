@@ -10,26 +10,41 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.TextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.FilledClipButton
@@ -42,13 +57,13 @@ import com.example.bookingapp.models.Hotel
 @Composable
 fun ModProfilePage(navController: NavController) {
     // Call api to get the des
-    val hotel = HotelData.data[0]
+    var hotel = remember { mutableStateOf(HotelData.data[0]) }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
     ) {
-        HotelBackground(hotel.imageUrl)
+        HotelBackground(hotel.value.imageUrl)
         LazyColumn (
             modifier = Modifier
                 .padding(top = 200.dp)
@@ -58,9 +73,9 @@ fun ModProfilePage(navController: NavController) {
             item {
                 HotelIntro(hotel = hotel)
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
-                HotelDescription(hotel = hotel)
+                HotelDescription(hotel = hotel.value)
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
-                HotelAccount(hotel = hotel)
+                HotelAccount(hotel = hotel.value)
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
                 OtherPart(text = "Financial Account")
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
@@ -73,7 +88,6 @@ fun ModProfilePage(navController: NavController) {
             }
         }
     }
-
 }
 @Composable
 fun HotelBackground(imgUrl : String) {
@@ -106,14 +120,18 @@ fun HotelBackground(imgUrl : String) {
                     modifier = Modifier
                         .size(20.dp)
                         .align(Alignment.Center)
-                        .clickable {  }
+                        .clickable { }
                 )
             }
         }
     }
 }
 @Composable
-fun HotelIntro(hotel : Hotel) {
+fun HotelIntro(hotel : MutableState<Hotel>) {
+    var isEditing by remember { mutableStateOf(false) }
+    var editedName by remember { mutableStateOf(hotel.value.name) }
+    var editedAddress by remember { mutableStateOf(hotel.value.address) }
+    var editedDescription by remember { mutableStateOf(hotel.value.desc) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -132,7 +150,7 @@ fun HotelIntro(hotel : Hotel) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = hotel.name,
+                text = hotel.value.name,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -142,7 +160,10 @@ fun HotelIntro(hotel : Hotel) {
                 tint = Color.Gray,
                 modifier = Modifier
                     .size(20.dp)
-                    .clickable {  }
+                    .clickable {
+                        // Open edit dialog
+                        isEditing = true
+                    }
             )
         }
         Row(
@@ -167,7 +188,7 @@ fun HotelIntro(hotel : Hotel) {
                     .width(80.dp)
             )
             Text(
-                text = hotel.address,
+                text = hotel.value.address,
                 style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
             )
@@ -194,9 +215,21 @@ fun HotelIntro(hotel : Hotel) {
                     .width(80.dp)
             )
             Text(
-                text = hotel.rating.toString(),
+                text = hotel.value.rating.toString(),
                 style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
+            )
+        }
+        if (isEditing) {
+            EditDialog(
+                editedName = editedName,
+                editedAddress = editedAddress,
+                editedDescription = editedDescription,
+                onDismiss = { isEditing = false },
+                onSave = {
+                    // Call api to save the edited data
+                    isEditing = false
+                }
             )
         }
     }
@@ -299,10 +332,6 @@ fun HotelAccount(hotel : Hotel) {
                 color = Color.Gray
             )
         }
-        FilledClipButton(
-            text = "Change password",
-            onClick = {}
-        )
     }
 }
 @Composable
@@ -326,7 +355,7 @@ fun Logout() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 16.dp)
-            .clickable {  },
+            .clickable { },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -344,8 +373,109 @@ fun Logout() {
 
     }
 }
+@Composable
+fun EditDialog(
+    editedName: String,
+    editedAddress: String,
+    editedDescription: String,
+    onDismiss: () -> Unit,
+    onSave: () -> Unit
+) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier.fillMaxWidth().height(480.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            ) {
+                Text(
+                    text = "Edit Hotel Details",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+                InputField("Hotel name", "Enter hotel name", remember { mutableStateOf(editedName) })
+                InputField("Hotel address", "Enter hotel address", remember { mutableStateOf(editedAddress) })
+                InputField("Description", "Enter Description", remember { mutableStateOf(editedDescription) })
+                Row (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    FilledClipButton(
+                        text = "Save",
+                        onClick = onSave,
+                        modifier = Modifier
+                            .width(120.dp)
+                    )
+                    FilledClipButton(
+                        text = "Cancel",
+                        onClick = onDismiss,
+                        modifier = Modifier
+                            .width(120.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+@Composable
+fun InputField(
+    label: String,
+    hint: String,
+    fieldInput: MutableState<String>,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    fontSize: TextUnit = androidx.compose.material3.MaterialTheme.typography.bodyMedium.fontSize
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp, horizontal = 0.dp)
+    ) {
+        Text(
+            text = label,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 5.dp, horizontal = 0.dp),
+        )
+        TextField(
+            value = fieldInput.value,
+            onValueChange = { fieldInput.value = it },
+            placeholder = { Text(text = hint) },
+            singleLine = (label != "Description"),
+            keyboardOptions = keyboardOptions,
+            shape = androidx.compose.material3.MaterialTheme.shapes.small,
+            textStyle = TextStyle(fontSize = fontSize),
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 120.dp),
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant,
+                unfocusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant
+            ),
+        )
+    }
+}
+
 @Preview
 @Composable
 fun ModProfilePagePreview() {
-    ModProfilePage(navController = rememberNavController())
+//    ModProfilePage(navController = rememberNavController())
+    EditDialog(
+        editedName = "Hotel ABC",
+        editedAddress = "123 Main St, San Francisco, CA",
+        editedDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, Lorem ipsum dolor sit amet, consectetur adipiscing elit, Lorem ipsum dolor sit amet, consectetur adipiscing elit, Lorem ipsum dolor sit amet, consectetur adipiscing elit, Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+        onDismiss = { /*TODO*/ },
+        onSave = {}
+    )
 }
+
