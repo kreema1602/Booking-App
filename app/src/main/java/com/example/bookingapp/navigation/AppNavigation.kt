@@ -1,7 +1,6 @@
 package com.example.bookingapp.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -9,11 +8,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.bookingapp.pages.ForgotPasswordPage
-import com.example.bookingapp.pages.LoginPage
 import com.example.bookingapp.pages.customer.CusHomePage
 import com.example.bookingapp.pages.NewPasswordPage
 import com.example.bookingapp.pages.customer.CusNotificationPage
-import com.example.bookingapp.pages.customer.NotificationViewModel
 import com.example.bookingapp.pages.customer.CusProfileFieldEditor
 import com.example.bookingapp.pages.customer.CusProfilePage
 import com.example.bookingapp.pages.customer.CusReservationDetail
@@ -24,6 +21,7 @@ import com.example.bookingapp.pages.customer.CusRoomDetail
 import com.example.bookingapp.pages.customer.CusRoomScreen
 import com.example.bookingapp.pages.hotelier.ModHomePage
 import com.example.bookingapp.pages.hotelier.ModRoomAdd
+import com.example.bookingapp.pages.hotelier.ModNotificationPage
 import com.example.bookingapp.pages.hotelier.ModRoomPage
 
 @Composable
@@ -136,12 +134,7 @@ private fun NavGraphBuilder.showCusReservationDetail(navController: NavControlle
 }
 private fun NavGraphBuilder.showCusNotifications(navController: NavController) {
     composable(CustomerLeafScreen.Notification.route) {
-        CusNotificationPage(
-            viewModel = NotificationViewModel(
-                savedStateHandle = SavedStateHandle(),
-                notificationList = arrayListOf()
-            )
-        )
+        CusNotificationPage(navController)
     }
 }
 private fun NavGraphBuilder.showCusProfile(navController: NavController) {
@@ -170,6 +163,7 @@ private fun NavGraphBuilder.addModeratorRoute(navController: NavController) {
         showModHome(navController)
         showModRoom(navController)
         showModRoomAdd(navController)
+        showModNotifications(navController)
     }
 }
 private fun NavGraphBuilder.showModHome(navController: NavController) {
@@ -185,6 +179,12 @@ private fun NavGraphBuilder.showModRoom(navController: NavController) {
 private fun NavGraphBuilder.showModRoomAdd(navController: NavController) {
     composable(ModeratorLeafScreen.RoomAdd.route) {
         ModRoomAdd (onBack = {navController.navigateUp()})
+    }
+}
+
+private fun NavGraphBuilder.showModNotifications(navController: NavController) {
+    composable(ModeratorLeafScreen.Notification.route) {
+        ModNotificationPage(navController)
     }
 }
 // -------------- End of Moderator navigation ------------------- //
