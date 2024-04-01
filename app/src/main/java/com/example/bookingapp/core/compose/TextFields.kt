@@ -9,29 +9,36 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.ThemedPreview
 
 @Composable
 fun EditText(
     modifier: Modifier = Modifier,
-    text: String,
     hint: String = "",
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    onValueChange: (String) -> Unit
+    singleLine: Boolean = true,
+    fontSize: TextUnit = MaterialTheme.typography.bodyMedium.fontSize
 ) {
+    var text by remember { mutableStateOf(TextFieldValue("")) }
     TextField(
         value = text,
         placeholder = { Text(text = hint) },
-        onValueChange = onValueChange,
-        singleLine = true,
+        onValueChange = { text = it },
+        singleLine = singleLine,
         keyboardOptions = keyboardOptions,
         shape = MaterialTheme.shapes.small,
         colors = TextFieldDefaults.colors(
@@ -40,7 +47,8 @@ fun EditText(
             focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        textStyle = TextStyle(fontSize = fontSize)
     )
 }
 
@@ -77,8 +85,6 @@ private fun PreviewSearchBox() {
             EditText(
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.onboarding_padding)),
                 hint = stringResource(id = R.string.hint_email),
-                text = "",
-                onValueChange = {}
             )
         }
     }
