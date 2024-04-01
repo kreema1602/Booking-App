@@ -167,7 +167,7 @@ private fun NavGraphBuilder.addModeratorRoute(navController: NavController) {
         startDestination = ModeratorLeafScreen.Home.route
     ) {
         showModHome(navController)
-        showModReservations(navController)
+        showModRoom(navController)
     }
 }
 private fun NavGraphBuilder.showModHome(navController: NavController) {
@@ -175,9 +175,9 @@ private fun NavGraphBuilder.showModHome(navController: NavController) {
         ModHomePage(navController = navController)
     }
 }
-private fun NavGraphBuilder.showModReservations(navController: NavController) {
+private fun NavGraphBuilder.showModRoom(navController: NavController) {
     composable(ModeratorLeafScreen.Room.route) {
-        ModRoomPage(navController)
+        ModRoomPage(navController = navController)
     }
 }
 // -------------- End of Moderator navigation ------------------- //

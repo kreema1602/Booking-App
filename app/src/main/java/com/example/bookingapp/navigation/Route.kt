@@ -21,6 +21,10 @@ sealed class ModeratorLeafScreen(val route: String){
     object Profile : ModeratorLeafScreen("mod_profile")
     object ProfileEditor : ModeratorLeafScreen("mod_profile_editor")
     object Room : ModeratorLeafScreen("mod_room")
+    object RoomAdd : ModeratorLeafScreen("mod_room_add")
+    object RoomEdit : ModeratorLeafScreen("mod_room_edit")
+    object RoomRemove : ModeratorLeafScreen("mod_room_remove")
+
 }
 sealed class GeneralLeafScreen(val route: String){
     object Login : GeneralLeafScreen("login")
