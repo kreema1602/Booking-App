@@ -31,8 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,14 +44,16 @@ import com.example.bookingapp.models.JoyhubAccount
 
 @Composable
 fun CusProfilePage(accId: Int, onClickEdit: (Int) -> Unit) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         val acc = AccountData.sampleData.find { it.id == accId }!!
         Text(
             text = "Profile",
             fontSize = 30.sp,
-            fontFamily = FontFamily(mavenProFontFamily.first, mavenProFontFamily.second),
+            fontFamily = mavenProFontFamily,
             fontWeight = FontWeight.Bold,
         )
         NameTag(acc)
@@ -98,9 +98,7 @@ fun NameTag(acc: JoyhubAccount) {
                     text = acc.username,
                     modifier = Modifier.fillMaxWidth(),
                     fontSize = 28.sp,
-                    fontFamily = FontFamily(
-                       mavenProFontFamily.first, mavenProFontFamily.second
-                    ),
+                    fontFamily = mavenProFontFamily,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
@@ -110,16 +108,14 @@ fun NameTag(acc: JoyhubAccount) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "JoyCoin", fontFamily = FontFamily(
-                            mavenProFontFamily.first, mavenProFontFamily.second
-                        ), fontSize = 16.sp, color = Color.White
+                        text = "JoyCoin", fontFamily = mavenProFontFamily,
+
+                        fontSize = 16.sp, color = Color.White
                     )
                     Text(
                         text = acc.wallet.toString(),
                         textAlign = TextAlign.End,
-                        fontFamily = FontFamily(
-                            mavenProFontFamily.first, mavenProFontFamily.second
-                        ),
+                        fontFamily = mavenProFontFamily,
                         fontSize = 16.sp,
                         color = Color.White
                     )
@@ -133,15 +129,16 @@ fun NameTag(acc: JoyhubAccount) {
 fun ProfileEditor(acc: JoyhubAccount, onClickEdit: (Int) -> Unit) {
     Log.i("Profile_main_screen", "Edit_user_profile: ${acc.email}")
     val context = LocalContext.current
-    val editLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent? = result.data
-            val editedAcc = data?.getSerializableExtra("ACCOUNT") as? JoyhubAccount
-            acc.username = editedAcc!!.username
-            acc.email = editedAcc.email
-            acc.phone = editedAcc.phone
+    val editLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val editedAcc = data?.getSerializableExtra("ACCOUNT") as? JoyhubAccount
+                acc.username = editedAcc!!.username
+                acc.email = editedAcc.email
+                acc.phone = editedAcc.phone
+            }
         }
-    }
     Card(modifier = Modifier.clickable {
         onClickEdit(acc.id)
     }) {
