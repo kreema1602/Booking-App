@@ -176,9 +176,8 @@ private fun NavGraphBuilder.showModHome(navController: NavController) {
     }
 }
 private fun NavGraphBuilder.showModRoom(navController: NavController) {
-    composable(ModeratorLeafScreen.Room.route + "/{hotelId}") {
-        val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
-        ModRoomPage(navController = navController, hotelId)
+    composable(ModeratorLeafScreen.Room.route) {
+        ModRoomPage(navController = navController)
     }
 }
 // -------------- End of Moderator navigation ------------------- //

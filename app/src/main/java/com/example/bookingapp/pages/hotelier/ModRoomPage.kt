@@ -56,8 +56,10 @@ import com.example.bookingapp.navigation.ModeratorLeafScreen
 import kotlin.random.Random
 
 @Composable
-fun ModRoomPage(navController: NavController, hotelId : Int) {
-    val hotel = HotelData.data.find { it.id == hotelId }
+fun ModRoomPage(navController: NavController) {
+    // Call api
+
+    val hotel = HotelData.data.find { it.id == 1 }
     if(hotel == null) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -397,5 +399,5 @@ fun Comment() {
 @Preview
 @Composable
 fun PreviewModRoomPage() {
-    ModRoomPage(navController = rememberNavController(), hotelId = 1)
+    ModRoomPage(navController = rememberNavController())
 }
