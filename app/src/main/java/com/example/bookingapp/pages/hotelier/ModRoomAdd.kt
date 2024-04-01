@@ -12,12 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,7 +38,7 @@ import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.mock_data.RoomData
 
 @Composable
-fun ModAddRoom(onBack: () -> Unit) {
+fun ModRoomAdd(onBack: () -> Unit) {
     val room = RoomData.data[0]
     Box {
         LazyColumn(
@@ -178,8 +176,8 @@ fun DetailInputField() {
 
 @Preview
 @Composable
-fun PreviewModAddRoom() {
+fun PreviewModRoomAdd() {
     ThemedPreview {
-        ModAddRoom(onBack = {})
+        ModRoomAdd(onBack = {})
     }
 }
