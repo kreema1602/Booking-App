@@ -19,10 +19,7 @@ import com.example.bookingapp.pages.SignUpForm
 import com.example.bookingapp.pages.SignUpPage
 import com.example.bookingapp.pages.customer.CusRoomDetail
 import com.example.bookingapp.pages.customer.CusRoomScreen
-import com.example.bookingapp.pages.hotelier.ModHomePage
-import com.example.bookingapp.pages.hotelier.ModRoomAdd
-import com.example.bookingapp.pages.hotelier.ModNotificationPage
-import com.example.bookingapp.pages.hotelier.ModRoomPage
+import com.example.bookingapp.pages.hotelier.*
 
 @Composable
 fun AppNavGraph(navController: NavHostController, role : String) {
@@ -179,6 +176,12 @@ private fun NavGraphBuilder.showModRoom(navController: NavController) {
 private fun NavGraphBuilder.showModRoomAdd(navController: NavController) {
     composable(ModeratorLeafScreen.RoomAdd.route) {
         ModRoomAdd (onBack = {navController.navigateUp()})
+    }
+}
+
+private fun NavGraphBuilder.showModRoomEdit(navController: NavController) {
+    composable(ModeratorLeafScreen.RoomEdit.route) {
+        ModRoomEdit(onBack = {navController.navigateUp()}, roomId = 0)
     }
 }
 
