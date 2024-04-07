@@ -1,4 +1,4 @@
-package com.example.bookingapp.pages
+package com.example.bookingapp.pages.customer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -42,12 +42,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bookingapp.R
 
 @Composable
-fun HomePage(
-    showDetail : () -> Unit
+fun CusHomePage(
+    showRoomScreen : (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -77,13 +78,13 @@ fun HomePage(
             )
             SearchBar()
         }
-        HotelList()
+        HotelList(showRoomScreen)
     }
 
 }
 
 @Composable
-fun HotelList() {
+fun HotelList(showRoomScreen: (Int) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(
             top = 16.dp,
@@ -92,7 +93,7 @@ fun HotelList() {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(10) {
-            HotelItem()
+            HotelItem(showRoomScreen)
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
@@ -140,13 +141,15 @@ fun SearchBar() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HotelItem() {
+fun HotelItem(showRoomScreen: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(10.dp),
+        onClick = { showRoomScreen(123) }
     ) {
         Column {
             Box(
@@ -155,7 +158,7 @@ fun HotelItem() {
                     .fillMaxWidth()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.hotel1),
+                    painter = painterResource(id = R.drawable.hotel2),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -229,4 +232,10 @@ fun HotelDescription(modifier: Modifier) {
             )
         }
     }
+}
+
+@Composable
+@Preview
+fun CusHomePagePreview() {
+    CusHomePage(showRoomScreen = {})
 }

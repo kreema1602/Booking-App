@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -15,7 +14,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,9 +34,14 @@ import com.example.bookingapp.core.compose.NotificationIcon
 import com.example.bookingapp.core.compose.ProfileIcon
 import com.example.bookingapp.core.ui.theme.BookingAppTheme
 import com.example.bookingapp.navigation.AppNavGraph
+import com.example.bookingapp.navigation.CustomerLeafScreen
+import com.example.bookingapp.navigation.ModeratorLeafScreen
 import com.example.bookingapp.navigation.RootScreen
+import com.example.bookingapp.pages.LoginPage
 
 class MainActivity : ComponentActivity() {
+    private val isLoggedIn = mutableStateOf(false)
+    private val userRole = mutableStateOf("moderator")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,7 +52,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MyApp()
+                    if (isLoggedIn.value)
+                        MyApp(userRole.value)
+                    else
+                        LoginPage {
+                            isLoggedIn.value = true
+                        }
                 }
             }
         }
@@ -51,18 +66,49 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MyApp() {
+fun MyApp(role : String) {
     val navController = rememberNavController()
     val currentSelectedPage by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
-    
-    Scaffold (
-        bottomBar = { BottomNavBar(navController, currentSelectedPage)}, modifier = Modifier.fillMaxSize()
-    ){
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(it)) {
-            AppNavGraph(navController = navController)
+    lateinit var currentRouteListByRole: List<String>
+
+    when (role) {
+        "customer" -> {
+            currentRouteListByRole = listOf(
+                CustomerLeafScreen.Home.route,
+                CustomerLeafScreen.Reservation.route,
+                CustomerLeafScreen.Notification.route,
+                CustomerLeafScreen.Profile.route
+            )
+        }
+        "moderator" -> {
+            currentRouteListByRole = listOf(
+                ModeratorLeafScreen.Home.route,
+                ModeratorLeafScreen.Room.route,
+                ModeratorLeafScreen.Notification.route,
+                ModeratorLeafScreen.Profile.route
+            )
+        }
+        else -> {
+            currentRouteListByRole = listOf()
+        }
+    }
+
+    Scaffold(
+        bottomBar = {
+            Log.d("AppNavGraph", "currentRoute: $currentRoute")
+            if (currentRoute in currentRouteListByRole) {
+                BottomNavBar(navController, currentSelectedPage, currentRouteListByRole)
+            }
+        },
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
+            AppNavGraph(navController = navController, role = role)
         }
     }
 }
@@ -70,77 +116,48 @@ fun MyApp() {
 @Composable
 private fun BottomNavBar(
     navController: NavController,
-    currentSelectedScreen: RootScreen
+    currentSelectedScreen: String,
+    listRoute: List<String>
 ) {
+    @Composable
+    fun getIcon(index: Int) {
+        return when (index) {
+            0 -> { HomeIcon() }
+            1 -> { CalendarIcon() }
+            2 -> { NotificationIcon() }
+            3 -> { ProfileIcon() }
+            else -> { HomeIcon() } // Provide a default icon
+        }
+    }
+
+    val listLabel = listOf(
+        stringResource(id = R.string.home),
+        stringResource(id = R.string.reservations),
+        stringResource(id = R.string.notifications),
+        stringResource(id = R.string.profile)
+    )
+
     NavigationBar {
-        NavigationBarItem(
-            selected = currentSelectedScreen == RootScreen.Home,
-            onClick = { navController.navigateToRootScreen(RootScreen.Home) },
-            alwaysShowLabel = true,
-            label = {
-                Text(text = stringResource(id = R.string.home))
-            },
-            icon = {
-                HomeIcon()
-            }
-        )
-        NavigationBarItem(
-            selected = currentSelectedScreen == RootScreen.Reservations,
-            onClick = { navController.navigateToRootScreen(RootScreen.Reservations) },
-            alwaysShowLabel = true,
-            label = {
-                Text(text = stringResource(id = R.string.reservations))
-            },
-            icon = {
-                CalendarIcon()
-            }
-        )
-        NavigationBarItem(
-            selected = currentSelectedScreen == RootScreen.Notifications,
-            onClick = { navController.navigateToRootScreen(RootScreen.Notifications) },
-            alwaysShowLabel = true,
-            label = {
-                Text(text = stringResource(id = R.string.notifications))
-            },
-            icon = {
-                NotificationIcon()
-            }
-        )
-        NavigationBarItem(
-            selected = currentSelectedScreen == RootScreen.Profile,
-            onClick = { navController.navigateToRootScreen(RootScreen.Profile) },
-            alwaysShowLabel = true,
-            label = {
-                Text(text = stringResource(id = R.string.profile))
-            },
-            icon = {
-                ProfileIcon()
-            }
-        )
+        listRoute.forEachIndexed { index, route ->
+            NavigationBarItem(
+                selected = currentSelectedScreen == route,
+                onClick = { navController.navigate(route) },
+                alwaysShowLabel = true,
+                label = { Text(text = listLabel[index]) },
+                icon = { getIcon(index) }
+            )
+        }
     }
 }
 
 @Stable
 @Composable
-private fun NavController.currentScreenAsState(): State<RootScreen> {
-    val selectedItem = remember { mutableStateOf<RootScreen>(RootScreen.Home) }
+private fun NavController.currentScreenAsState(): MutableState<String> {
+    val selectedItem = remember { mutableStateOf("")}
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             Log.d("Navigation", "Destination changed to: ${destination.route}")
-            when {
-                destination.hierarchy.any { it.route == RootScreen.Home.route } -> {
-                    selectedItem.value = RootScreen.Home
-                }
-                destination.hierarchy.any { it.route == RootScreen.Reservations.route } -> {
-                    selectedItem.value = RootScreen.Reservations
-                }
-                destination.hierarchy.any { it.route == RootScreen.Notifications.route } -> {
-                    selectedItem.value = RootScreen.Notifications
-                }
-                destination.hierarchy.any { it.route == RootScreen.Profile.route } -> {
-                    selectedItem.value = RootScreen.Profile
-                }
-            }
+            selectedItem.value = destination.route.toString()
         }
         addOnDestinationChangedListener(listener)
         onDispose { removeOnDestinationChangedListener(listener) }
@@ -181,6 +198,6 @@ private fun NavController.navigateToRootScreen(rootScreen: RootScreen) {
 @Composable
 fun DefaultPreview() {
     BookingAppTheme {
-        MyApp()
+        MyApp(role = "customer")
     }
 }

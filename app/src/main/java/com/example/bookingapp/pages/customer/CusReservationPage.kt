@@ -1,4 +1,4 @@
-package com.example.bookingapp.pages
+package com.example.bookingapp.pages.customer
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,14 +31,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import com.example.bookingapp.core.compose.FilledButton
 import com.example.bookingapp.models.ReservationItem
 import com.example.bookingapp.mock_data.ReservationData
-import com.example.bookingapp.navigation.LeafScreen
+import com.example.bookingapp.navigation.CustomerLeafScreen
 
 @Composable
-fun ReservationPage(navController: NavController) {
+fun CusReservationPage(navController: NavController) {
     ReservationList(navController)
 }
 
@@ -59,7 +56,7 @@ fun ReservationList(navController: NavController) {
         items(items = items) { item ->
             ReservationListItem(item = item, viewDetail = {
                 Log.i("ReservationList", "View detail of ${item.id}")
-                navController.navigate(LeafScreen.ReservationDetail.route + "/${item.id}")
+                navController.navigate(CustomerLeafScreen.ReservationDetail.route + "/${item.id}")
             })
         }
     }
