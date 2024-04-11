@@ -30,6 +30,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.example.bookingapp.core.compose.CalendarIcon
 import com.example.bookingapp.core.compose.HomeIcon
+import com.example.bookingapp.core.compose.HotelIcon
 import com.example.bookingapp.core.compose.NotificationIcon
 import com.example.bookingapp.core.compose.ProfileIcon
 import com.example.bookingapp.core.ui.theme.BookingAppTheme
@@ -41,23 +42,17 @@ import com.example.bookingapp.pages.LoginPage
 
 class MainActivity : ComponentActivity() {
     private val isLoggedIn = mutableStateOf(false)
-    private val userRole = mutableStateOf("moderator")
+    private val userRole = mutableStateOf("guest")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             BookingAppTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (isLoggedIn.value)
-                        MyApp(userRole.value)
-                    else
-                        LoginPage {
-                            isLoggedIn.value = true
-                        }
+                    MyApp(isLoggedIn, userRole)
                 }
             }
         }
@@ -66,13 +61,13 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MyApp(role : String) {
+fun MyApp(isLoggedIn: MutableState<Boolean>, userRole: MutableState<String>) {
     val navController = rememberNavController()
     val currentSelectedPage by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
     lateinit var currentRouteListByRole: List<String>
 
-    when (role) {
+    when (userRole.value) {
         "customer" -> {
             currentRouteListByRole = listOf(
                 CustomerLeafScreen.Home.route,
@@ -108,7 +103,7 @@ fun MyApp(role : String) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            AppNavGraph(navController = navController, role = role)
+            AppNavGraph(navController = navController, role = userRole, isLoggedIn = isLoggedIn)
         }
     }
 }
@@ -123,7 +118,7 @@ private fun BottomNavBar(
     fun getIcon(index: Int) {
         return when (index) {
             0 -> { HomeIcon() }
-            1 -> { CalendarIcon() }
+            1 -> { if (listRoute[1] === CustomerLeafScreen.Reservation.route) CalendarIcon() else HotelIcon() }
             2 -> { NotificationIcon() }
             3 -> { ProfileIcon() }
             else -> { HomeIcon() } // Provide a default icon
@@ -132,7 +127,7 @@ private fun BottomNavBar(
 
     val listLabel = listOf(
         stringResource(id = R.string.home),
-        stringResource(id = R.string.reservations),
+        stringResource(id = if (listRoute[1] === CustomerLeafScreen.Reservation.route) R.string.reservations else R.string.hotel),
         stringResource(id = R.string.notifications),
         stringResource(id = R.string.profile)
     )
@@ -194,10 +189,10 @@ private fun NavController.navigateToRootScreen(rootScreen: RootScreen) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    BookingAppTheme {
-        MyApp(role = "customer")
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    BookingAppTheme {
+//        MyApp(role = "customer")
+//    }
+//}

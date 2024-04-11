@@ -22,6 +22,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,15 +36,22 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.navigation.RootScreen
+
+fun authorize(username: String, password: String): String {
+    if (username == "hotel") return "moderator";
+    else if (username == "customer") return "customer";
+    return "guest";
+}
 
 @Composable
-fun LoginPage(onLoggedInSuccess: () -> Unit) {
+fun LoginPage(navController: NavController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>) {
     val mavenProFamily = FontFamily(
         Font(R.font.maven_pro_regular, FontWeight.Normal),
         Font(R.font.maven_pro_bold, FontWeight.Bold),
@@ -161,7 +169,19 @@ fun LoginPage(onLoggedInSuccess: () -> Unit) {
 
             Button(
                 onClick = {
-                    onLoggedInSuccess()
+                    authorize(username, password).let {
+                        role.value = it
+                        if (role.value != "guest") {
+                            isLoggedIn.value = true
+                            navController.navigate(
+                                when (role.value) {
+                                    "customer" -> RootScreen.Customer.route
+                                    "moderator" -> RootScreen.Moderator.route
+                                    else -> RootScreen.Login.route
+                                }
+                            )
+                        }
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary),
                 modifier = Modifier
@@ -221,15 +241,15 @@ fun LoginPage(onLoggedInSuccess: () -> Unit) {
                     }
                 },
                 onClick = {
-                    
+
                 },
             )
         }
     }
 }
 
-@Preview
-@Composable
-fun LoginPagePreview() {
-    LoginPage {}
-}
+//@Preview
+//@Composable
+//fun LoginPagePreview() {
+//    LoginPage {}
+//}
