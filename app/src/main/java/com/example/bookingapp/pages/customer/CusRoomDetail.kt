@@ -139,11 +139,11 @@ fun PaymentInformation() {
         )
         val payment = PaymentData.data[0]
         val total = payment.perNight * payment.nights
-        PaymentDetail(Pair("Per Night", "$" + payment.perNight))
+        PaymentDetail(Pair("Per Night", "${payment.perNight} VND"))
         PaymentDetail(Pair("From", payment.from))
         PaymentDetail(Pair("To", payment.to))
         PaymentDetail(Pair("Nights", payment.nights.toString()))
-        PaymentDetail(Pair("Total", "$$total"), OrangePrimary, FontWeight.Bold)
+        PaymentDetail(Pair("Total", "$total VND"), OrangePrimary, FontWeight.Bold)
     }
 }
 
