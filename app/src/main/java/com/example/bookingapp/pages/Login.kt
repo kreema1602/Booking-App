@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.navigation.GeneralLeafScreen
 import com.example.bookingapp.navigation.RootScreen
 
 fun authorize(username: String, password: String): String {
@@ -160,7 +161,7 @@ fun LoginPage(navController: NavController, role: MutableState<String>, isLogged
                         append("Forgot password?")
                     }
                 },
-                onClick = { Log.d("LoginPage", "Forgot password clicked") },
+                onClick = { navController.navigate(GeneralLeafScreen.ForgotPassword.route) },
                 modifier = Modifier
                     .align(Alignment.End)
                     .padding(end = 50.dp, bottom = 20.dp),
@@ -241,7 +242,7 @@ fun LoginPage(navController: NavController, role: MutableState<String>, isLogged
                     }
                 },
                 onClick = {
-
+                    navController.navigate(GeneralLeafScreen.SignUp.route)
                 },
             )
         }
