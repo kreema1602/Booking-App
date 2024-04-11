@@ -52,6 +52,7 @@ import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.Hotel
+import com.example.bookingapp.navigation.RootScreen
 
 
 @Composable
@@ -83,7 +84,7 @@ fun ModProfilePage(navController: NavController) {
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
                 OtherPart(text = "Booking History")
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
-                Logout()
+                Logout(navController)
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
             }
         }
@@ -327,7 +328,7 @@ fun HotelAccount(hotel : Hotel) {
                     .width(100.dp)
             )
             Text(
-                text = "cokamegai@gmail.com",
+                text = "cokakakaka@gmail.com",
                 style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
             )
@@ -350,12 +351,12 @@ fun OtherPart(text: String) {
     }
 }
 @Composable
-fun Logout() {
+fun Logout(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 16.dp)
-            .clickable { },
+            .clickable { navController.navigate(RootScreen.Login.route) },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
