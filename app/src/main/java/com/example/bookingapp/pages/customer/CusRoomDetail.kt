@@ -110,11 +110,9 @@ fun CusRoomDetail(roomId: Int, onBack: () -> Unit) {
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .background(Color.White)
         ) {
             BottomSection(
-                from = "Thu, 4/6/2023",
-                to = "Sat, 6/6/2023",
+                calendar = true,
                 price = "400.000",
                 buttonText = "Book",
                 onClick = {}
