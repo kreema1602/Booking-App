@@ -7,6 +7,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 interface ApiService {
     // Account
@@ -14,5 +15,6 @@ interface ApiService {
     suspend fun login(@Body request: LoginRequest): Response<ApiResponse>
 
     // Amenity
-//    @GET("/amenities")
+    @GET("/amenity")
+    suspend fun getAmenities(): Response<ApiResponse>
 }

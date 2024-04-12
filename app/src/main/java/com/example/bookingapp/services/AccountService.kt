@@ -1,6 +1,5 @@
 package com.example.bookingapp.services
 
-import android.util.Log
 import com.example.bookingapp.CurrentAccount
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.ApiResponse
@@ -18,21 +17,17 @@ object AccountService {
         val response = apiService.login(request)
         val apiResponse = response.body() as ApiResponse
 
-//        Log.d("AccountService", apiResponse.data.toString())
-
-        if (response.isSuccessful) {
+        return if (response.isSuccessful) {
             val jsonData = JSONObject(Gson().toJson(apiResponse.data))
             RetrofitClient.setAuthToken(jsonData.getString("token"))
 
             val account = Gson().fromJson(jsonData.getJSONObject("account").toString(), Account::class.java)
             CurrentAccount.setAccount(account)
 
-            Log.d("AccountService", CurrentAccount.getAccount().toString())
-
-            return true
+            true
         } else {
             RetrofitClient.clearAuthToken()
-            return false
+            false
         }
     }
 }
