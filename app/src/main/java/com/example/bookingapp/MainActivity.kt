@@ -1,5 +1,6 @@
 package com.example.bookingapp
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -39,6 +40,7 @@ import com.example.bookingapp.navigation.CustomerLeafScreen
 import com.example.bookingapp.navigation.ModeratorLeafScreen
 import com.example.bookingapp.navigation.RootScreen
 import com.example.bookingapp.pages.LoginPage
+import com.example.bookingapp.services.RetrofitClient
 
 class MainActivity : ComponentActivity() {
     private val isLoggedIn = mutableStateOf(false)
@@ -46,13 +48,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val token = getSharedPreferences("token", Context.MODE_PRIVATE).getString("token", null)
+        if (token != null) {
+            isLoggedIn.value = true
+            RetrofitClient.setAuthToken(token)
+            userRole.value = getSharedPreferences("account", Context.MODE_PRIVATE).getString("role", "").toString()
+        }
+
         setContent {
             BookingAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MyApp(isLoggedIn, userRole)
+                    MyApp(isLoggedIn, userRole, this@MainActivity)
                 }
             }
         }
@@ -61,7 +70,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MyApp(isLoggedIn: MutableState<Boolean>, userRole: MutableState<String>) {
+fun MyApp(isLoggedIn: MutableState<Boolean>, userRole: MutableState<String>, context: Context) {
     val navController = rememberNavController()
     val currentSelectedPage by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
@@ -103,7 +112,7 @@ fun MyApp(isLoggedIn: MutableState<Boolean>, userRole: MutableState<String>) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            AppNavGraph(navController = navController, role = userRole, isLoggedIn = isLoggedIn)
+            AppNavGraph(navController = navController, role = userRole, isLoggedIn = isLoggedIn, context = context)
         }
     }
 }

@@ -10,8 +10,8 @@ class TestActivity: ComponentActivity() {
 
     // This is a test function to check if the login function works
     private suspend fun testLogin() {
-        AccountService.login("abcdefh", "12345")
-        AmenityService.getAmenities()
+        AccountService.login("abcdefh", "12345", this@TestActivity)
+        AmenityService.getAmenities(getSharedPreferences("role", MODE_PRIVATE).getString("role", "").toString())
     }
 
     // Call the testLogin function

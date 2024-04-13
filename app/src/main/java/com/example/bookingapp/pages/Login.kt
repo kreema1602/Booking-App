@@ -1,5 +1,6 @@
 package com.example.bookingapp.pages
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +46,11 @@ import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.navigation.GeneralLeafScreen
 import com.example.bookingapp.navigation.RootScreen
+import com.example.bookingapp.services.AccountService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 fun authorize(username: String, password: String): String {
     if (username == "hotel") return "moderator";
@@ -52,7 +59,7 @@ fun authorize(username: String, password: String): String {
 }
 
 @Composable
-fun LoginPage(navController: NavController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>) {
+fun LoginPage(navController: NavController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>, context: Context) {
     val mavenProFamily = FontFamily(
         Font(R.font.maven_pro_regular, FontWeight.Normal),
         Font(R.font.maven_pro_bold, FontWeight.Bold),
@@ -170,17 +177,27 @@ fun LoginPage(navController: NavController, role: MutableState<String>, isLogged
 
             Button(
                 onClick = {
-                    authorize(username, password).let {
-                        role.value = it
-                        if (role.value != "guest") {
+//                    authorize(username, password).let {
+//                        role.value = it
+//                        if (role.value != "guest") {
+//                            isLoggedIn.value = true
+//                            navController.navigate(
+//                                when (role.value) {
+//                                    "customer" -> RootScreen.Customer.route
+//                                    "moderator" -> RootScreen.Moderator.route
+//                                    else -> RootScreen.Login.route
+//                                }
+//                            )
+//                        }
+//                    }
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val result = withContext(Dispatchers.IO) {
+                            AccountService.login(username, password, context)
+                        }
+                        if (result) {
+                            role.value = "customer"
                             isLoggedIn.value = true
-                            navController.navigate(
-                                when (role.value) {
-                                    "customer" -> RootScreen.Customer.route
-                                    "moderator" -> RootScreen.Moderator.route
-                                    else -> RootScreen.Login.route
-                                }
-                            )
+                            navController.navigate(RootScreen.Customer.route)
                         }
                     }
                 },

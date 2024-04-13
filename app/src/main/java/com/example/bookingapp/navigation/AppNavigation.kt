@@ -1,5 +1,6 @@
 package com.example.bookingapp.navigation
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavController
@@ -28,34 +29,34 @@ import com.example.bookingapp.pages.hotelier.ModProfilePage
 import com.example.bookingapp.pages.hotelier.ModRoomPage
 
 @Composable
-fun AppNavGraph(navController: NavHostController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>) {
+fun AppNavGraph(navController: NavHostController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>, context: Context) {
     val startDes = when (role.value) {
         "customer" -> RootScreen.Customer.route
         "moderator" -> RootScreen.Moderator.route
         else -> RootScreen.Login.route
     }
     NavHost(navController = navController, startDestination = startDes) {
-        addLoginRoute(navController, role, isLoggedIn)
+        addLoginRoute(navController, role, isLoggedIn, context)
         addCustomerRoute(navController)
         addModeratorRoute(navController)
     }
 }
 // -------------- Login navigation ------------------- //
-private fun NavGraphBuilder.addLoginRoute(navController: NavController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>) {
+private fun NavGraphBuilder.addLoginRoute(navController: NavController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>, context: Context) {
     navigation(
         route = RootScreen.Login.route,
         startDestination = GeneralLeafScreen.Login.route
     ) {
-        showLogin(navController, role, isLoggedIn)
+        showLogin(navController, role, isLoggedIn, context)
         showSignUp(navController)
         showSignUpForm(navController)
         showForgotPassword(navController)
         showNewPassword(navController)
     }
 }
-private fun NavGraphBuilder.showLogin(navController: NavController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>) {
+private fun NavGraphBuilder.showLogin(navController: NavController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>, context: Context) {
     composable(GeneralLeafScreen.Login.route) {
-        LoginPage(navController, role, isLoggedIn)
+        LoginPage(navController, role, isLoggedIn, context)
     }
 }
 private fun NavGraphBuilder.showSignUp(navController: NavController) {
