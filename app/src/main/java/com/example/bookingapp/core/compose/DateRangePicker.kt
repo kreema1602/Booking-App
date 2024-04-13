@@ -65,6 +65,16 @@ fun dateValidator(): (Long) -> Boolean {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun MyDateRangePicker(state: DateRangePickerState, bottomSheetState: ModalBottomSheetState, coroutineScope: CoroutineScope) {
+
+    state.setSelection(
+        Calendar.getInstance().apply {
+            add(Calendar.DATE, 1)
+        }.timeInMillis,
+        Calendar.getInstance().apply {
+            add(Calendar.DATE, 2)
+        }.timeInMillis
+    )
+
     DateRangePicker(
         state,
         modifier = Modifier,
