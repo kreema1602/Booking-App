@@ -6,7 +6,12 @@
 
     <string name="home">Home</string>
     <string name="reservations">Reservations</string>
+<<<<<<< Updated upstream
     <string name="notifications">Notifications</string>
+=======
+    <string name="hotel">Hotel</string>
+    <string name="notifications">Notification</string>
+>>>>>>> Stashed changes
     <string name="search">Search</string>
     <string name="favorites">Favorites</string>
     <string name="profile">Profile</string>

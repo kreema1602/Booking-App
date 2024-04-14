@@ -5,6 +5,7 @@ package com.example.bookingapp.pages
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
+import com.example.bookingapp.core.compose.HistoryCard
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 
 val mavenProFamily = FontFamily(
@@ -116,19 +118,19 @@ fun ChartScreen() {
                 modifier = Modifier.padding(16.dp)
             )
 
-            Text(
-                text = "Bar Chart",
-                fontFamily = mavenProFamily,
-                modifier = Modifier.padding(16.dp),
-                fontSize = 24.sp,
-            )
+//            Text(
+//                text = "Bar Chart",
+//                fontFamily = mavenProFamily,
+//                modifier = Modifier.padding(16.dp),
+//                fontSize = 24.sp,
+//            )
 
-            BarChart(
-                data = listOf(100f, 200f, 150f, 300f, 250f), modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                notes = listOf("Jan", "Feb", "Mar", "Apr", "May")
-            )
+//            BarChart(
+//                data = listOf(100f, 200f, 150f, 300f, 250f), modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(200.dp),
+//                notes = listOf("Jan", "Feb", "Mar", "Apr", "May")
+//            )
 
             Text(
                 text = "Line Chart",
@@ -142,6 +144,23 @@ fun ChartScreen() {
                     .fillMaxWidth()
                     .height(200.dp)
             )
+
+            Text(
+                text = "History",
+                fontFamily = mavenProFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                modifier = Modifier.padding(16.dp)
+            )
+            for (i in 0..5) {
+                HistoryCard(
+                    from = "2021-10-01",
+                    to = "2021-10-02",
+                    customerName = "John Doe",
+                    roomName = "Room 101"
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
     }
 }
