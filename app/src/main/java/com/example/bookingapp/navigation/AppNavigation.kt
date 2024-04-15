@@ -20,6 +20,8 @@ import com.example.bookingapp.pages.customer.CusReservationDetail
 import com.example.bookingapp.pages.customer.CusReservationPage
 import com.example.bookingapp.pages.SignUpForm
 import com.example.bookingapp.pages.SignUpPage
+import com.example.bookingapp.pages.customer.CusFavoritePage
+import com.example.bookingapp.pages.customer.CusHistoryPage
 import com.example.bookingapp.pages.customer.CusRoomDetail
 import com.example.bookingapp.pages.customer.CusRoomScreen
 import com.example.bookingapp.pages.hotelier.ModHomePage
@@ -96,6 +98,8 @@ private fun NavGraphBuilder.addCustomerRoute(navController: NavController) {
         showCusNotifications(navController)
         showCusProfile(navController)
         showCusProfileEditor(navController)
+        showCusFavorite(navController)
+        showCusHistory(navController)
     }
 }
 private fun NavGraphBuilder.showCusHome(navController: NavController) {
@@ -156,6 +160,18 @@ private fun NavGraphBuilder.showCusProfileEditor(navController: NavController) {
         CusProfileFieldEditor(accId = accId, onBack = {
             navController.navigateUp()
         })
+    }
+}
+
+private fun NavGraphBuilder.showCusFavorite(navController: NavController) {
+    composable(CustomerLeafScreen.Favorite.route) {
+         CusFavoritePage(navController)
+    }
+}
+
+private fun NavGraphBuilder.showCusHistory(navController: NavController) {
+    composable(CustomerLeafScreen.History.route) {
+        CusHistoryPage(navController)
     }
 }
 // -------------- End of Customer navigation ------------------- //
