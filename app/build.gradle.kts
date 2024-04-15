@@ -27,6 +27,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+//            buildConfigField("String", "BASE_URL", "\"https://455c-42-115-164-149.ngrok-free.app/\"")
+        }
+
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://455c-42-115-164-149.ngrok-free.app/\"")
         }
     }
     compileOptions {
@@ -38,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"

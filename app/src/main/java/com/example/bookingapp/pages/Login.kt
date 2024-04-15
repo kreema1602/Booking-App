@@ -177,19 +177,6 @@ fun LoginPage(navController: NavController, role: MutableState<String>, isLogged
 
             Button(
                 onClick = {
-//                    authorize(username, password).let {
-//                        role.value = it
-//                        if (role.value != "guest") {
-//                            isLoggedIn.value = true
-//                            navController.navigate(
-//                                when (role.value) {
-//                                    "customer" -> RootScreen.Customer.route
-//                                    "moderator" -> RootScreen.Moderator.route
-//                                    else -> RootScreen.Login.route
-//                                }
-//                            )
-//                        }
-//                    }
                     CoroutineScope(Dispatchers.Main).launch {
                         val result = withContext(Dispatchers.IO) {
                             AccountService.login(username, password, context)

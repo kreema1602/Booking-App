@@ -1,14 +1,16 @@
 package com.example.bookingapp.services
 
+import android.os.Build
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import com.example.bookingapp.BuildConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.Interceptor
 
 object RetrofitClient {
-    private var BASE_URL = "https://36a6-42-115-164-149.ngrok-free.app/";
+    private var BASE_URL = BuildConfig.BASE_URL;
     private val authInterceptor = AuthInterceptor()
     private val client = OkHttpClient.Builder().addInterceptor(authInterceptor).build()
     private var authToken: String? = null
