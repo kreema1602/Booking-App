@@ -16,11 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BookingApp">
         <activity
-            android:name=".TestActivity"
-            android:exported="true"
-            android:label="@string/title_activity_nav_bar"
-        />
-        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.BookingApp">
