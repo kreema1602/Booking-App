@@ -14,7 +14,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,7 +23,7 @@ import com.example.bookingapp.pages.mavenProFamily
 
 @Composable
 fun CusProfileFieldEditor(accId: Int, onBack: () -> Unit) {
-    val accTmp = AccountData.sampleData.find { it.id == accId }!!
+    val accTmp = AccountData.sampleData.find { it._id == accId.toString() }!!
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.size(16.dp))
         Text(

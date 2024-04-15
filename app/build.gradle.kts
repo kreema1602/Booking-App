@@ -27,6 +27,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+//            buildConfigField("String", "BASE_URL", "\"https://455c-42-115-164-149.ngrok-free.app/\"")
+        }
+
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://455c-42-115-164-149.ngrok-free.app/\"")
         }
     }
     compileOptions {
@@ -38,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -69,6 +75,8 @@ dependencies {
     implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation ("androidx.compose.material:material-icons-extended:1.6.4")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
