@@ -151,6 +151,10 @@ private fun NavGraphBuilder.showCusProfile(navController: NavController) {
             navController.navigate(CustomerLeafScreen.ProfileEditor.route + "/$it")
         }, onClickLogout = {
             navController.navigate(RootScreen.Login.route)
+        }, onClickFavorite = {
+            navController.navigate(CustomerLeafScreen.Favorite.route)
+        }, onClickHistory = {
+            navController.navigate(CustomerLeafScreen.History.route)
         })
     }
 }
