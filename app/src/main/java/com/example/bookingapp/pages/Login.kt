@@ -1,5 +1,6 @@
 package com.example.bookingapp.pages
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.bookingapp.MainActivity
@@ -185,15 +188,15 @@ fun LoginPage(
                             val result = withContext(Dispatchers.IO) {
                                 MainViewModel.authViewModel.login(username, password)
                             }
+
                             if (result) {
                                 Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
-//                                navController.navigate(RootScreen.Customer.route)
                             } else {
                                 Toast.makeText(context, "Invalid username or password!", Toast.LENGTH_SHORT)
                                     .show()
                             }
                         } catch (e: Exception) {
-                            Toast.makeText(context, "Failed to login", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Failed to login ${e.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
                 },

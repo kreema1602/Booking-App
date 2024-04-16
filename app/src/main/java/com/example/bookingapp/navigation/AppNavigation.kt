@@ -36,7 +36,7 @@ fun AppNavGraph(
 ) {
     val authViewModel = MainViewModel.authViewModel
     Log.d("AppNavGraph", "Role: ${authViewModel.isAuthenticated}")
-    val startDes = when (authViewModel.account.role) {
+    val startDes = when (authViewModel.account?.role) {
         "customer" -> RootScreen.Customer.route
         "moderator" -> RootScreen.Moderator.route
         else -> RootScreen.Login.route

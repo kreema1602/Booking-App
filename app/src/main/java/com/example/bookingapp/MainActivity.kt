@@ -60,6 +60,9 @@ class MainActivity : ComponentActivity() {
 
         // end set view model
 
+        // load account from shared preferences
+        authViewModel.loadAccount()
+
         if (authViewModel.authToken != "") {
             RetrofitClient.setAuthToken(authViewModel.authToken)
         }
