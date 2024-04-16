@@ -2,6 +2,7 @@ package com.example.bookingapp.pages
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
@@ -51,12 +53,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-fun authorize(username: String, password: String): String {
-    if (username == "hotel") return "moderator";
-    else if (username == "customer") return "customer";
-    return "guest";
-}
 
 @Composable
 fun LoginPage(navController: NavController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>, context: Context) {
@@ -178,13 +174,17 @@ fun LoginPage(navController: NavController, role: MutableState<String>, isLogged
             Button(
                 onClick = {
                     CoroutineScope(Dispatchers.Main).launch {
-                        val result = withContext(Dispatchers.IO) {
-                            AccountService.login(username, password, context)
-                        }
-                        if (result) {
-                            role.value = "customer"
-                            isLoggedIn.value = true
-                            navController.navigate(RootScreen.Customer.route)
+                        try {
+                            val result = withContext(Dispatchers.IO) {
+                                AccountService.login(username, password, context)
+                            }
+                            if (result) {
+                                role.value = context.getSharedPreferences("role", Context.MODE_PRIVATE).getString("role", "")!!
+                                isLoggedIn.value = true
+                                navController.navigate(RootScreen.Customer.route)
+                            }
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Failed to login", Toast.LENGTH_SHORT).show()
                         }
                     }
                 },
