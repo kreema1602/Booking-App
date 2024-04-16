@@ -2,6 +2,7 @@ package com.example.bookingapp.services
 
 import android.content.Context
 import android.util.Log
+import com.example.bookingapp.MainActivity
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.requests.LoginRequest
@@ -13,7 +14,7 @@ object AccountService {
         RetrofitClient.apiService
     }
 
-    suspend fun login(username: String, password: String, context: Context): Boolean {
+    suspend fun login(username: String, password: String): Pair<Account, String>? {
         try {
             val request = LoginRequest(username, password)
             val response = apiService.login(request)
@@ -30,21 +31,23 @@ object AccountService {
                 val token = jsonData.getString("token")
 
                 RetrofitClient.setAuthToken(token)
-                saveAccount(account, token, context) // Save account and token to shared preferences
-                Log.d("[Account service] Account: ", getAccount(context).toString())
+                saveAccount(account, token) // Save account and token to shared preferences
+                Log.d("[Account service] Account: ", getAccount().toString())
 
-                true
+                // return both account and token
+                Pair(account, token)
             } else {
                 RetrofitClient.clearAuthToken()
-                false
+                null
             }
         } catch (e: Exception) {
             throw Exception("Failed to login: ${e.message}")
         }
     }
 
-    private fun saveAccount(account: Account, token: String, context: Context) {
+    private fun saveAccount(account: Account, token: String) {
         val accountJson = Gson().toJson(account)
+        val context = MainActivity.context
 
         val accountPref = context.getSharedPreferences("account", Context.MODE_PRIVATE)
         val accountEditor = accountPref.edit()
@@ -62,7 +65,8 @@ object AccountService {
         roleEditor.apply()
     }
 
-    private fun getAccount(context: Context): Account? {
+    private fun getAccount(): Account? {
+        val context = MainActivity.context
         val accountPref = context.getSharedPreferences("account", Context.MODE_PRIVATE)
         val accountJson = accountPref.getString("account", null)
         return if (accountJson != null) {

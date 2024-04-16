@@ -1,8 +1,7 @@
 package com.example.bookingapp.navigation
 
-import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -29,21 +28,21 @@ import com.example.bookingapp.pages.hotelier.ModNotificationPage
 import com.example.bookingapp.pages.hotelier.ModProfilePage
 import com.example.bookingapp.pages.hotelier.ModRoomAdd
 import com.example.bookingapp.pages.hotelier.ModRoomPage
+import com.example.bookingapp.view_models.MainViewModel
 
 @Composable
 fun AppNavGraph(
-    navController: NavHostController,
-    role: MutableState<String>,
-    isLoggedIn: MutableState<Boolean>,
-    context: Context
+    navController: NavHostController
 ) {
-    val startDes = when (role.value) {
+    val authViewModel = MainViewModel.authViewModel
+    Log.d("AppNavGraph", "Role: ${authViewModel.isAuthenticated}")
+    val startDes = when (authViewModel.account.role) {
         "customer" -> RootScreen.Customer.route
         "moderator" -> RootScreen.Moderator.route
         else -> RootScreen.Login.route
     }
     NavHost(navController = navController, startDestination = startDes) {
-        addLoginRoute(navController, role, isLoggedIn, context)
+        addLoginRoute(navController)
         addCustomerRoute(navController)
         addModeratorRoute(navController)
     }
@@ -51,44 +50,38 @@ fun AppNavGraph(
 
 // -------------- Login navigation ------------------- //
 private fun NavGraphBuilder.addLoginRoute(
-    navController: NavController,
-    role: MutableState<String>,
-    isLoggedIn: MutableState<Boolean>,
-    context: Context
+    navController: NavController
 ) {
     navigation(
         route = RootScreen.Login.route,
         startDestination = GeneralLeafScreen.Login.route
     ) {
-        showLogin(navController, role, isLoggedIn, context)
-        showSignUp(navController, context)
-        showSignUpForm(navController, context)
+        showLogin(navController)
+        showSignUp(navController)
+        showSignUpForm(navController)
         showForgotPassword(navController)
         showNewPassword(navController)
     }
 }
 
 private fun NavGraphBuilder.showLogin(
-    navController: NavController,
-    role: MutableState<String>,
-    isLoggedIn: MutableState<Boolean>,
-    context: Context
+    navController: NavController
 ) {
     composable(GeneralLeafScreen.Login.route) {
-        LoginPage(navController, role, isLoggedIn, context)
+        LoginPage(navController)
     }
 }
 
-private fun NavGraphBuilder.showSignUp(navController: NavController, context: Context) {
+private fun NavGraphBuilder.showSignUp(navController: NavController) {
     composable(GeneralLeafScreen.SignUp.route) {
         SignUpPage(navController = navController)
     }
 }
 
-private fun NavGraphBuilder.showSignUpForm(navController: NavController, context: Context) {
+private fun NavGraphBuilder.showSignUpForm(navController: NavController) {
     composable(GeneralLeafScreen.SignUpForm.route + "/{role}") {
         val role = it.arguments?.getString("role") ?: ""
-        SignUpForm(navController = navController, role = role, context = context)
+        SignUpForm(navController = navController, role = role)
     }
 }
 

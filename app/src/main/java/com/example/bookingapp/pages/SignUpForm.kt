@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.FilledClipButton
 import com.example.bookingapp.core.compose.TopAppBar
@@ -105,7 +106,7 @@ fun Title(role: String) {
 }
 
 @Composable
-fun SignUpForm(navController: NavController, role: String, context: Context) {
+fun SignUpForm(navController: NavController, role: String) {
 
     val fieldsMap = mapOf(
         "username" to remember { mutableStateOf("") },
@@ -141,8 +142,7 @@ fun SignUpForm(navController: NavController, role: String, context: Context) {
                     performValidation(
                         fieldsMap,
                         acceptTermState.value,
-                        role,
-                        context = context
+                        role
                     )
                 }
             )
@@ -309,10 +309,11 @@ fun getFieldMap(field: String): String {
 fun performValidation(
     fieldsMap: Map<String, MutableState<String>>,
     acceptTermState: Boolean,
-    role: String, context: Context
+    role: String
 ) {
     Log.i("SignUpForm", "performValidation")
     val fieldsCheckMap = mutableMapOf<String, String>()
+    val context = MainActivity.context
 
     // Initialize fieldsCheckMap based on the role
     when (role.lowercase()) {
@@ -358,5 +359,5 @@ fun performValidation(
 @Preview
 @Composable
 fun PreviewSignUpForm() {
-    SignUpForm(navController = rememberNavController(), role = "moderator", context = TODO())
+    SignUpForm(navController = rememberNavController(), role = "moderator")
 }

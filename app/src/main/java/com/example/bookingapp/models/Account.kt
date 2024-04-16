@@ -16,4 +16,6 @@ data class Account(
     var hotel_address: String = "",
     var description: String = "",
     var image: String = "",
-) : Serializable
+) : Serializable {
+    constructor() : this("", "", "", "", "")
+}

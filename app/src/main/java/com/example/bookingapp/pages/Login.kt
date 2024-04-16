@@ -1,6 +1,5 @@
 package com.example.bookingapp.pages
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,11 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.navigation.GeneralLeafScreen
-import com.example.bookingapp.navigation.RootScreen
-import com.example.bookingapp.services.AccountService
+import com.example.bookingapp.view_models.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,10 +51,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun LoginPage(
-    navController: NavController,
-    role: MutableState<String>,
-    isLoggedIn: MutableState<Boolean>,
-    context: Context
+    navController: NavController
 ) {
     val mavenProFamily = FontFamily(
         Font(R.font.maven_pro_regular, FontWeight.Normal),
@@ -64,6 +59,8 @@ fun LoginPage(
         Font(R.font.maven_pro_medium, FontWeight.Medium),
         Font(R.font.maven_pro_semibold, FontWeight.SemiBold)
     )
+    val context = MainActivity.context
+
     Surface(color = Color.White) {
         Column(
             modifier = Modifier
@@ -186,14 +183,11 @@ fun LoginPage(
                                 return@launch
                             }
                             val result = withContext(Dispatchers.IO) {
-                                AccountService.login(username, password, context)
+                                MainViewModel.authViewModel.login(username, password)
                             }
                             if (result) {
-                                role.value =
-                                    context.getSharedPreferences("role", Context.MODE_PRIVATE)
-                                        .getString("role", "")!!
-                                isLoggedIn.value = true
-                                navController.navigate(RootScreen.Customer.route)
+                                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+//                                navController.navigate(RootScreen.Customer.route)
                             } else {
                                 Toast.makeText(context, "Invalid username or password!", Toast.LENGTH_SHORT)
                                     .show()

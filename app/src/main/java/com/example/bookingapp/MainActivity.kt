@@ -1,10 +1,12 @@
 package com.example.bookingapp
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,9 +26,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.example.bookingapp.core.compose.CalendarIcon
@@ -39,20 +40,28 @@ import com.example.bookingapp.navigation.AppNavGraph
 import com.example.bookingapp.navigation.CustomerLeafScreen
 import com.example.bookingapp.navigation.ModeratorLeafScreen
 import com.example.bookingapp.navigation.RootScreen
-import com.example.bookingapp.pages.LoginPage
 import com.example.bookingapp.services.RetrofitClient
+import com.example.bookingapp.view_models.AuthViewModel
+import com.example.bookingapp.view_models.MainViewModel
+import com.example.bookingapp.view_models.MainViewModel.authViewModel
 
 class MainActivity : ComponentActivity() {
-    private val isLoggedIn = mutableStateOf(false)
-    private val userRole = mutableStateOf("guest")
+    @SuppressLint("StaticFieldLeak")
+    companion object {
+        lateinit var context: Context
+            private set
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        context = this
 
-        val token = getSharedPreferences("token", Context.MODE_PRIVATE).getString("token", null)
-        if (token != null) {
-            isLoggedIn.value = true
-            RetrofitClient.setAuthToken(token)
-            userRole.value = getSharedPreferences("account", Context.MODE_PRIVATE).getString("role", "").toString()
+        // set view model
+        MainViewModel.authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+
+        // end set view model
+
+        if (authViewModel.authToken != "") {
+            RetrofitClient.setAuthToken(authViewModel.authToken)
         }
 
         setContent {
@@ -61,7 +70,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MyApp(isLoggedIn, userRole, this@MainActivity)
+                    MyApp()
                 }
             }
         }
@@ -70,13 +79,13 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MyApp(isLoggedIn: MutableState<Boolean>, userRole: MutableState<String>, context: Context) {
+fun MyApp() {
     val navController = rememberNavController()
     val currentSelectedPage by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
     lateinit var currentRouteListByRole: List<String>
 
-    when (userRole.value) {
+    when (authViewModel.account?.role) {
         "customer" -> {
             currentRouteListByRole = listOf(
                 CustomerLeafScreen.Home.route,
@@ -112,7 +121,7 @@ fun MyApp(isLoggedIn: MutableState<Boolean>, userRole: MutableState<String>, con
                 .fillMaxSize()
                 .padding(it)
         ) {
-            AppNavGraph(navController = navController, role = userRole, isLoggedIn = isLoggedIn, context = context)
+            AppNavGraph(navController = navController)
         }
     }
 }
