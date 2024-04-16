@@ -195,7 +195,7 @@ fun LoginPage(
                                 isLoggedIn.value = true
                                 navController.navigate(RootScreen.Customer.route)
                             } else {
-                                Toast.makeText(context, "Failed to login", Toast.LENGTH_SHORT)
+                                Toast.makeText(context, "Invalid username or password!", Toast.LENGTH_SHORT)
                                     .show()
                             }
                         } catch (e: Exception) {

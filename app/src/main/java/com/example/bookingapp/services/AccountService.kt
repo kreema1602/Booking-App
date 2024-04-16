@@ -17,9 +17,10 @@ object AccountService {
         try {
             val request = LoginRequest(username, password)
             val response = apiService.login(request)
-            val apiResponse = response.body() as ApiResponse
+            val statusCode = response.code()
 
-            return if (response.isSuccessful) {
+            return if (statusCode == 200) {
+                val apiResponse = response.body() as ApiResponse
                 val jsonData = JSONObject(Gson().toJson(apiResponse.data))
 
                 val account = Gson().fromJson(
@@ -29,8 +30,8 @@ object AccountService {
                 val token = jsonData.getString("token")
 
                 RetrofitClient.setAuthToken(token)
-                saveAccount(account, token, context)
-                Log.d("Test", getAccount(context).toString())
+                saveAccount(account, token, context) // Save account and token to shared preferences
+                Log.d("[Account service] Account: ", getAccount(context).toString())
 
                 true
             } else {
