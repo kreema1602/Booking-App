@@ -1,7 +1,6 @@
 package com.example.bookingapp.pages
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
@@ -25,7 +23,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,7 +52,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun LoginPage(navController: NavController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>, context: Context) {
+fun LoginPage(
+    navController: NavController,
+    role: MutableState<String>,
+    isLoggedIn: MutableState<Boolean>,
+    context: Context
+) {
     val mavenProFamily = FontFamily(
         Font(R.font.maven_pro_regular, FontWeight.Normal),
         Font(R.font.maven_pro_bold, FontWeight.Bold),
@@ -175,13 +177,26 @@ fun LoginPage(navController: NavController, role: MutableState<String>, isLogged
                 onClick = {
                     CoroutineScope(Dispatchers.Main).launch {
                         try {
+                            if (username.isEmpty() || password.isEmpty()) {
+                                Toast.makeText(
+                                    context,
+                                    "Please fill username and password",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                return@launch
+                            }
                             val result = withContext(Dispatchers.IO) {
                                 AccountService.login(username, password, context)
                             }
                             if (result) {
-                                role.value = context.getSharedPreferences("role", Context.MODE_PRIVATE).getString("role", "")!!
+                                role.value =
+                                    context.getSharedPreferences("role", Context.MODE_PRIVATE)
+                                        .getString("role", "")!!
                                 isLoggedIn.value = true
                                 navController.navigate(RootScreen.Customer.route)
+                            } else {
+                                Toast.makeText(context, "Failed to login", Toast.LENGTH_SHORT)
+                                    .show()
                             }
                         } catch (e: Exception) {
                             Toast.makeText(context, "Failed to login", Toast.LENGTH_SHORT).show()
@@ -203,7 +218,11 @@ fun LoginPage(navController: NavController, role: MutableState<String>, isLogged
             }
 
             TextButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+//                    role.value = "guest"
+//                    isLoggedIn.value = true
+//                    navController.navigate(RootScreen.Customer.route)
+                },
                 colors = ButtonDefaults.textButtonColors(contentColor = OrangePrimary),
                 modifier = Modifier.size(200.dp, 50.dp)
             ) {
