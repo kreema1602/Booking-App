@@ -44,6 +44,7 @@ import com.example.bookingapp.core.ui.mavenProFontFamily
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.AccountData
 import com.example.bookingapp.models.Account
+import com.example.bookingapp.view_models.MainViewModel
 
 @Composable
 fun CusProfilePage(accId: Int, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
@@ -132,7 +133,6 @@ fun NameTag(acc: Account) {
 
 @Composable
 fun ProfileEditor(acc: Account, onClickEdit: (String) -> Unit) {
-    Log.i("Profile_main_screen", "Edit_user_profile: ${acc.email}")
     val context = LocalContext.current
     val editLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -239,7 +239,7 @@ fun FavoriteList(acc: Account, onClickFavorite: () -> Unit) {
 
 @Composable
 fun LogOut(onClickLogout: () -> Unit) {
-    Card( modifier = Modifier.clickable { onClickLogout() }) {
+    Card( modifier = Modifier.clickable { MainViewModel.authViewModel.logout() }) {
         Row(
             Modifier
                 .fillMaxWidth()

@@ -1,6 +1,5 @@
 package com.example.bookingapp.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -35,7 +34,6 @@ fun AppNavGraph(
     navController: NavHostController
 ) {
     val authViewModel = MainViewModel.authViewModel
-    Log.d("AppNavGraph", "Role: ${authViewModel.isAuthenticated}")
     val startDes = when (authViewModel.account?.role) {
         "customer" -> RootScreen.Customer.route
         "moderator" -> RootScreen.Moderator.route
