@@ -1,7 +1,7 @@
 package com.example.bookingapp.pages
 
-import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,8 +23,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,32 +38,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.navigation.GeneralLeafScreen
-import com.example.bookingapp.navigation.RootScreen
-import com.example.bookingapp.services.AccountService
+import com.example.bookingapp.view_models.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-fun authorize(username: String, password: String): String {
-    if (username == "hotel") return "moderator";
-    else if (username == "customer") return "customer";
-    return "guest";
-}
-
 @Composable
-fun LoginPage(navController: NavController, role: MutableState<String>, isLoggedIn: MutableState<Boolean>, context: Context) {
+fun LoginPage(
+    navController: NavController
+) {
     val mavenProFamily = FontFamily(
         Font(R.font.maven_pro_regular, FontWeight.Normal),
         Font(R.font.maven_pro_bold, FontWeight.Bold),
         Font(R.font.maven_pro_medium, FontWeight.Medium),
         Font(R.font.maven_pro_semibold, FontWeight.SemiBold)
     )
+    val context = MainActivity.context
+
     Surface(color = Color.White) {
         Column(
             modifier = Modifier
@@ -178,13 +176,27 @@ fun LoginPage(navController: NavController, role: MutableState<String>, isLogged
             Button(
                 onClick = {
                     CoroutineScope(Dispatchers.Main).launch {
-                        val result = withContext(Dispatchers.IO) {
-                            AccountService.login(username, password, context)
-                        }
-                        if (result) {
-                            role.value = "customer"
-                            isLoggedIn.value = true
-                            navController.navigate(RootScreen.Customer.route)
+                        try {
+                            if (username.isEmpty() || password.isEmpty()) {
+                                Toast.makeText(
+                                    context,
+                                    "Please fill username and password",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                return@launch
+                            }
+                            val result = withContext(Dispatchers.IO) {
+                                MainViewModel.authViewModel.login(username, password)
+                            }
+
+                            if (result) {
+                                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Invalid username or password!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Failed to login ${e.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
                 },
@@ -203,7 +215,11 @@ fun LoginPage(navController: NavController, role: MutableState<String>, isLogged
             }
 
             TextButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+//                    role.value = "guest"
+//                    isLoggedIn.value = true
+//                    navController.navigate(RootScreen.Customer.route)
+                },
                 colors = ButtonDefaults.textButtonColors(contentColor = OrangePrimary),
                 modifier = Modifier.size(200.dp, 50.dp)
             ) {

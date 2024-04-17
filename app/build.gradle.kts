@@ -31,7 +31,7 @@ android {
         }
 
         debug {
-            buildConfigField("String", "BASE_URL", "\"https://455c-42-115-164-149.ngrok-free.app/\"")
+            buildConfigField("String", "BASE_URL", "\"https://28c8-42-115-164-149.ngrok-free.app/\"")
         }
     }
     compileOptions {
@@ -77,6 +77,7 @@ dependencies {
     implementation ("androidx.compose.material:material-icons-extended:1.6.4")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

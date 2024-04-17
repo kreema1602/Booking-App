@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,15 +37,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.mavenProFontFamily
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.AccountData
 import com.example.bookingapp.models.Account
+import com.example.bookingapp.view_models.MainViewModel
 
 @Composable
-fun CusProfilePage(accId: Int, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit) {
+fun CusProfilePage(accId: Int, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -57,19 +60,19 @@ fun CusProfilePage(accId: Int, onClickEdit: (String) -> Unit, onClickLogout: () 
         )
         NameTag(acc)
         Spacer(modifier = Modifier.padding(16.dp))
-        ConfigCard(acc, onClickEdit, onClickLogout)
+        ConfigCard(acc, onClickEdit, onClickLogout, onClickFavorite, onClickHistory)
     }
 }
 
 
 @Composable
-fun ConfigCard(acc: Account, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit) {
+fun ConfigCard(acc: Account, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
     Card {
         Column {
             ProfileEditor(acc, onClickEdit)
             RechargeJoycoin(acc)
-            RecentlyHistory(acc)
-            FavoriteList(acc)
+            RecentlyHistory(acc, onClickHistory)
+            FavoriteList(acc, onClickFavorite)
             LogOut(onClickLogout)
         }
     }
@@ -130,7 +133,6 @@ fun NameTag(acc: Account) {
 
 @Composable
 fun ProfileEditor(acc: Account, onClickEdit: (String) -> Unit) {
-    Log.i("Profile_main_screen", "Edit_user_profile: ${acc.email}")
     val context = LocalContext.current
     val editLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -183,9 +185,14 @@ fun RechargeJoycoin(acc: Account) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecentlyHistory(acc: Account) {
-    Card {
+fun RecentlyHistory(acc: Account, onClickHistory: () -> Unit) {
+    Card(
+        onClick = {
+            onClickHistory()
+        }
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -204,9 +211,14 @@ fun RecentlyHistory(acc: Account) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoriteList(acc: Account) {
-    Card {
+fun FavoriteList(acc: Account, onClickFavorite: () -> Unit) {
+    Card(
+        onClick = {
+            onClickFavorite()
+        }
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -227,7 +239,7 @@ fun FavoriteList(acc: Account) {
 
 @Composable
 fun LogOut(onClickLogout: () -> Unit) {
-    Card( modifier = Modifier.clickable { onClickLogout() }) {
+    Card( modifier = Modifier.clickable { MainViewModel.authViewModel.logout() }) {
         Row(
             Modifier
                 .fillMaxWidth()
