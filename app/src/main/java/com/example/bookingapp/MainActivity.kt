@@ -1,9 +1,12 @@
 package com.example.bookingapp
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,13 +26,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.example.bookingapp.core.compose.CalendarIcon
 import com.example.bookingapp.core.compose.HomeIcon
+import com.example.bookingapp.core.compose.HotelIcon
 import com.example.bookingapp.core.compose.NotificationIcon
 import com.example.bookingapp.core.compose.ProfileIcon
 import com.example.bookingapp.core.ui.theme.BookingAppTheme
@@ -37,27 +40,40 @@ import com.example.bookingapp.navigation.AppNavGraph
 import com.example.bookingapp.navigation.CustomerLeafScreen
 import com.example.bookingapp.navigation.ModeratorLeafScreen
 import com.example.bookingapp.navigation.RootScreen
-import com.example.bookingapp.pages.LoginPage
+import com.example.bookingapp.services.RetrofitClient
+import com.example.bookingapp.view_models.AuthViewModel
+import com.example.bookingapp.view_models.MainViewModel
+import com.example.bookingapp.view_models.MainViewModel.authViewModel
 
 class MainActivity : ComponentActivity() {
-    private val isLoggedIn = mutableStateOf(false)
-    private val userRole = mutableStateOf("moderator")
+    @SuppressLint("StaticFieldLeak")
+    companion object {
+        lateinit var context: Context
+            private set
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        context = this
+
+        // set view model
+        MainViewModel.authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+
+        // end set view model
+
+        // load account from shared preferences
+        authViewModel.loadAccount()
+
+        if (authViewModel.authToken != "") {
+            RetrofitClient.setAuthToken(authViewModel.authToken)
+        }
 
         setContent {
             BookingAppTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (isLoggedIn.value)
-                        MyApp(userRole.value)
-                    else
-                        LoginPage {
-                            isLoggedIn.value = true
-                        }
+                    MyApp()
                 }
             }
         }
@@ -66,13 +82,13 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MyApp(role : String) {
+fun MyApp() {
     val navController = rememberNavController()
     val currentSelectedPage by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
     lateinit var currentRouteListByRole: List<String>
 
-    when (role) {
+    when (authViewModel.account?.role) {
         "customer" -> {
             currentRouteListByRole = listOf(
                 CustomerLeafScreen.Home.route,
@@ -108,7 +124,7 @@ fun MyApp(role : String) {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            AppNavGraph(navController = navController, role = role)
+            AppNavGraph(navController = navController)
         }
     }
 }
@@ -123,7 +139,7 @@ private fun BottomNavBar(
     fun getIcon(index: Int) {
         return when (index) {
             0 -> { HomeIcon() }
-            1 -> { CalendarIcon() }
+            1 -> { if (listRoute[1] === CustomerLeafScreen.Reservation.route) CalendarIcon() else HotelIcon() }
             2 -> { NotificationIcon() }
             3 -> { ProfileIcon() }
             else -> { HomeIcon() } // Provide a default icon
@@ -132,7 +148,7 @@ private fun BottomNavBar(
 
     val listLabel = listOf(
         stringResource(id = R.string.home),
-        stringResource(id = R.string.reservations),
+        stringResource(id = if (listRoute[1] === CustomerLeafScreen.Reservation.route) R.string.reservations else R.string.hotel),
         stringResource(id = R.string.notifications),
         stringResource(id = R.string.profile)
     )
@@ -194,10 +210,10 @@ private fun NavController.navigateToRootScreen(rootScreen: RootScreen) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    BookingAppTheme {
-        MyApp(role = "customer")
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    BookingAppTheme {
+//        MyApp(role = "customer")
+//    }
+//}

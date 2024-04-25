@@ -1,6 +1,7 @@
 package com.example.bookingapp.pages
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,21 +36,34 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.navigation.GeneralLeafScreen
+import com.example.bookingapp.view_models.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
-fun LoginPage(onLoggedInSuccess: () -> Unit) {
+fun LoginPage(
+    navController: NavController
+) {
     val mavenProFamily = FontFamily(
         Font(R.font.maven_pro_regular, FontWeight.Normal),
         Font(R.font.maven_pro_bold, FontWeight.Bold),
         Font(R.font.maven_pro_medium, FontWeight.Medium),
         Font(R.font.maven_pro_semibold, FontWeight.SemiBold)
     )
+    val context = MainActivity.context
+
     Surface(color = Color.White) {
         Column(
             modifier = Modifier
@@ -152,7 +166,7 @@ fun LoginPage(onLoggedInSuccess: () -> Unit) {
                         append("Forgot password?")
                     }
                 },
-                onClick = { Log.d("LoginPage", "Forgot password clicked") },
+                onClick = { navController.navigate(GeneralLeafScreen.ForgotPassword.route) },
                 modifier = Modifier
                     .align(Alignment.End)
                     .padding(end = 50.dp, bottom = 20.dp),
@@ -161,7 +175,30 @@ fun LoginPage(onLoggedInSuccess: () -> Unit) {
 
             Button(
                 onClick = {
-                    onLoggedInSuccess()
+                    CoroutineScope(Dispatchers.Main).launch {
+                        try {
+                            if (username.isEmpty() || password.isEmpty()) {
+                                Toast.makeText(
+                                    context,
+                                    "Please fill username and password",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                return@launch
+                            }
+                            val result = withContext(Dispatchers.IO) {
+                                MainViewModel.authViewModel.login(username, password)
+                            }
+
+                            if (result) {
+                                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Invalid username or password!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Failed to login ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary),
                 modifier = Modifier
@@ -178,7 +215,11 @@ fun LoginPage(onLoggedInSuccess: () -> Unit) {
             }
 
             TextButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+//                    role.value = "guest"
+//                    isLoggedIn.value = true
+//                    navController.navigate(RootScreen.Customer.route)
+                },
                 colors = ButtonDefaults.textButtonColors(contentColor = OrangePrimary),
                 modifier = Modifier.size(200.dp, 50.dp)
             ) {
@@ -221,15 +262,15 @@ fun LoginPage(onLoggedInSuccess: () -> Unit) {
                     }
                 },
                 onClick = {
-                    
+                    navController.navigate(GeneralLeafScreen.SignUp.route)
                 },
             )
         }
     }
 }
 
-@Preview
-@Composable
-fun LoginPagePreview() {
-    LoginPage {}
-}
+//@Preview
+//@Composable
+//fun LoginPagePreview() {
+//    LoginPage {}
+//}

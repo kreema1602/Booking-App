@@ -76,9 +76,8 @@ fun CusRoomScreen(hotelId: Int, onBack: () -> Unit, showRoomDetail: (Int) -> Uni
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .background(Color.White)
         ) {
-            BottomSection(from = "Thu, 4/6/2023", to = "Sat, 6/6/2023", onClick = {})
+            BottomSection(calendar = true, onClick = {})
         }
     }
 }
@@ -198,7 +197,7 @@ fun HotelInfo(hotel: Hotel) {
             text = hotel.desc,
             maxLines = 4,
             onClick = {},
-            color = com.example.bookingapp.core.ui.theme.OrangePrimary
+            color = OrangePrimary
         )
     }
 }
