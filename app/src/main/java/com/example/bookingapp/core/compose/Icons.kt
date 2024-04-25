@@ -206,6 +206,17 @@ fun NotificationIcon(
     )
 }
 
+@Composable
+fun HotelIcon(
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        painterResource(id = R.drawable.ic_hotel),
+        contentDescription = "Hotel",
+        modifier = modifier
+    )
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Preview
 @Composable

@@ -10,7 +10,7 @@ object ReservationData {
             name = "New World Hotel",
             status = "Completed",
             date = "Sat 01/01/2022 - Sun 02/01/2022",
-            price = "1,000,000",
+            price = "1.000.000",
             roomType = "Deluxe Room",
             imageResource = listOf(R.drawable.image1, R.drawable.image2, R.drawable.image3)
         ),
@@ -19,7 +19,7 @@ object ReservationData {
             name = "Sheraton Hotel",
             status = "Waiting",
             date = "Mon 03/01/2022 - Tue 04/01/2022",
-            price = "2,000,000",
+            price = "2.000.000",
             roomType = "Superior Room",
             imageResource = listOf(R.drawable.image4, R.drawable.image1, R.drawable.image2)
         ),
@@ -28,7 +28,7 @@ object ReservationData {
             name = "Majestic Hotel",
             status = "Cancelled",
             date = "Mon 03/01/2022 - Tue 04/01/2022",
-            price = "3,000,000",
+            price = "3.000.000",
             roomType = "Suite Room",
             imageResource = listOf(R.drawable.image3, R.drawable.image4, R.drawable.image1)
         ),
@@ -37,7 +37,7 @@ object ReservationData {
             name = "Grand Hotel",
             status = "Completed",
             date = "Sat 01/01/2022 - Sun 02/01/2022",
-            price = "4,000,000",
+            price = "4.000.000",
             roomType = "Executive Room",
             imageResource = listOf(R.drawable.image2, R.drawable.image3, R.drawable.image4)
         ),
@@ -46,7 +46,7 @@ object ReservationData {
             name = "Sunset Resort",
             status = "Completed",
             date = "Mon 03/01/2022 - Tue 04/01/2022",
-            price = "5,000,000",
+            price = "5.000.000",
             roomType = "Ocean View Suite",
             imageResource = listOf(R.drawable.image1, R.drawable.image2, R.drawable.image3)
         ),
@@ -55,7 +55,7 @@ object ReservationData {
             name = "Golden Sands",
             status = "Cancelled",
             date = "Sat 01/01/2022 - Sun 02/01/2022",
-            price = "6,000,000",
+            price = "6.000.000",
             roomType = "Luxury Villa",
             imageResource = listOf(R.drawable.image4, R.drawable.image1, R.drawable.image2)
         ),
@@ -64,7 +64,7 @@ object ReservationData {
             name = "Crystal Palace",
             status = "Completed",
             date = "Mon 03/01/2022 - Tue 04/01/2022",
-            price = "7,000,000",
+            price = "7.000.000",
             roomType = "Penthouse Suite",
             imageResource = listOf(R.drawable.image3, R.drawable.image4, R.drawable.image1)
         ),
@@ -73,7 +73,7 @@ object ReservationData {
             name = "Emerald Bay Resort",
             status = "Waiting",
             date = "Sat 01/01/2022 - Sun 02/01/2022",
-            price = "8,000,000",
+            price = "8.000.000",
             roomType = "Private Bungalow",
             imageResource = listOf(R.drawable.image2, R.drawable.image3, R.drawable.image4)
         ),
@@ -82,7 +82,7 @@ object ReservationData {
             name = "Silver Heights Hotel",
             status = "Cancelled",
             date = "Mon 03/01/2022 - Tue 04/01/2022",
-            price = "9,000,000",
+            price = "9.000.000",
             roomType = "Mountain View Suite",
             imageResource = listOf(R.drawable.image1, R.drawable.image2, R.drawable.image3)
         ),
@@ -91,7 +91,7 @@ object ReservationData {
             name = "Royal Palace",
             status = "Completed",
             date = "Sat 01/01/2022 - Sun 02/01/2022",
-            price = "10,000,000",
+            price = "10.000.000",
             roomType = "Royal Suite",
             imageResource = listOf(R.drawable.image4, R.drawable.image1, R.drawable.image2)
         ),
@@ -100,7 +100,7 @@ object ReservationData {
             name = "Lakeside Resort",
             status = "Completed",
             date = "Mon 03/01/2022 - Tue 04/01/2022",
-            price = "11,000,000",
+            price = "11.000.000",
             roomType = "Lake View Villa",
             imageResource = listOf(R.drawable.image3, R.drawable.image4, R.drawable.image1)
         ),
@@ -109,7 +109,7 @@ object ReservationData {
             name = "Mountain Vista",
             status = "Cancelled",
             date = "Sat 01/01/2022 - Sun 02/01/2022",
-            price = "12,000,000",
+            price = "12.000.000",
             roomType = "Scenic Chalet",
             imageResource = listOf(R.drawable.image2, R.drawable.image3, R.drawable.image4)
         ),
@@ -118,7 +118,7 @@ object ReservationData {
             name = "Ocean Breeze",
             status = "Completed",
             date = "Mon 03/01/2022 - Tue 04/01/2022",
-            price = "13,000,000",
+            price = "13.000.000",
             roomType = "Beachfront Cottage",
             imageResource = listOf(R.drawable.image1, R.drawable.image2, R.drawable.image3)
         ),
@@ -127,7 +127,7 @@ object ReservationData {
             name = "Palm Springs Hotel",
             status = "Waiting",
             date = "Mon 03/01/2022 - Tue 04/01/2022",
-            price = "14,000,000",
+            price = "14.000.000",
             roomType = "Desert Oasis Suite",
             imageResource = listOf(R.drawable.image4, R.drawable.image1, R.drawable.image2)
         ),
@@ -136,7 +136,7 @@ object ReservationData {
             name = "Tropical Paradise",
             status = "Cancelled",
             date = "Sat 01/01/2022 - Sun 02/01/2022",
-            price = "15,000,000",
+            price = "15.000.000",
             roomType = "Tropical Villa",
             imageResource = listOf(R.drawable.image3, R.drawable.image4, R.drawable.image1)
         ),

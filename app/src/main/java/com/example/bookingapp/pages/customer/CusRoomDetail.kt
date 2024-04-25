@@ -110,11 +110,9 @@ fun CusRoomDetail(roomId: Int, onBack: () -> Unit) {
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .background(Color.White)
         ) {
             BottomSection(
-                from = "Thu, 4/6/2023",
-                to = "Sat, 6/6/2023",
+                calendar = true,
                 price = "400.000",
                 buttonText = "Book",
                 onClick = {}
@@ -139,11 +137,11 @@ fun PaymentInformation() {
         )
         val payment = PaymentData.data[0]
         val total = payment.perNight * payment.nights
-        PaymentDetail(Pair("Per Night", "$" + payment.perNight))
+        PaymentDetail(Pair("Per Night", "${payment.perNight} VND"))
         PaymentDetail(Pair("From", payment.from))
         PaymentDetail(Pair("To", payment.to))
         PaymentDetail(Pair("Nights", payment.nights.toString()))
-        PaymentDetail(Pair("Total", "$$total"), OrangePrimary, FontWeight.Bold)
+        PaymentDetail(Pair("Total", "$total VND"), OrangePrimary, FontWeight.Bold)
     }
 }
 

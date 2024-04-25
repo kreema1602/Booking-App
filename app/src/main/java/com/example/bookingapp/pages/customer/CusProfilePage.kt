@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,25 +32,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.mavenProFontFamily
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.AccountData
-import com.example.bookingapp.models.JoyhubAccount
+import com.example.bookingapp.models.Account
+import com.example.bookingapp.view_models.MainViewModel
 
 @Composable
-fun CusProfilePage(accId: Int, onClickEdit: (Int) -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        val acc = AccountData.sampleData.find { it.id == accId }!!
+fun CusProfilePage(accId: Int, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        val acc = AccountData.sampleData.find { it._id == accId.toString() }!!
         Text(
             text = "Profile",
             fontSize = 30.sp,
@@ -58,26 +60,26 @@ fun CusProfilePage(accId: Int, onClickEdit: (Int) -> Unit) {
         )
         NameTag(acc)
         Spacer(modifier = Modifier.padding(16.dp))
-        ConfigCard(acc, onClickEdit)
+        ConfigCard(acc, onClickEdit, onClickLogout, onClickFavorite, onClickHistory)
     }
 }
 
 
 @Composable
-fun ConfigCard(acc: JoyhubAccount, onClickEdit: (Int) -> Unit) {
+fun ConfigCard(acc: Account, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
     Card {
         Column {
             ProfileEditor(acc, onClickEdit)
             RechargeJoycoin(acc)
-            RecentlyHistory(acc)
-            FavoriteList(acc)
-            LogOut(acc)
+            RecentlyHistory(acc, onClickHistory)
+            FavoriteList(acc, onClickFavorite)
+            LogOut(onClickLogout)
         }
     }
 }
 
 @Composable
-fun NameTag(acc: JoyhubAccount) {
+fun NameTag(acc: Account) {
     Card(colors = CardDefaults.cardColors(containerColor = OrangePrimary)) {
         Row(
             modifier = Modifier
@@ -126,21 +128,18 @@ fun NameTag(acc: JoyhubAccount) {
 }
 
 @Composable
-fun ProfileEditor(acc: JoyhubAccount, onClickEdit: (Int) -> Unit) {
-    Log.i("Profile_main_screen", "Edit_user_profile: ${acc.email}")
+fun ProfileEditor(acc: Account, onClickEdit: (String) -> Unit) {
     val context = LocalContext.current
-    val editLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data: Intent? = result.data
-                val editedAcc = data?.getSerializableExtra("ACCOUNT") as? JoyhubAccount
-                acc.username = editedAcc!!.username
-                acc.email = editedAcc.email
-                acc.phone = editedAcc.phone
-            }
+    val editLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            val editedAcc = data?.getSerializableExtra("ACCOUNT") as? Account
+            acc.username = editedAcc!!.username
+            acc.email = editedAcc.email
+            acc.phone = editedAcc.phone
         }
     Card(modifier = Modifier.clickable {
-        onClickEdit(acc.id)
+        onClickEdit(acc._id)
     }) {
         Row(
             modifier = Modifier
@@ -161,7 +160,7 @@ fun ProfileEditor(acc: JoyhubAccount, onClickEdit: (Int) -> Unit) {
 }
 
 @Composable
-fun RechargeJoycoin(acc: JoyhubAccount) {
+fun RechargeJoycoin(acc: Account) {
     Card {
         Row(
             modifier = Modifier
@@ -181,9 +180,14 @@ fun RechargeJoycoin(acc: JoyhubAccount) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecentlyHistory(acc: JoyhubAccount) {
-    Card {
+fun RecentlyHistory(acc: Account, onClickHistory: () -> Unit) {
+    Card(
+        onClick = {
+            onClickHistory()
+        }
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -202,9 +206,14 @@ fun RecentlyHistory(acc: JoyhubAccount) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoriteList(acc: JoyhubAccount) {
-    Card {
+fun FavoriteList(acc: Account, onClickFavorite: () -> Unit) {
+    Card(
+        onClick = {
+            onClickFavorite()
+        }
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -224,17 +233,18 @@ fun FavoriteList(acc: JoyhubAccount) {
 }
 
 @Composable
-fun LogOut(acc: JoyhubAccount) {
-    Card {
+fun LogOut(onClickLogout: () -> Unit) {
+    Card( modifier = Modifier.clickable { MainViewModel.authViewModel.logout() }) {
         Row(
             Modifier
                 .fillMaxWidth()
                 .padding(0.dp, 0.dp, 16.dp, 0.dp),
             Arrangement.SpaceBetween,
-            Alignment.CenterVertically,
+            Alignment.CenterVertically
         ) {
-            Text(text = "Log out", modifier = Modifier.padding(16.dp), fontSize = 20.sp)
-            Icon(Icons.Filled.ExitToApp, contentDescription = null)
+                Text(text = "Log out", modifier = Modifier.padding(16.dp), fontSize = 20.sp)
+                Icon(Icons.Filled.ExitToApp, contentDescription = null)
+
         }
     }
 

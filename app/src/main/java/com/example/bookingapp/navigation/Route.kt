@@ -14,6 +14,8 @@ sealed class CustomerLeafScreen(val route: String){
     object ProfileEditor : CustomerLeafScreen("cus_profile_editor")
     object Room : CustomerLeafScreen("cus_room")
     object RoomDetail : CustomerLeafScreen("cus_room_detail")
+    object Favorite : CustomerLeafScreen("cus_favorite")
+    object History : CustomerLeafScreen("cus_history")
 }
 sealed class ModeratorLeafScreen(val route: String){
     object Home : ModeratorLeafScreen("mod_home")
