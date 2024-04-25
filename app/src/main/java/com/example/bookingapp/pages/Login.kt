@@ -137,6 +137,7 @@ fun LoginPage(
                     unfocusedIndicatorColor = Color.Transparent,
                     unfocusedContainerColor = Color.White
                 ),
+                singleLine = true,
                 modifier = Modifier
                     .padding(bottom = 20.dp)
                     .border(
@@ -247,39 +248,7 @@ fun LoginPage(
 
             Button(
                 onClick = {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        try {
-                            if (username.isEmpty() || password.isEmpty()) {
-                                Toast.makeText(
-                                    context,
-                                    "Please fill username and password",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                return@launch
-                            }
-                            val result = withContext(Dispatchers.IO) {
-                                MainViewModel.authViewModel.login(username, password)
-                            }
-
-                            if (result) {
-                                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT)
-                                    .show()
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "Invalid username or password!",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
-                        } catch (e: Exception) {
-                            Toast.makeText(
-                                context,
-                                "Failed to login ${e.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
+                    performLogin(context, username, password)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary),
                 modifier = Modifier
