@@ -1,8 +1,8 @@
 package com.example.bookingapp.pages
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -35,11 +37,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.bookingapp.MainActivity
@@ -63,6 +65,9 @@ fun LoginPage(
         Font(R.font.maven_pro_semibold, FontWeight.SemiBold)
     )
     val context = MainActivity.context
+    var visible by remember {
+        mutableStateOf(false)
+    }
 
     Surface(color = Color.White) {
         Column(
@@ -150,7 +155,25 @@ fun LoginPage(
                     .border(
                         1.dp, Color.Gray, RoundedCornerShape(100)
                     ),
-                placeholder = { Text(text = "Enter password") }
+                placeholder = { Text(text = "Enter password") },
+                visualTransformation = if (!visible)
+                    PasswordVisualTransformation()
+                else
+                    VisualTransformation.None,
+                trailingIcon = {
+                    val icon =
+                        if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = OrangePrimary,
+                        modifier = Modifier
+                            .padding(end = 20.dp)
+                            .clickable {
+                                visible = !visible
+                            }
+                    )
+                }
             )
 
 
@@ -190,13 +213,22 @@ fun LoginPage(
                             }
 
                             if (result) {
-                                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT)
+                                    .show()
                             } else {
-                                Toast.makeText(context, "Invalid username or password!", Toast.LENGTH_SHORT)
+                                Toast.makeText(
+                                    context,
+                                    "Invalid username or password!",
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
                             }
                         } catch (e: Exception) {
-                            Toast.makeText(context, "Failed to login ${e.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Failed to login ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 },
