@@ -1,12 +1,9 @@
 package com.example.bookingapp.view_models
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.bookingapp.MainActivity
 import com.example.bookingapp.models.Account
@@ -99,5 +96,13 @@ class AuthViewModel: ViewModel() {
         val tokenEditor = tokenPref.edit()
         tokenEditor.clear()
         tokenEditor.apply()
+    }
+
+    suspend fun register(fields: Map<String, String>, role: String): Boolean {
+        try {
+            return AccountService.register(fields, role)
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.example.bookingapp.services
 
 import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.requests.LoginRequest
+import com.example.bookingapp.models.requests.RegisterRequest
 import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -13,6 +14,9 @@ interface ApiService {
     // Account
     @POST("/auth/login")
     suspend fun login(@Body request: LoginRequest): Response<ApiResponse>
+
+    @POST("/auth/register")
+    suspend fun register(@Body request: RegisterRequest): Response<ApiResponse>
 
     // Amenity
     @GET("/{role}/amenity")
