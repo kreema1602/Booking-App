@@ -12,6 +12,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +26,15 @@ import com.example.bookingapp.pages.mavenProFamily
 @Composable
 fun CusProfileFieldEditor(accId: Int, onBack: () -> Unit) {
     val accTmp = AccountData.sampleData.find { it._id == accId.toString() }!!
+    val phone = remember {
+        mutableStateOf(accTmp.phone)
+    }
+    val username = remember {
+        mutableStateOf(accTmp.username)
+    }
+    val email = remember {
+        mutableStateOf(accTmp.email)
+    }
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.size(16.dp))
         Text(
@@ -34,20 +45,20 @@ fun CusProfileFieldEditor(accId: Int, onBack: () -> Unit) {
             modifier = Modifier.padding(16.dp)
         )
         TextField(
-            value = accTmp.username,
-            onValueChange = { accTmp.username = it },
+            value = username.value,
+            onValueChange = { username.value = it },
             label = { Text("Username") },
             modifier = Modifier.padding(16.dp).fillMaxWidth()
         )
         TextField(
-            value = accTmp.email,
-            onValueChange = { accTmp.email = it },
+            value = email.value,
+            onValueChange = { email.value = it },
             label = { Text("Email") },
             modifier = Modifier.padding(16.dp).fillMaxWidth()
         )
         TextField(
-            value = accTmp.phone,
-            onValueChange = { accTmp.phone = it },
+            value = phone.value,
+            onValueChange = { phone.value = it },
             label = { Text("Phone") },
             modifier = Modifier.padding(16.dp).fillMaxWidth()
         )
