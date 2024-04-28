@@ -18,23 +18,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.bookingapp.core.compose.BottomSection
 import com.example.bookingapp.core.compose.Carousel
 import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.FacilityList
 import com.example.bookingapp.core.compose.MySpacer
-import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.mock_data.RoomData
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.PaymentData
+import com.example.bookingapp.navigation.CustomerLeafScreen
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CusRoomDetail(roomId: Int, onBack: () -> Unit) {
+fun CusRoomDetail(navController: NavController, roomId: Int, onBack: () -> Unit) {
     val room = RoomData.data[0]
     Box {
         LazyColumn(
@@ -115,7 +115,7 @@ fun CusRoomDetail(roomId: Int, onBack: () -> Unit) {
                 calendar = true,
                 price = "400.000",
                 buttonText = "Book",
-                onClick = {}
+                onClick = {navController.navigate(CustomerLeafScreen.Payment.route + "/$roomId")}
             )
         }
     }
@@ -173,15 +173,5 @@ fun PaymentDetail(
                 color = color
             ),
         )
-    }
-}
-
-
-@Preview
-@Composable
-fun CusRoomDetailPreview() {
-    ThemedPreview {
-        CusRoomDetail(123, {})
-//        PaymentInformation()
     }
 }

@@ -16,6 +16,7 @@ import com.example.bookingapp.pages.customer.CusFavoritePage
 import com.example.bookingapp.pages.customer.CusHistoryPage
 import com.example.bookingapp.pages.customer.CusHomePage
 import com.example.bookingapp.pages.customer.CusNotificationPage
+import com.example.bookingapp.pages.customer.CusPaymentScreen
 import com.example.bookingapp.pages.customer.CusProfileFieldEditor
 import com.example.bookingapp.pages.customer.CusProfilePage
 import com.example.bookingapp.pages.customer.CusReservationDetail
@@ -34,7 +35,7 @@ fun AppNavGraph(
     navController: NavHostController
 ) {
     val authViewModel = MainViewModel.authViewModel
-    val startDes = when (authViewModel.account?.role) {
+    val startDes = when (authViewModel.account.role) {
         "customer" -> RootScreen.Customer.route
         "moderator" -> RootScreen.Moderator.route
         else -> RootScreen.Login.route
@@ -112,6 +113,7 @@ private fun NavGraphBuilder.addCustomerRoute(navController: NavController) {
         showCusProfileEditor(navController)
         showCusFavorite(navController)
         showCusHistory(navController)
+        showCusPayment(navController)
     }
 }
 
@@ -139,7 +141,7 @@ private fun NavGraphBuilder.showCusRoomScreen(navController: NavController) {
 private fun NavGraphBuilder.showCusRoomDetail(navController: NavController) {
     composable(CustomerLeafScreen.RoomDetail.route + "/{roomId}") {
         val roomId = it.arguments?.getString("roomId")?.toInt() ?: 0
-        CusRoomDetail(roomId, onBack = {
+        CusRoomDetail(navController, roomId, onBack = {
             navController.navigateUp()
         })
     }
@@ -198,6 +200,17 @@ private fun NavGraphBuilder.showCusHistory(navController: NavController) {
         CusHistoryPage(navController)
     }
 }
+
+private fun NavGraphBuilder.showCusPayment(navController: NavController) {
+    composable(CustomerLeafScreen.Payment.route + "/{roomId}") {
+        val roomId = it.arguments?.getString("roomId")?.toInt() ?: 0
+        CusPaymentScreen(roomId = roomId, onBack = {
+            navController.navigateUp()
+        })
+
+    }
+}
+
 // -------------- End of Customer navigation ------------------- //
 
 // -------------- Moderator navigation ------------------- //
