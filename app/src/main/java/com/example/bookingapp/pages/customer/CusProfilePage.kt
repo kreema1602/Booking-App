@@ -2,7 +2,6 @@ package com.example.bookingapp.pages.customer
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -32,12 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.mavenProFontFamily
@@ -138,6 +135,7 @@ fun ProfileEditor(acc: Account, onClickEdit: (String) -> Unit) {
             acc.email = editedAcc.email
             acc.phone = editedAcc.phone
         }
+    }
     Card(modifier = Modifier.clickable {
         onClickEdit(acc._id)
     }) {
