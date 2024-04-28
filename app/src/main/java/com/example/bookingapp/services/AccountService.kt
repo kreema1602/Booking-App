@@ -1,6 +1,5 @@
 package com.example.bookingapp.services
 
-import android.util.Log
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.requests.CusRegisterRequest
@@ -50,32 +49,36 @@ object AccountService {
         try {
             val response: Response<ApiResponse>?
             val statusCode: Int?
-            if (role == "customer") {
-                val request = CusRegisterRequest(
-                    fields["username"]!!,
-                    fields["password"]!!,
-                    fields["fullName"]!!,
-                    role
-                )
+            when (role) {
+                "customer" -> {
+                    val request = CusRegisterRequest(
+                        fields["username"]!!,
+                        fields["password"]!!,
+                        fields["fullName"]!!,
+                        role
+                    )
 
-                response = apiService.registerCustomer(request)
+                    response = apiService.registerCustomer(request)
 
-                statusCode = response.code()
-            } else if (role == "moderator") {
-                val request = ModRegisterRequest(
-                    fields["username"]!!,
-                    fields["password"]!!,
-                    fields["hotelName"]!!,
-                    fields["hotelAddress"]!!,
-                    fields["description"]!!,
-                    role
-                )
-                response = apiService.registerModerator(request)
+                    statusCode = response.code()
+                }
+                "moderator" -> {
+                    val request = ModRegisterRequest(
+                        fields["username"]!!,
+                        fields["password"]!!,
+                        fields["hotelName"]!!,
+                        fields["hotelAddress"]!!,
+                        fields["description"]!!,
+                        role
+                    )
+                    response = apiService.registerModerator(request)
 
-                statusCode = response.code()
+                    statusCode = response.code()
 
-            } else {
-                throw Exception("Invalid role")
+                }
+                else -> {
+                    throw Exception("Invalid role")
+                }
             }
 
             if (statusCode == 200) {

@@ -10,8 +10,8 @@ data class CusRegisterRequest(
 data class ModRegisterRequest(
     val username: String,
     val password: String,
-    val hotel_name: String,
-    val hotel_address: String,
+    val hotelName: String,
+    val hotelAddress: String,
     val description: String,
     val role: String
 )
