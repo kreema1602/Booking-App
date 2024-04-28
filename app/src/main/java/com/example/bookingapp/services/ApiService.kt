@@ -16,10 +16,10 @@ interface ApiService {
     suspend fun login(@Body request: LoginRequest): Response<ApiResponse>
 
     @POST("/auth/register")
-    suspend fun register_customer(@Body request: CusRegisterRequest): Response<ApiResponse>
+    suspend fun registerCustomer(@Body request: CusRegisterRequest): Response<ApiResponse>
 
     @POST("/auth/register")
-    suspend fun register_moderator(@Body request: ModRegisterRequest): Response<ApiResponse>
+    suspend fun registerModerator(@Body request: ModRegisterRequest): Response<ApiResponse>
 
     // Amenity
     @GET("/{role}/amenity")

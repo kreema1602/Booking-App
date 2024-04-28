@@ -48,8 +48,8 @@ object AccountService {
 
     suspend fun register(fields: Map<String, String>, role: String): Boolean {
         try {
-            var response: Response<ApiResponse>? = null
-            var statusCode: Int? = null
+            val response: Response<ApiResponse>?
+            val statusCode: Int?
             if (role == "customer") {
                 val request = CusRegisterRequest(
                     fields["username"]!!,
@@ -58,7 +58,7 @@ object AccountService {
                     role
                 )
 
-                response = apiService.register_customer(request)
+                response = apiService.registerCustomer(request)
 
                 statusCode = response.code()
             } else if (role == "moderator") {
@@ -70,7 +70,7 @@ object AccountService {
                     fields["description"]!!,
                     role
                 )
-                response = apiService.register_moderator(request)
+                response = apiService.registerModerator(request)
 
                 statusCode = response.code()
 
