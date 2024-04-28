@@ -1,14 +1,11 @@
 package com.example.bookingapp.services
 
-import android.content.Context
 import android.util.Log
-import com.example.bookingapp.MainActivity
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.requests.CusRegisterRequest
 import com.example.bookingapp.models.requests.LoginRequest
 import com.example.bookingapp.models.requests.ModRegisterRequest
-import com.example.bookingapp.view_models.MainViewModel
 import com.google.gson.Gson
 import org.json.JSONObject
 import retrofit2.Response
@@ -38,18 +35,21 @@ object AccountService {
                 Pair(account, token)
             } else {
                 RetrofitClient.clearAuthToken()
-                null
+
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
+
+                throw Exception(errorResponse.message)
             }
         } catch (e: Exception) {
-            throw Exception("Failed to login: ${e.message}")
+            throw Exception("${e.message}")
         }
     }
 
     suspend fun register(fields: Map<String, String>, role: String): Boolean {
         try {
             var response: Response<ApiResponse>? = null
-            var statusCode: Int
-
+            var statusCode: Int? = null
             if (role == "customer") {
                 val request = CusRegisterRequest(
                     fields["username"]!!,
@@ -58,11 +58,7 @@ object AccountService {
                     role
                 )
 
-                Log.i("Register 1", request.toString())
-
-                response = apiService.register(request)
-
-                Log.i("Register 2", response.toString())
+                response = apiService.register_customer(request)
 
                 statusCode = response.code()
             } else if (role == "moderator") {
@@ -74,7 +70,7 @@ object AccountService {
                     fields["description"]!!,
                     role
                 )
-                response = apiService.register(request)
+                response = apiService.register_moderator(request)
 
                 statusCode = response.code()
 
@@ -82,12 +78,13 @@ object AccountService {
                 throw Exception("Invalid role")
             }
 
-            val apiResponse = response.body() as ApiResponse
-
-            if (statusCode == 201) {
+            if (statusCode == 200) {
                 return true
             } else {
-                throw Exception(apiResponse.message)
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
+
+                throw Exception(errorResponse.message)
             }
 
         } catch (e: Exception) {

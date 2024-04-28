@@ -63,7 +63,7 @@ class AuthViewModel: ViewModel() {
                 }
             }
         } catch (e: Exception) {
-            throw Exception("Auth view model: ${e.message}")
+            throw Exception("${e.message}")
         }
 
         return isAuthenticated

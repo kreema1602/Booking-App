@@ -376,6 +376,7 @@ suspend fun performValidation(
             Toast.makeText(context, "Registration failed", Toast.LENGTH_SHORT).show()
         }
     } catch (e: Exception) {
+//        Log.i("SignUpForm", "Registration failed: $e")
         Toast.makeText(context, "Registration failed: ${e.message}", Toast.LENGTH_SHORT).show()
     }
 }
