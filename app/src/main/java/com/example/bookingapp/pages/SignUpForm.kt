@@ -52,6 +52,11 @@ import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.FilledClipButton
 import com.example.bookingapp.core.compose.TopAppBar
+import com.example.bookingapp.view_models.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun Title(role: String) {
@@ -138,11 +143,14 @@ fun SignUpForm(navController: NavController, role: String) {
                 fieldsMap = fieldsMap,
                 acceptTermState = acceptTermState,
                 onRegisterClicked = {
-                    performValidation(
-                        fieldsMap,
-                        acceptTermState.value,
-                        role
-                    )
+                    CoroutineScope(Dispatchers.Main).launch {
+                        performValidation(
+                            navController,
+                            fieldsMap,
+                            acceptTermState.value,
+                            role
+                        )
+                    }
                 }
             )
         }
@@ -305,7 +313,8 @@ fun getFieldMap(field: String): String {
     }
 }
 
-fun performValidation(
+suspend fun performValidation(
+    navController: NavController,
     fieldsMap: Map<String, MutableState<String>>,
     acceptTermState: Boolean,
     role: String
@@ -331,13 +340,15 @@ fun performValidation(
             fieldsCheckMap["hotelAddress"] = fieldsMap["hotelAddress"]?.value ?: ""
             fieldsCheckMap["description"] = fieldsMap["description"]?.value ?: ""
         }
-
-        else -> {}
     }
 
     for ((field, value) in fieldsCheckMap) {
         if (value.isEmpty()) {
-            Toast.makeText(context, "$field is empty", Toast.LENGTH_SHORT).show()
+            // format the field name to be more readable
+            val formattedField = field.replaceFirstChar { it.uppercase() }
+            val splitField = formattedField.replace(Regex("([a-z])([A-Z])"), "$1 $2")
+
+            Toast.makeText(context, "$splitField is empty", Toast.LENGTH_SHORT).show()
             return
         }
     }
@@ -351,6 +362,22 @@ fun performValidation(
     if (!acceptTermState) {
         Toast.makeText(context, "Please accept the terms of service", Toast.LENGTH_SHORT).show()
         return
+    }
+
+    try {
+
+        val result = withContext(Dispatchers.IO) {
+            MainViewModel.authViewModel.register(fieldsCheckMap, role)
+        }
+
+        if (result) {
+            Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
+            navController.navigate("login")
+        } else {
+            Toast.makeText(context, "Registration failed", Toast.LENGTH_SHORT).show()
+        }
+    } catch (e: Exception) {
+        Toast.makeText(context, "Registration failed: ${e.message}", Toast.LENGTH_SHORT).show()
     }
 }
 

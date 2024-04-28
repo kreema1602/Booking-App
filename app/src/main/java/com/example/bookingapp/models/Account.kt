@@ -12,8 +12,8 @@ data class Account(
     var wallet: Int = 0,
     var phone: String = "",
     var fullname: String = "",
-    var hotel_name: String = "",
-    var hotel_address: String = "",
+    var hotelName: String = "",
+    var hotelAddress: String = "",
     var description: String = "",
     var image: String = "",
 ) : Serializable {
