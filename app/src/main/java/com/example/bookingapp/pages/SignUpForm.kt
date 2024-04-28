@@ -1,6 +1,5 @@
 package com.example.bookingapp.pages
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -341,13 +340,15 @@ suspend fun performValidation(
             fieldsCheckMap["hotelAddress"] = fieldsMap["hotelAddress"]?.value ?: ""
             fieldsCheckMap["description"] = fieldsMap["description"]?.value ?: ""
         }
-
-        else -> {}
     }
 
     for ((field, value) in fieldsCheckMap) {
         if (value.isEmpty()) {
-            Toast.makeText(context, "$field is empty", Toast.LENGTH_SHORT).show()
+            // format the field name to be more readable
+            val formattedField = field.replaceFirstChar { it.uppercase() }
+            val splitField = formattedField.replace(Regex("([a-z])([A-Z])"), "$1 $2")
+
+            Toast.makeText(context, "$splitField is empty", Toast.LENGTH_SHORT).show()
             return
         }
     }
