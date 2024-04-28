@@ -25,6 +25,7 @@ import com.example.bookingapp.pages.mavenProFamily
 
 @Composable
 fun CusProfileFieldEditor(accId: Int, onBack: () -> Unit) {
+    val accTmp = AccountData.sampleData.find { it._id == accId.toString() }!!
     val phone = remember {
         mutableStateOf(accTmp.phone)
     }
@@ -34,7 +35,6 @@ fun CusProfileFieldEditor(accId: Int, onBack: () -> Unit) {
     val email = remember {
         mutableStateOf(accTmp.email)
     }
-    val accTmp = AccountData.sampleData.find { it._id == accId.toString() }!!
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.size(16.dp))
         Text(

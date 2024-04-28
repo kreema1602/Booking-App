@@ -4,6 +4,7 @@ package com.example.bookingapp.pages
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,12 +13,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -26,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.HistoryCard
+import com.example.bookingapp.core.ui.theme.Black
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 
 val mavenProFamily = FontFamily(
@@ -62,9 +67,6 @@ fun BarChart(data: List<Float>, notes: List<String>, modifier: Modifier = Modifi
                     Paint().apply {
                         color = OrangePrimary
                     })
-
-
-                val textToDraw = notes.getOrNull(index) ?: ""
             }
         }
     }
@@ -72,11 +74,11 @@ fun BarChart(data: List<Float>, notes: List<String>, modifier: Modifier = Modifi
 
 
 @Composable
-fun LineChart(data: List<Float>, modifier: Modifier = Modifier) {
+fun LineChart(data: List<Float>, notes: List<String>, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier.fillMaxSize()) {
         drawIntoCanvas {
-            val canvasWidth = size.width
-            val canvasHeight = size.height
+            val canvasWidth = size.width - 1.dp.toPx()
+            val canvasHeight = size.height - 1.dp.toPx()
 
             val dataPoints = data.mapIndexed { index, value ->
                 val x = (index / (data.size - 1).toFloat()) * canvasWidth
@@ -96,6 +98,30 @@ fun LineChart(data: List<Float>, modifier: Modifier = Modifier) {
                         }
                     )
                 }
+            }
+
+            dataPoints.forEach { point ->
+                it.drawCircle(
+                    point,
+                    8.dp.toPx(),
+                    Paint().apply {
+                        color = OrangePrimary
+                    }
+                )
+            }
+
+            dataPoints.forEachIndexed { index, point ->
+                val textToDraw = notes.getOrNull(index) ?: ""
+                it.nativeCanvas.drawText(
+                    textToDraw,
+                    point.x,
+                    canvasHeight + 16.dp.toPx(),
+                    android.graphics.Paint().apply {
+                        color = Black.toArgb()
+                        textSize = 16.sp.toPx()
+                        textAlign = android.graphics.Paint.Align.CENTER
+                    }
+                )
             }
         }
     }
@@ -118,20 +144,6 @@ fun ChartScreen() {
                 modifier = Modifier.padding(16.dp)
             )
 
-//            Text(
-//                text = "Bar Chart",
-//                fontFamily = mavenProFamily,
-//                modifier = Modifier.padding(16.dp),
-//                fontSize = 24.sp,
-//            )
-
-//            BarChart(
-//                data = listOf(100f, 200f, 150f, 300f, 250f), modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(200.dp),
-//                notes = listOf("Jan", "Feb", "Mar", "Apr", "May")
-//            )
-
             Text(
                 text = "Line Chart",
                 fontFamily = mavenProFamily,
@@ -140,9 +152,13 @@ fun ChartScreen() {
             )
 
             LineChart(
-                data = listOf(0.2f, 0.5f, 0.3f, 0.8f, 0.6f, 0.9f), modifier = Modifier
+                data = listOf(0.2f, 0.5f, 0.3f, 0.8f, 0.6f, 0.9f),
+                notes = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun"),
+                modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
+                    .padding(horizontal = 16.dp)
+                    .border(1.dp, OrangePrimary, shape = MaterialTheme.shapes.medium)
             )
 
             Text(
