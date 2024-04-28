@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -42,7 +41,6 @@ import com.example.bookingapp.navigation.ModeratorLeafScreen
 import com.example.bookingapp.navigation.RootScreen
 import com.example.bookingapp.services.RetrofitClient
 import com.example.bookingapp.view_models.AuthViewModel
-import com.example.bookingapp.view_models.MainViewModel
 import com.example.bookingapp.view_models.MainViewModel.authViewModel
 
 class MainActivity : ComponentActivity() {
@@ -51,13 +49,13 @@ class MainActivity : ComponentActivity() {
         lateinit var context: Context
             private set
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context = this
 
         // set view model
-        MainViewModel.authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
-
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
         // end set view model
 
         // load account from shared preferences
@@ -88,7 +86,7 @@ fun MyApp() {
     val currentRoute by navController.currentRouteAsState()
     lateinit var currentRouteListByRole: List<String>
 
-    when (authViewModel.account?.role) {
+    when (authViewModel.account.role) {
         "customer" -> {
             currentRouteListByRole = listOf(
                 CustomerLeafScreen.Home.route,
@@ -97,6 +95,7 @@ fun MyApp() {
                 CustomerLeafScreen.Profile.route
             )
         }
+
         "moderator" -> {
             currentRouteListByRole = listOf(
                 ModeratorLeafScreen.Home.route,
@@ -105,6 +104,7 @@ fun MyApp() {
                 ModeratorLeafScreen.Profile.route
             )
         }
+
         else -> {
             currentRouteListByRole = listOf()
         }
@@ -138,11 +138,25 @@ private fun BottomNavBar(
     @Composable
     fun getIcon(index: Int) {
         return when (index) {
-            0 -> { HomeIcon() }
-            1 -> { if (listRoute[1] === CustomerLeafScreen.Reservation.route) CalendarIcon() else HotelIcon() }
-            2 -> { NotificationIcon() }
-            3 -> { ProfileIcon() }
-            else -> { HomeIcon() } // Provide a default icon
+            0 -> {
+                HomeIcon()
+            }
+
+            1 -> {
+                if (listRoute[1] === CustomerLeafScreen.Reservation.route) CalendarIcon() else HotelIcon()
+            }
+
+            2 -> {
+                NotificationIcon()
+            }
+
+            3 -> {
+                ProfileIcon()
+            }
+
+            else -> {
+                HomeIcon()
+            } // Provide a default icon
         }
     }
 
@@ -169,7 +183,7 @@ private fun BottomNavBar(
 @Stable
 @Composable
 private fun NavController.currentScreenAsState(): MutableState<String> {
-    val selectedItem = remember { mutableStateOf("")}
+    val selectedItem = remember { mutableStateOf("") }
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             Log.d("Navigation", "Destination changed to: ${destination.route}")
@@ -209,11 +223,3 @@ private fun NavController.navigateToRootScreen(rootScreen: RootScreen) {
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreview() {
-//    BookingAppTheme {
-//        MyApp(role = "customer")
-//    }
-//}

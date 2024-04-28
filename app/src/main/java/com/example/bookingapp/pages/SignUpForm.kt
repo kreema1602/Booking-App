@@ -1,6 +1,5 @@
 package com.example.bookingapp.pages
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
