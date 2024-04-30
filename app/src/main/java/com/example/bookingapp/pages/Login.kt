@@ -351,6 +351,7 @@ fun performLogin(
                     .show()
             }
         } catch (e: Exception) {
+            Log.e("Login", "Failed to login ${e.message}")
             Toast.makeText(
                 context,
                 "Failed to login ${e.message}",

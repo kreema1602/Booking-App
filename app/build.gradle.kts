@@ -32,6 +32,7 @@ android {
 
         debug {
             buildConfigField("String", "BASE_URL", "\"https://144d-113-161-89-145.ngrok-free.app/\"")
+            buildConfigField("String", "BASE_URL", "\"https://88cf-183-80-39-221.ngrok-free.app/\"")
         }
     }
     compileOptions {
@@ -78,6 +79,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("io.coil-kt:coil-compose:2.4.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
