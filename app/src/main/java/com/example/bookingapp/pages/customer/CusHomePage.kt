@@ -207,7 +207,7 @@ fun HotelDescription(modifier: Modifier, hotel: Account) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = hotel.hotel_name,
+                text = hotel.hotelName,
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.White
             )
@@ -245,7 +245,7 @@ fun HotelDescription(modifier: Modifier, hotel: Account) {
                     tint = Color.White
                 )
                 Text(
-                    text = hotel.hotel_address,
+                    text = hotel.hotelAddress,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White
                 )
