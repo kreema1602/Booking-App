@@ -107,10 +107,6 @@ fun HotelList(showRoomScreen: (Int) -> Unit) {
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-//        items(10) {
-//            HotelItem(showRoomScreen)
-//            Spacer(modifier = Modifier.height(8.dp))
-//        }
         items(hotelData.size) { index ->
             Log.d("CusHomePage", "HotelList: ${hotelData[index]}")
             HotelItem(showRoomScreen, hotelData[index])

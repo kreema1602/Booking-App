@@ -1,9 +1,7 @@
 package com.example.bookingapp.services
 
-import android.util.Log
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.ApiResponse
-import com.example.bookingapp.models.Hotel
 import com.example.bookingapp.view_models.MainViewModel.authViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
