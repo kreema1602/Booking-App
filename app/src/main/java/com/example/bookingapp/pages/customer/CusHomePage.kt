@@ -180,7 +180,8 @@ fun HotelItem(showRoomScreen: (Int) -> Unit, hotel: Account) {
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
-                HotelDescription(modifier = Modifier.align(Alignment.BottomStart), hotel)
+                HotelDescription(modifier = Modifier.align(Alignment.BottomStart).background(Color.Black.copy(alpha = 0.5f)),
+                    hotel)
             }
         }
     }
