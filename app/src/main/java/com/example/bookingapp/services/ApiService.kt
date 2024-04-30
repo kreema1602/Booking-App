@@ -28,4 +28,10 @@ interface ApiService {
     // Hotel and Room
     @GET("/{role}/hotel/all")
     suspend fun getHotels(@Path("role") role: String): Response<ApiResponse>
+
+    @GET("/{role}/hotel/rating/{hotelId}")
+    suspend fun getAvaregeRating(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
+
+    @GET("/{role}/hotel/price/{hotelId}")
+    suspend fun getPriceRange(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
 }

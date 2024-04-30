@@ -28,12 +28,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -50,8 +50,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.models.Account
-import com.example.bookingapp.pages.hotelier.HotelDescription
-import com.example.bookingapp.services.HotelRoomService
 import com.example.bookingapp.view_models.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -192,8 +190,16 @@ fun HotelItem(showRoomScreen: (Int) -> Unit, hotel: Account) {
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun HotelDescription(modifier: Modifier, hotel: Account) {
+    var rating by rememberSaveable { mutableDoubleStateOf(0.0) }
+    var price by rememberSaveable { mutableStateOf(Pair(0.0, 0.0)) }
+
+    CoroutineScope(Dispatchers.Main).launch {
+        rating = getAvaregeRating(hotel._id)
+        price = getPriceRange(hotel._id)
+    }
     Column(
         modifier = modifier
             .padding(8.dp)
@@ -221,7 +227,7 @@ fun HotelDescription(modifier: Modifier, hotel: Account) {
                     tint = Color.Yellow
                 )
                 Text(
-                    text = "4.5",
+                    text = rating.toString(),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White
                 )
@@ -249,7 +255,7 @@ fun HotelDescription(modifier: Modifier, hotel: Account) {
                 )
             }
             Text(
-                text = "Price",
+                text = "Price: ${price.first} - ${price.second}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White
             )
@@ -264,6 +270,28 @@ suspend fun getHotelData(): List<Account> {
         } catch (e: Exception) {
             Log.d("CusHomePage", "getHotelData: ${e.message}")
             emptyList()
+        }
+    }
+}
+
+suspend fun getAvaregeRating(hotelId: String): Double {
+    return withContext(Dispatchers.IO) {
+        try {
+            MainViewModel.cusHotelRoomViewModel.getAverageRating(hotelId)
+        } catch (e: Exception) {
+            Log.d("CusHomePage", "getAvaregeRating: ${e.message}")
+            0.0
+        }
+    }
+}
+
+suspend fun getPriceRange(hotelId: String): Pair<Double, Double> {
+    return withContext(Dispatchers.IO) {
+        try {
+            MainViewModel.cusHotelRoomViewModel.getPriceRange(hotelId)
+        } catch (e: Exception) {
+            Log.d("CusHomePage", "getPriceRange: ${e.message}")
+            Pair(0.0, 0.0)
         }
     }
 }
