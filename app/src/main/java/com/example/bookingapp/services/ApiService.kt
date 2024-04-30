@@ -24,4 +24,8 @@ interface ApiService {
     // Amenity
     @GET("/{role}/amenity")
     suspend fun getAmenities(@Path("role") role: String): Response<ApiResponse>
+
+    // Hotel and Room
+    @GET("/{role}/hotel/all")
+    suspend fun getHotels(@Path("role") role: String): Response<ApiResponse>
 }

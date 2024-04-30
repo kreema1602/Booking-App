@@ -41,7 +41,9 @@ import com.example.bookingapp.navigation.ModeratorLeafScreen
 import com.example.bookingapp.navigation.RootScreen
 import com.example.bookingapp.services.RetrofitClient
 import com.example.bookingapp.view_models.AuthViewModel
+import com.example.bookingapp.view_models.CusHotelRoomViewModel
 import com.example.bookingapp.view_models.MainViewModel.authViewModel
+import com.example.bookingapp.view_models.MainViewModel.cusHotelRoomViewModel
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("StaticFieldLeak")
@@ -56,6 +58,7 @@ class MainActivity : ComponentActivity() {
 
         // set view model
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+        cusHotelRoomViewModel = ViewModelProvider(this)[CusHotelRoomViewModel::class.java]
         // end set view model
 
         // load account from shared preferences

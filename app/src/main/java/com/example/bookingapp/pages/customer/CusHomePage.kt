@@ -1,5 +1,7 @@
 package com.example.bookingapp.pages.customer
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -26,6 +28,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,11 +47,20 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.bookingapp.R
+import com.example.bookingapp.models.Account
+import com.example.bookingapp.pages.hotelier.HotelDescription
+import com.example.bookingapp.services.HotelRoomService
+import com.example.bookingapp.view_models.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun CusHomePage(
-    showRoomScreen : (Int) -> Unit
+    showRoomScreen: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -83,8 +95,13 @@ fun CusHomePage(
 
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun HotelList(showRoomScreen: (Int) -> Unit) {
+    var hotelData by rememberSaveable { mutableStateOf(listOf<Account>()) }
+    CoroutineScope(Dispatchers.Main).launch {
+        hotelData = getHotelData()
+    }
     LazyColumn(
         contentPadding = PaddingValues(
             top = 16.dp,
@@ -92,8 +109,13 @@ fun HotelList(showRoomScreen: (Int) -> Unit) {
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(10) {
-            HotelItem(showRoomScreen)
+//        items(10) {
+//            HotelItem(showRoomScreen)
+//            Spacer(modifier = Modifier.height(8.dp))
+//        }
+        items(hotelData.size) { index ->
+            Log.d("CusHomePage", "HotelList: ${hotelData[index]}")
+            HotelItem(showRoomScreen, hotelData[index])
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
@@ -143,7 +165,7 @@ fun SearchBar() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HotelItem(showRoomScreen: (Int) -> Unit) {
+fun HotelItem(showRoomScreen: (Int) -> Unit, hotel: Account) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -157,20 +179,21 @@ fun HotelItem(showRoomScreen: (Int) -> Unit) {
                     .height(200.dp)
                     .fillMaxWidth()
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.hotel2),
+                AsyncImage(
+                    model = hotel.image,
+                    error = painterResource(id = R.drawable.hotel2),
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
                 )
-                HotelDescription(modifier = Modifier.align(Alignment.BottomStart))
+                HotelDescription(modifier = Modifier.align(Alignment.BottomStart), hotel)
             }
         }
     }
 }
 
 @Composable
-fun HotelDescription(modifier: Modifier) {
+fun HotelDescription(modifier: Modifier, hotel: Account) {
     Column(
         modifier = modifier
             .padding(8.dp)
@@ -182,7 +205,7 @@ fun HotelDescription(modifier: Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Hotel ABC",
+                text = hotel.hotel_name,
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.White
             )
@@ -220,7 +243,7 @@ fun HotelDescription(modifier: Modifier) {
                     tint = Color.White
                 )
                 Text(
-                    text = "Hotel location",
+                    text = hotel.hotel_address,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White
                 )
@@ -230,6 +253,17 @@ fun HotelDescription(modifier: Modifier) {
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White
             )
+        }
+    }
+}
+
+suspend fun getHotelData(): List<Account> {
+    return withContext(Dispatchers.IO) {
+        try {
+            MainViewModel.cusHotelRoomViewModel.getHotels()
+        } catch (e: Exception) {
+            Log.d("CusHomePage", "getHotelData: ${e.message}")
+            emptyList()
         }
     }
 }

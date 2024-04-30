@@ -8,14 +8,16 @@ data class Account(
     var password: String,
     var email: String,
     var role: String,
-    var bankNumber: String = "",
+    var bank_number: String = "",
     var wallet: Int = 0,
     var phone: String = "",
     var fullname: String = "",
-    var hotelName: String = "",
-    var hotelAddress: String = "",
+    var hotel_name: String = "",
+    var hotel_address: String = "",
     var description: String = "",
     var image: String = "",
+    var createdAt: String = "",
+    var updatedAt: String = "",
 ) : Serializable {
-    constructor() : this("", "", "", "", "")
+    constructor() : this("", "", "", "", "", "", 0, "", "", "", "", "", "", "", "")
 }
