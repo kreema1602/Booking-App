@@ -114,8 +114,10 @@ fun SignUpForm(navController: NavController, role: String) {
 
     val fieldsMap = mapOf(
         "username" to remember { mutableStateOf("") },
-        "fullName" to remember { mutableStateOf("") },
+        "email" to remember { mutableStateOf("") },
         "password" to remember { mutableStateOf("") },
+        "phone" to remember { mutableStateOf("") },
+        "fullName" to remember { mutableStateOf("") },
         "confirmPassword" to remember { mutableStateOf("") },
         "hotelName" to remember { mutableStateOf("") },
         "hotelAddress" to remember { mutableStateOf("") },
@@ -286,10 +288,20 @@ fun CheckBoxAcceptTerm(acceptTermState: MutableState<Boolean>) {
 
 fun getFormFields(role: String): List<String> {
     return when (role.lowercase()) {
-        "customer" -> listOf("Username", "Full Name", "Password", "Confirm Password")
+        "customer" -> listOf(
+            "Username",
+            "Full Name",
+            "Email",
+            "Phone number",
+            "Password",
+            "Confirm Password"
+        )
         "moderator" -> listOf(
             "Username",
             "Hotel's name",
+            "Email",
+            "Phone number",
+            "Full Name",
             "Password",
             "Confirm Password",
             "Hotel's address",
@@ -303,8 +315,10 @@ fun getFormFields(role: String): List<String> {
 fun getFieldMap(field: String): String {
     return when (field) {
         "Username" -> "username"
-        "Full Name" -> "fullName"
+        "Email" -> "email"
         "Password" -> "password"
+        "Phone number" -> "phone"
+        "Full Name" -> "fullName"
         "Confirm Password" -> "confirmPassword"
         "Hotel's name" -> "hotelName"
         "Hotel's address" -> "hotelAddress"
@@ -327,16 +341,21 @@ suspend fun performValidation(
     when (role.lowercase()) {
         "customer" -> {
             fieldsCheckMap["username"] = fieldsMap["username"]?.value ?: ""
-            fieldsCheckMap["fullName"] = fieldsMap["fullName"]?.value ?: ""
+            fieldsCheckMap["email"] = fieldsMap["email"]?.value ?: ""
             fieldsCheckMap["password"] = fieldsMap["password"]?.value ?: ""
             fieldsCheckMap["confirmPassword"] = fieldsMap["confirmPassword"]?.value ?: ""
+            fieldsCheckMap["phone"] = fieldsMap["phone"]?.value ?: ""
+            fieldsCheckMap["fullName"] = fieldsMap["fullName"]?.value ?: ""
         }
 
         "moderator" -> {
             fieldsCheckMap["username"] = fieldsMap["username"]?.value ?: ""
-            fieldsCheckMap["hotelName"] = fieldsMap["hotelName"]?.value ?: ""
+            fieldsCheckMap["email"] = fieldsMap["email"]?.value ?: ""
             fieldsCheckMap["password"] = fieldsMap["password"]?.value ?: ""
             fieldsCheckMap["confirmPassword"] = fieldsMap["confirmPassword"]?.value ?: ""
+            fieldsCheckMap["phone"] = fieldsMap["phone"]?.value ?: ""
+            fieldsCheckMap["fullName"] = fieldsMap["fullName"]?.value ?: ""
+            fieldsCheckMap["hotelName"] = fieldsMap["hotelName"]?.value ?: ""
             fieldsCheckMap["hotelAddress"] = fieldsMap["hotelAddress"]?.value ?: ""
             fieldsCheckMap["description"] = fieldsMap["description"]?.value ?: ""
         }
