@@ -91,8 +91,9 @@ private fun NavGraphBuilder.showForgotPassword(navController: NavController) {
 }
 
 private fun NavGraphBuilder.showNewPassword(navController: NavController) {
-    composable(GeneralLeafScreen.NewPassword.route) {
-        NewPasswordPage(navController = navController)
+    composable(GeneralLeafScreen.NewPassword.route + "/{username}") {
+        val username = it.arguments?.getString("username") ?: ""
+        NewPasswordPage(username = username, navController = navController)
     }
 }
 // -------------- End of Login navigation ------------------- //

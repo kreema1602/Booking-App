@@ -114,17 +114,17 @@ class AuthViewModel: ViewModel() {
         }
     }
 
-    suspend fun forgotPassword(email: String): Boolean {
+    suspend fun forgotPassword(username: String): Boolean {
         try {
-            return AccountService.forgotPassword(email)
+            return AccountService.forgotPassword(username)
         } catch (e: Exception) {
             throw Exception("${e.message}")
         }
     }
 
-    suspend fun resetPassword(email: String, password: String): Boolean {
+    suspend fun resetPassword(username: String, password: String): Boolean {
         try {
-            return AccountService.resetPassword(email, password)
+            return AccountService.resetPassword(username, password)
         } catch (e: Exception) {
             throw Exception("${e.message}")
         }
