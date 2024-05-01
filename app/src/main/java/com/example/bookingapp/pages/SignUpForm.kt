@@ -57,7 +57,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 @Composable
 fun Title(role: String) {
     val description = when (role) {
@@ -286,43 +285,54 @@ fun CheckBoxAcceptTerm(acceptTermState: MutableState<Boolean>) {
     }
 }
 
+val fields = listOf(
+    "Username",
+    "Full Name",
+    "Email",
+    "Phone number",
+    "Password",
+    "Confirm Password",
+    "Hotel's name",
+    "Hotel's address",
+    "Description"
+)
+
 fun getFormFields(role: String): List<String> {
     return when (role.lowercase()) {
         "customer" -> listOf(
-            "Username",
-            "Full Name",
-            "Email",
-            "Phone number",
-            "Password",
-            "Confirm Password"
+            fields[0],
+            fields[1],
+            fields[2],
+            fields[3],
+            fields[4],
+            fields[5]
         )
         "moderator" -> listOf(
-            "Username",
-            "Hotel's name",
-            "Email",
-            "Phone number",
-            "Full Name",
-            "Password",
-            "Confirm Password",
-            "Hotel's address",
-            "Description"
+            fields[0],
+            fields[1],
+            fields[2],
+            fields[3],
+            fields[4],
+            fields[6],
+            fields[7],
+            fields[8]
         )
 
-        else -> listOf("Username", "Full Name", "Password", "Confirm Password")
+        else -> listOf(fields[0], fields[1], fields[2], fields[3], fields[4], fields[5])
     }
 }
 
 fun getFieldMap(field: String): String {
     return when (field) {
-        "Username" -> "username"
-        "Email" -> "email"
-        "Password" -> "password"
-        "Phone number" -> "phone"
-        "Full Name" -> "fullName"
-        "Confirm Password" -> "confirmPassword"
-        "Hotel's name" -> "hotelName"
-        "Hotel's address" -> "hotelAddress"
-        "Description" -> "description"
+        fields[0] -> "username"
+        fields[1] -> "fullName"
+        fields[2] -> "email"
+        fields[3] -> "phone"
+        fields[4] -> "password"
+        fields[5] -> "confirmPassword"
+        fields[6] -> "hotelName"
+        fields[7] -> "hotelAddress"
+        fields[8] -> "description"
         else -> "not found"
     }
 }
