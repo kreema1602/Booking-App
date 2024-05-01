@@ -363,13 +363,28 @@ suspend fun performValidation(
 
     for ((field, value) in fieldsCheckMap) {
         if (value.isEmpty()) {
-            // format the field name to be more readable
             val formattedField = field.replaceFirstChar { it.uppercase() }
             val splitField = formattedField.replace(Regex("([a-z])([A-Z])"), "$1 $2")
 
             Toast.makeText(context, "$splitField is empty", Toast.LENGTH_SHORT).show()
             return
         }
+    }
+
+    // Check format of email
+    val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+.[A-Za-z0-9.-]\$"
+    if (!fieldsCheckMap["email"]?.matches(emailRegex.toRegex())!!) {
+        Log.i("SignUpForm", "Invalid email format")
+        Toast.makeText(context, "Invalid email format", Toast.LENGTH_SHORT).show()
+        return
+    }
+
+    // Check format of phone number
+    val phoneRegex = "^[0-9]{10,11}\$"
+    if (!fieldsCheckMap["phone"]?.matches(phoneRegex.toRegex())!!) {
+        Log.i("SignUpForm", "Invalid phone number format")
+        Toast.makeText(context, "Invalid phone number format", Toast.LENGTH_SHORT).show()
+        return
     }
 
     if (!fieldsCheckMap["password"].equals(fieldsCheckMap["confirmPassword"])) {
