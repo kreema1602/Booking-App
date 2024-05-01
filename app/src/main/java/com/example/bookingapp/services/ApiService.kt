@@ -4,6 +4,7 @@ import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.requests.CusRegisterRequest
 import com.example.bookingapp.models.requests.LoginRequest
 import com.example.bookingapp.models.requests.ModRegisterRequest
+import com.example.bookingapp.models.requests.VerifyOTPRequest
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Response
@@ -20,6 +21,15 @@ interface ApiService {
 
     @POST("/auth/register")
     suspend fun registerModerator(@Body request: ModRegisterRequest): Response<ApiResponse>
+
+    @POST("/auth/forgot-password")
+    suspend fun forgotPassword(@Body request: LoginRequest): Response<ApiResponse>
+
+    @POST("/auth/reset-password")
+    suspend fun resetPassword(@Body request: LoginRequest): Response<ApiResponse>
+
+    @POST("/auth/verify-otp")
+    suspend fun verifyOTP(@Body request: VerifyOTPRequest): Response<ApiResponse>
 
     // Amenity
     @GET("/{role}/amenity")

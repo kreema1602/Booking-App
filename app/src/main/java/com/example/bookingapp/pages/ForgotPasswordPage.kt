@@ -149,11 +149,11 @@ fun ForgotPasswordContent(
                     .padding(vertical = 5.dp, horizontal = 0.dp)
                     .border(1.dp, Color(0xFFDEE7F5), shape = RoundedCornerShape(100)),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color(0xFFf9f9f9), // Modify background color
-                    focusedIndicatorColor = Color.Transparent, // Remove the focus indicator
-                    unfocusedIndicatorColor = Color.Transparent, // Remove the unfocused indicator
-                    cursorColor = Color(0xFFff6400), // Modify cursor color
-                    textColor = Color(0xFF000000), // Modify text color
+                    backgroundColor = Color(0xFFf9f9f9),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = Color(0xFFff6400),
+                    textColor = Color(0xFF000000),
                 ),
             )
         }
@@ -193,9 +193,6 @@ fun SendCode(
     navController: NavController,
     onDismissRequest: () -> Unit
 ){
-    // Check username
-    // Call api send code to email
-
     ShowOTPDialog(navController = navController, onDismissRequest = { onDismissRequest() }, onConfirmation = { /*TODO*/ })
 }
 
