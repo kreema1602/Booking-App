@@ -48,7 +48,7 @@ fun ModRoomAdd(onBack: () -> Unit) {
         ) {
             item {
                 TopAppBar(title = "Detail", onClick = onBack)
-                EditCarousel(initialItems = room.images)
+//                EditCarousel(initialItems = room.images)
                 Text(
                     text = "Room",
                     style = MaterialTheme.typography.titleLarge.copy(

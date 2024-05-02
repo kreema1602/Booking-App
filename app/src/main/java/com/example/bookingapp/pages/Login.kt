@@ -324,7 +324,6 @@ fun performLogin(
     username: String,
     password: String
 ) {
-    Log.i("Login", "Username: $username, Password: $password")
     CoroutineScope(Dispatchers.Main).launch {
         try {
             if (username.isEmpty() || password.isEmpty()) {

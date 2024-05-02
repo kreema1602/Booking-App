@@ -44,9 +44,9 @@ fun CusRoomDetail(navController: NavController, roomId: Int, onBack: () -> Unit)
         ) {
             item {
                 TopAppBar(title = "Detail", onClick = onBack)
-                Carousel(itemList = room.images)
+//                Carousel(itemList = room.images)
                 Text(
-                    text = room.name + " (" + room.type + ")",
+                    text = room.name + " (Standard room)",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight(650),
                         fontSize = 26.sp
@@ -62,7 +62,7 @@ fun CusRoomDetail(navController: NavController, roomId: Int, onBack: () -> Unit)
                     fontSize = 20.sp
                 )
                 ExpandableText(
-                    text = room.desc,
+                    text = "Description of the room",
                     maxLines = 2,
                     color = OrangePrimary,
                     onClick = {}

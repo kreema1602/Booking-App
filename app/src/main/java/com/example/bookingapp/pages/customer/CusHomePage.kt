@@ -32,6 +32,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,7 +59,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun CusHomePage(
-    showRoomScreen: (Int) -> Unit
+    showRoomScreen: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -95,9 +96,9 @@ fun CusHomePage(
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun HotelList(showRoomScreen: (Int) -> Unit) {
+fun HotelList(showRoomScreen: (String) -> Unit) {
     var hotelData by rememberSaveable { mutableStateOf(listOf<Account>()) }
-    CoroutineScope(Dispatchers.Main).launch {
+    LaunchedEffect(Unit) {
         hotelData = getHotelData()
     }
     LazyColumn(
@@ -108,7 +109,6 @@ fun HotelList(showRoomScreen: (Int) -> Unit) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(hotelData.size) { index ->
-            Log.d("CusHomePage", "HotelList: ${hotelData[index]}")
             HotelItem(showRoomScreen, hotelData[index])
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -159,13 +159,13 @@ fun SearchBar() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HotelItem(showRoomScreen: (Int) -> Unit, hotel: Account) {
+fun HotelItem(showRoomScreen: (String) -> Unit, hotel: Account) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(10.dp),
-        onClick = { showRoomScreen(123) }
+        onClick = { showRoomScreen(hotel._id) }
     ) {
         Column {
             Box(
@@ -180,7 +180,9 @@ fun HotelItem(showRoomScreen: (Int) -> Unit, hotel: Account) {
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
-                HotelDescription(modifier = Modifier.align(Alignment.BottomStart).background(Color.Black.copy(alpha = 0.5f)),
+                HotelDescription(modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .background(Color.Black.copy(alpha = 0.5f)),
                     hotel)
             }
         }
@@ -193,8 +195,8 @@ fun HotelDescription(modifier: Modifier, hotel: Account) {
     var rating by rememberSaveable { mutableDoubleStateOf(0.0) }
     var price by rememberSaveable { mutableStateOf(Pair(0.0, 0.0)) }
 
-    CoroutineScope(Dispatchers.Main).launch {
-        rating = getAvaregeRating(hotel._id)
+    LaunchedEffect(key1 = Unit) {
+        rating = getAverageRating(hotel._id)
         price = getPriceRange(hotel._id)
     }
     Column(
@@ -271,12 +273,12 @@ suspend fun getHotelData(): List<Account> {
     }
 }
 
-suspend fun getAvaregeRating(hotelId: String): Double {
+suspend fun getAverageRating(hotelId: String): Double {
     return withContext(Dispatchers.IO) {
         try {
             MainViewModel.cusHotelRoomViewModel.getAverageRating(hotelId)
         } catch (e: Exception) {
-            Log.d("CusHomePage", "getAvaregeRating: ${e.message}")
+            Log.d("CusHomePage", "getAverageRating: ${e.message}")
             0.0
         }
     }
