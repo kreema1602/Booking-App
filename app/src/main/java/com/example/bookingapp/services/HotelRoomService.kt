@@ -71,8 +71,8 @@ object HotelRoomService {
                 val apiResponse = response.body() as ApiResponse
                 val data = JSONObject(apiResponse.data.toString())
 
-                val minPrice = data.getString("min").toDouble()
-                val maxPrice = data.getString("max").toDouble()
+                val minPrice = data.getString("min").toDouble() / 1000.0
+                val maxPrice = data.getString("max").toDouble() / 1000.0
                 Pair(minPrice, maxPrice)
             } else {
                 val errorBody = response.errorBody()?.string()

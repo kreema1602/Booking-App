@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -46,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -248,13 +250,17 @@ fun HotelDescription(modifier: Modifier, hotel: Account) {
                     tint = Color.White
                 )
                 Text(
-                    text = hotel.hotelAddress,
+                    text = hotel.hotelAddress.split(",")[0].trim(),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White
+                    color = Color.White,
+                    maxLines = 1,
+                    modifier = Modifier.widthIn(max = 150.dp),
+                    textAlign = TextAlign.Start
                 )
             }
+
             Text(
-                text = "Price: ${price.first} - ${price.second}",
+                text = "Price: ${price.first}K - ${price.second}K",
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White
             )
