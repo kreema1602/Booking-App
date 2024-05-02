@@ -9,10 +9,22 @@ import androidx.lifecycle.ViewModel
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.Amenity
 import com.example.bookingapp.models.Room
+import com.example.bookingapp.models.RoomFullDetail
 import com.example.bookingapp.services.HotelRoomService
 
 class CusHotelRoomViewModel: ViewModel() {
     var selectedHotelId by mutableStateOf("")
+    var room by mutableStateOf(emptyList<RoomFullDetail>())
+    var hotel by mutableStateOf(Account())
+
+    suspend fun fetchHotelData() {
+        try {
+            hotel = getHotel(selectedHotelId)
+            room = getRoomData(selectedHotelId)
+        } catch (e: Exception) {
+            throw Exception("CusHotelRoomViewModel: ${e.message}")
+        }
+    }
 
     suspend fun getHotels(): List<Account> {
         try {
@@ -47,9 +59,9 @@ class CusHotelRoomViewModel: ViewModel() {
         }
     }
 
-    suspend fun getRoomData(hotelId: String): List<Room> {
+    suspend fun getRoomData(hotelId: String): List<RoomFullDetail> {
         try {
-            return HotelRoomService.getRoomData(hotelId)
+            return HotelRoomService.getRoomFullDetail(hotelId)
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }

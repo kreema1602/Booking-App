@@ -13,45 +13,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.mock_data.RoomData
+import com.example.bookingapp.pages.customer.amenityMap
+
+val facilityMap = mapOf(
+    "Area" to "https://img.icons8.com/ios/24/page-size.png",
+    "Bedroom" to "https://img.icons8.com/ios/24/bedroom.png",
+    "Guest" to R.drawable.ic_person,
+    "Bathroom" to "https://img.icons8.com/ios/24/bath.png"
+)
 
 @Composable
-fun FacilityList() {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(bottom = 4.dp)
-//    ) {
-//        data class Facility(val type: String, val value: String)
-//
-//        val facilities = RoomData.data[0].facilities
-//        // Loop through facilities
-//        facilities.forEach { facility ->
-//            val icon = when (facility.first) {
-//                "Area" -> R.drawable.ic_zoom_out
-//                "Bed" -> R.drawable.ic_bed
-//                "Capacity" -> R.drawable.ic_person
-//                "Bathroom" -> R.drawable.ic_bathroom
-//                else -> R.drawable.ic_zoom_out
-//            }
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                modifier = Modifier.padding(end = 8.dp)
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = icon),
-//                    contentDescription = null,
-//                    modifier = Modifier
-//                        .size(30.dp)
-//                        .padding(end = 4.dp, top = 4.dp, bottom = 4.dp),
-//                    tint = Color.Black
-//                )
-//                Text(
-//                    text = facility.second,
-//                    style = MaterialTheme.typography.bodyMedium,
-//                )
-//            }
-//        }
-//    }
+fun FacilityList(map: Map<String, String>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 6.dp, start = 4.dp)
+    ) {
+        map.forEach { facility ->
+            val icon = facilityMap[facility.key] ?: R.drawable.ic_person
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(end = 12.dp)
+            ) {
+                AsyncImage(
+                    model = facilityMap[facility.key] ?: "",
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = facility.value,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+    }
 }

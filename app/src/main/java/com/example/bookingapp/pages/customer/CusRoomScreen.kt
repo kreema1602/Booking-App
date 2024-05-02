@@ -1,6 +1,5 @@
 package com.example.bookingapp.pages.customer
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -67,6 +66,7 @@ import com.example.bookingapp.core.ui.theme.WarningSecondary
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.Amenity
 import com.example.bookingapp.models.Room
+import com.example.bookingapp.models.RoomFullDetail
 import com.example.bookingapp.services.HotelRoomService.getHotelAmenities
 import com.example.bookingapp.view_models.MainViewModel
 import kotlinx.coroutines.Dispatchers
@@ -74,15 +74,22 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (Int) -> Unit) {
-    var room by rememberSaveable { mutableStateOf(emptyList<Room>()) }
     var hotel by rememberSaveable { mutableStateOf(Account()) }
+    var room by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
+    var standardRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
+    var superiorRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
+    var deluxeRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
+    var suiteRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
 
     LaunchedEffect(Unit) {
-//        MainViewModel.cusHotelRoomViewModel.fetchData(MainViewModel.cusHotelRoomViewModel.selectedHotelId)
-//        room = MainViewModel.cusHotelRoomViewModel.room
-//        hotel = MainViewModel.cusHotelRoomViewModel.hotel
-        room = getRoomData()
-        hotel = getHotel()
+        MainViewModel.cusHotelRoomViewModel.fetchHotelData()
+        hotel = MainViewModel.cusHotelRoomViewModel.hotel
+        room = MainViewModel.cusHotelRoomViewModel.room
+
+        standardRoom = room.filter { it.roomType == "Standard Room" }
+        superiorRoom = room.filter { it.roomType == "Superior Room" }
+        deluxeRoom = room.filter { it.roomType == "Deluxe Room" }
+        suiteRoom = room.filter { it.roomType == "Suite Room" }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -95,12 +102,32 @@ fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (Int) -> Unit) {
             item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
             item { HotelFacilities() }
             item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
-//            item { RoomList(title = "Standard", showRoomDetail) }
-//            item { MySpacer(height = 8.dp) }
-//            item { RoomList(title = "Deluxe", showRoomDetail) }
-//            item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
-//            item { CommentsList() }
-//            item { MySpacer(height = 100.dp, color = Color.Transparent) }
+
+            if (standardRoom.isNotEmpty()) {
+                item {
+                    RoomList(title = "Standard", showRoomDetail, standardRoom)
+                }
+                item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
+            }
+            if (superiorRoom.isNotEmpty()) {
+                item {
+                    RoomList(title = "Superior", showRoomDetail, superiorRoom)
+                }
+                item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
+            }
+            if (deluxeRoom.isNotEmpty()) {
+                item {
+                    RoomList(title = "Deluxe", showRoomDetail, deluxeRoom)
+                }
+                item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
+            }
+            if (suiteRoom.isNotEmpty()) {
+                item {
+                    RoomList(title = "Suite", showRoomDetail, suiteRoom)
+                }
+                item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
+            }
+            item { MySpacer(height = 100.dp, color = Color.Transparent) }
         }
         Column(
             modifier = Modifier
@@ -274,7 +301,7 @@ fun HotelFacilities() {
                         )
                     ) {
                         AsyncImage(
-                            model = facilityMap[amenity.name]!!,
+                            model = amenityMap[amenity.name]!!,
                             contentDescription = null,
                             modifier = Modifier.size(24.dp)
                         )
@@ -294,7 +321,7 @@ fun HotelFacilities() {
 }
 
 // facility hashmap
-val facilityMap = mapOf(
+val amenityMap = mapOf(
     "Wifi" to R.drawable.ic_wifi,
     "Pool" to R.drawable.ic_swimming_pool,
     "Towel" to "https://img.icons8.com/ios/50/towel.png",
@@ -310,7 +337,7 @@ val facilityMap = mapOf(
 )
 
 @Composable
-fun RoomList(title: String, showRoomDetail: (Int) -> Unit) {
+fun RoomList(title: String, showRoomDetail: (Int) -> Unit, rooms: List<RoomFullDetail>) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -325,8 +352,8 @@ fun RoomList(title: String, showRoomDetail: (Int) -> Unit) {
         )
         LazyRow(
             content = {
-                items(5) {
-                    RoomListItem(showRoomDetail)
+                items(rooms) { room ->
+                    RoomListItem(showRoomDetail, room)
                 }
             }
         )
@@ -335,7 +362,7 @@ fun RoomList(title: String, showRoomDetail: (Int) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RoomListItem(showRoomDetail: (Int) -> Unit) {
+fun RoomListItem(showRoomDetail: (Int) -> Unit, room: RoomFullDetail) {
     Card(
         modifier = Modifier
             .padding(12.dp)
@@ -350,14 +377,15 @@ fun RoomListItem(showRoomDetail: (Int) -> Unit) {
                     .height(200.dp)
                     .width(320.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.hotel2),
+                AsyncImage(
+                    model = room.image[0],
+                    placeholder = painterResource(id = R.drawable.placeholder),
                     contentDescription = null,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxWidth().heightIn(max = 180.dp)
                 )
                 // State
-                val state = "Available"
+                val state = if (room.isBooked) "Full" else "Available"
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -410,7 +438,7 @@ fun RoomListItem(showRoomDetail: (Int) -> Unit) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Standard Room",
+                            text = room.name,
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
@@ -419,7 +447,7 @@ fun RoomListItem(showRoomDetail: (Int) -> Unit) {
                             modifier = Modifier.padding(8.dp)
                         )
                         Text(
-                            text = "123.000 VND / night",
+                            text = "${room.price} VND / night",
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 fontSize = 14.sp
                             ),
@@ -427,7 +455,12 @@ fun RoomListItem(showRoomDetail: (Int) -> Unit) {
                             modifier = Modifier.padding(8.dp)
                         )
                     }
-                    FacilityList()
+                    FacilityList(mapOf(
+                        "Area" to "${room.area} m²",
+                        "Bedroom" to "${room.bedroom}",
+                        "Guest" to "${room.guest}",
+                        "Bathroom" to "${room.bathroom}"
+                    ))
                 }
             }
         }
@@ -503,28 +536,6 @@ fun Comment() {
             modifier = Modifier.padding(bottom = 8.dp)
         )
         MySpacer(height = 0.5.dp, color = Color.Black)
-    }
-}
-
-suspend fun getRoomData(): List<Room> {
-    return withContext(Dispatchers.IO) {
-        try {
-            MainViewModel.cusHotelRoomViewModel.getRoomData(MainViewModel.cusHotelRoomViewModel.selectedHotelId)
-        } catch (e: Exception) {
-            Log.e("CusRoomScreen", e.message.toString())
-            emptyList()
-        }
-    }
-}
-
-suspend fun getHotel(): Account {
-    return withContext(Dispatchers.IO) {
-        try {
-            MainViewModel.cusHotelRoomViewModel.getHotel(MainViewModel.cusHotelRoomViewModel.selectedHotelId)
-        } catch (e: Exception) {
-            Log.e("CusRoomScreen", e.message.toString())
-            Account()
-        }
     }
 }
 

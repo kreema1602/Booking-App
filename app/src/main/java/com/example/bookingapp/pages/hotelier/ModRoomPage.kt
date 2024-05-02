@@ -318,7 +318,7 @@ fun RoomListItem(showRoomEdit: (Int) -> Unit) {
                             modifier = Modifier.padding(8.dp)
                         )
                     }
-                    FacilityList()
+//                    FacilityList()
                 }
             }
         }

@@ -4,6 +4,7 @@ import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.Amenity
 import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.Room
+import com.example.bookingapp.models.RoomFullDetail
 import com.example.bookingapp.view_models.MainViewModel.authViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -85,9 +86,9 @@ object HotelRoomService {
         }
     }
 
-    suspend fun getRoomData(hotelId: String): List<Room> {
+    suspend fun getRoomFullDetail(hotelId: String): List<RoomFullDetail> {
         try {
-            val response = apiService.getRoomData(authViewModel.account.role, hotelId)
+            val response = apiService.getRoomFullDetail(authViewModel.account.role, hotelId)
             val statusCode = response.code()
 
             return if (statusCode == 200) {
@@ -95,7 +96,7 @@ object HotelRoomService {
 
                 Gson().fromJson(
                     Gson().toJson(apiResponse.data),
-                    object : TypeToken<List<Room>>() {}.type
+                    object : TypeToken<List<RoomFullDetail>>() {}.type
                 )
             } else {
                 val errorBody = response.errorBody()?.string()

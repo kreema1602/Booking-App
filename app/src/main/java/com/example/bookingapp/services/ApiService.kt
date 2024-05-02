@@ -41,6 +41,6 @@ interface ApiService {
     @GET("/{role}/hotel/price/{hotelId}")
     suspend fun getPriceRange(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
 
-    @GET("/{role}/room/{hotelId}")
-    suspend fun getRoomData(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
+    @GET("/{role}/room/{hotelId}?is_full_detail=true")
+    suspend fun getRoomFullDetail(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
 }

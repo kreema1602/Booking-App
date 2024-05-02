@@ -53,7 +53,7 @@ fun CusRoomDetail(navController: NavController, roomId: Int, onBack: () -> Unit)
                     ),
                     modifier = Modifier.padding(top = 8.dp)
                 )
-                FacilityList()
+//                FacilityList()
                 Text(
                     text = "Description",
                     style = MaterialTheme.typography.titleMedium.copy(
