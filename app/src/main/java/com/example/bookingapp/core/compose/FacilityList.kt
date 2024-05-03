@@ -1,5 +1,6 @@
 package com.example.bookingapp.core.compose
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,12 +31,15 @@ fun FacilityList(map: Map<String, String>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 6.dp, start = 4.dp)
+            .padding(bottom = 6.dp, start = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
     ) {
         map.forEach { facility ->
             val icon = facilityMap[facility.key] ?: R.drawable.ic_person
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier.padding(end = 12.dp)
             ) {
                 AsyncImage(

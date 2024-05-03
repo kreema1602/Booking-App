@@ -27,15 +27,15 @@ import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.FacilityList
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.TopAppBar
-import com.example.bookingapp.mock_data.RoomData
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.PaymentData
 import com.example.bookingapp.navigation.CustomerLeafScreen
+import com.example.bookingapp.view_models.MainViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CusRoomDetail(navController: NavController, roomId: Int, onBack: () -> Unit) {
-    val room = RoomData.data[0]
+fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
+    val room = MainViewModel.cusHotelRoomViewModel.room.filter { it._id == MainViewModel.cusHotelRoomViewModel.selectedRoomId }[0]
     Box {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -44,16 +44,21 @@ fun CusRoomDetail(navController: NavController, roomId: Int, onBack: () -> Unit)
         ) {
             item {
                 TopAppBar(title = "Detail", onClick = onBack)
-//                Carousel(itemList = room.images)
+                Carousel(itemList = room.image)
                 Text(
-                    text = room.name + " (Standard room)",
+                    text = room.name + " (${room.roomType})",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight(650),
                         fontSize = 26.sp
                     ),
                     modifier = Modifier.padding(top = 8.dp)
                 )
-//                FacilityList()
+                FacilityList(mapOf(
+                    "Area" to "${room.area} m²",
+                    "Bedroom" to "${room.bedroom}",
+                    "Guest" to "${room.guest}",
+                    "Bathroom" to "${room.bathroom}"
+                ))
                 Text(
                     text = "Description",
                     style = MaterialTheme.typography.titleMedium.copy(
@@ -62,7 +67,7 @@ fun CusRoomDetail(navController: NavController, roomId: Int, onBack: () -> Unit)
                     fontSize = 20.sp
                 )
                 ExpandableText(
-                    text = "Description of the room",
+                    text = room.description,
                     maxLines = 2,
                     color = OrangePrimary,
                     onClick = {}
@@ -115,7 +120,7 @@ fun CusRoomDetail(navController: NavController, roomId: Int, onBack: () -> Unit)
                 calendar = true,
                 price = "400.000",
                 buttonText = "Book",
-                onClick = {navController.navigate(CustomerLeafScreen.Payment.route + "/$roomId")}
+                onClick = {navController.navigate(CustomerLeafScreen.Payment.route + "/${MainViewModel.cusHotelRoomViewModel.selectedRoomId}")}
             )
         }
     }

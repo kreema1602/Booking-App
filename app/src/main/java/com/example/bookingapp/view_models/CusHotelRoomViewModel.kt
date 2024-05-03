@@ -11,16 +11,21 @@ import com.example.bookingapp.models.Amenity
 import com.example.bookingapp.models.Room
 import com.example.bookingapp.models.RoomFullDetail
 import com.example.bookingapp.services.HotelRoomService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class CusHotelRoomViewModel: ViewModel() {
     var selectedHotelId by mutableStateOf("")
+    var selectedRoomId by mutableStateOf("")
     var room by mutableStateOf(emptyList<RoomFullDetail>())
     var hotel by mutableStateOf(Account())
 
     suspend fun fetchHotelData() {
         try {
-            hotel = getHotel(selectedHotelId)
-            room = getRoomData(selectedHotelId)
+            withContext(Dispatchers.IO) {
+                hotel = getHotel(selectedHotelId)
+                room = getRoomData(selectedHotelId)
+            }
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
@@ -28,7 +33,7 @@ class CusHotelRoomViewModel: ViewModel() {
 
     suspend fun getHotels(): List<Account> {
         try {
-            return HotelRoomService.getHotels()
+            return withContext(Dispatchers.IO) { HotelRoomService.getHotels() }
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
@@ -36,7 +41,7 @@ class CusHotelRoomViewModel: ViewModel() {
 
     suspend fun getHotel(hotelId: String): Account {
         try {
-            return HotelRoomService.getHotel(hotelId)
+            return withContext(Dispatchers.IO) { HotelRoomService.getHotel(hotelId) }
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
@@ -44,8 +49,7 @@ class CusHotelRoomViewModel: ViewModel() {
 
     suspend fun getAverageRating(hotelId: String): Double {
         try {
-            Log.d("CusHotelRoomViewModel", "getAverageRating: $hotelId")
-            return HotelRoomService.getAvaregeRating(hotelId)
+            return withContext(Dispatchers.IO) { HotelRoomService.getAvaregeRating(hotelId) }
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
@@ -53,7 +57,7 @@ class CusHotelRoomViewModel: ViewModel() {
 
     suspend fun getPriceRange(hotelId: String): Pair<Double, Double> {
         try {
-            return HotelRoomService.getPriceRange(hotelId)
+            return withContext(Dispatchers.IO) { HotelRoomService.getPriceRange(hotelId) }
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
@@ -61,7 +65,7 @@ class CusHotelRoomViewModel: ViewModel() {
 
     suspend fun getRoomData(hotelId: String): List<RoomFullDetail> {
         try {
-            return HotelRoomService.getRoomFullDetail(hotelId)
+            return withContext(Dispatchers.IO) { HotelRoomService.getRoomFullDetail(hotelId) }
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
@@ -69,7 +73,7 @@ class CusHotelRoomViewModel: ViewModel() {
 
     suspend fun getHotelAmenities(hotelId: String): List<Amenity> {
         try {
-            return HotelRoomService.getHotelAmenities(hotelId)
+            return withContext(Dispatchers.IO) { HotelRoomService.getHotelAmenities(hotelId) }
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }

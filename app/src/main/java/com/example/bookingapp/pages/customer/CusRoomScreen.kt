@@ -1,7 +1,7 @@
 package com.example.bookingapp.pages.customer
 
+import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -65,15 +66,15 @@ import com.example.bookingapp.core.ui.theme.WarningPrimary
 import com.example.bookingapp.core.ui.theme.WarningSecondary
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.Amenity
-import com.example.bookingapp.models.Room
 import com.example.bookingapp.models.RoomFullDetail
 import com.example.bookingapp.services.HotelRoomService.getHotelAmenities
 import com.example.bookingapp.view_models.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (Int) -> Unit) {
+fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (String) -> Unit) {
     var hotel by rememberSaveable { mutableStateOf(Account()) }
     var room by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
     var standardRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
@@ -81,7 +82,9 @@ fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (Int) -> Unit) {
     var deluxeRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
     var suiteRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
 
-    LaunchedEffect(Unit) {
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = Unit) {
         MainViewModel.cusHotelRoomViewModel.fetchHotelData()
         hotel = MainViewModel.cusHotelRoomViewModel.hotel
         room = MainViewModel.cusHotelRoomViewModel.room
@@ -90,6 +93,7 @@ fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (Int) -> Unit) {
         superiorRoom = room.filter { it.roomType == "Superior Room" }
         deluxeRoom = room.filter { it.roomType == "Deluxe Room" }
         suiteRoom = room.filter { it.roomType == "Suite Room" }
+
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -151,7 +155,9 @@ fun HotelImage(imageUrl: String, onBack: () -> Unit) {
             placeholder = painterResource(id = R.drawable.placeholder),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxWidth().heightIn(max = 280.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 280.dp)
         )
         TopBar(onBack)
     }
@@ -308,7 +314,10 @@ fun HotelFacilities() {
                         Text(
                             text = amenity.name,
                             style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(bottom = 4.dp).widthIn(max = 68.dp).align(Alignment.CenterHorizontally),
+                            modifier = Modifier
+                                .padding(bottom = 4.dp)
+                                .widthIn(max = 68.dp)
+                                .align(Alignment.CenterHorizontally),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             textAlign = TextAlign.Center
@@ -337,7 +346,7 @@ val amenityMap = mapOf(
 )
 
 @Composable
-fun RoomList(title: String, showRoomDetail: (Int) -> Unit, rooms: List<RoomFullDetail>) {
+fun RoomList(title: String, showRoomDetail: (String) -> Unit, rooms: List<RoomFullDetail>) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -362,14 +371,14 @@ fun RoomList(title: String, showRoomDetail: (Int) -> Unit, rooms: List<RoomFullD
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RoomListItem(showRoomDetail: (Int) -> Unit, room: RoomFullDetail) {
+fun RoomListItem(showRoomDetail: (String) -> Unit, room: RoomFullDetail) {
     Card(
         modifier = Modifier
             .padding(12.dp)
             .width(320.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(10.dp),
-        onClick = { showRoomDetail(123) }
+        onClick = { showRoomDetail(room._id) }
     ) {
         Column {
             Box(
@@ -382,7 +391,9 @@ fun RoomListItem(showRoomDetail: (Int) -> Unit, room: RoomFullDetail) {
                     placeholder = painterResource(id = R.drawable.placeholder),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxWidth().heightIn(max = 180.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 180.dp)
                 )
                 // State
                 val state = if (room.isBooked) "Full" else "Available"

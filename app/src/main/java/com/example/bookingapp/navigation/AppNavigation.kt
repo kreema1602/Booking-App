@@ -143,8 +143,10 @@ private fun NavGraphBuilder.showCusRoomScreen(navController: NavController) {
 
 private fun NavGraphBuilder.showCusRoomDetail(navController: NavController) {
     composable(CustomerLeafScreen.RoomDetail.route + "/{roomId}") {
-        val roomId = it.arguments?.getString("roomId")?.toInt() ?: 0
-        CusRoomDetail(navController, roomId, onBack = {
+        val roomId = it.arguments?.getString("roomId") ?: ""
+
+        MainViewModel.cusHotelRoomViewModel.selectedRoomId = roomId
+        CusRoomDetail(navController, onBack = {
             navController.navigateUp()
         })
     }
