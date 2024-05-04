@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.HistoryCard
+import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.ui.theme.Black
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 
