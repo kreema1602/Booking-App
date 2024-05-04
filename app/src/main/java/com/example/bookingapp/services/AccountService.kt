@@ -36,7 +36,8 @@ object AccountService {
                 RetrofitClient.clearAuthToken()
 
                 val errorBody = response.errorBody()?.string()
-                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
+                val errorResponse =
+                    Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
 
                 throw Exception(errorResponse.message)
             }
@@ -62,6 +63,7 @@ object AccountService {
 
                     statusCode = response.code()
                 }
+
                 "moderator" -> {
                     val request = ModRegisterRequest(
                         fields["username"]!!,
@@ -76,6 +78,7 @@ object AccountService {
                     statusCode = response.code()
 
                 }
+
                 else -> {
                     throw Exception("Invalid role")
                 }
@@ -85,11 +88,37 @@ object AccountService {
                 return true
             } else {
                 val errorBody = response.errorBody()?.string()
-                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
+                val errorResponse =
+                    Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
 
                 throw Exception(errorResponse.message)
             }
 
+        } catch (e: Exception) {
+            throw Exception(e.message)
+        }
+    }
+
+    suspend fun updateAccount(fields: Map<String, String>, accId: String): Boolean {
+        try {
+            val request = CusRegisterRequest(
+                fields["username"]!!,
+                fields["password"]!!,
+                fields["fullName"]!!,
+                "customer"
+            )
+
+            val response = apiService.updateAccount(accId, request)
+            val statusCode = response.code()
+
+            return if (statusCode == 200) {
+                true
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
+
+                throw Exception(errorResponse.message)
+            }
         } catch (e: Exception) {
             throw Exception(e.message)
         }

@@ -11,4 +11,5 @@ data class Room(
     var images: List<Int>,
     var facilities: List<Pair<String, String>>,
     var type: String,
-) : Serializable
+) : Serializable {
+}

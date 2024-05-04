@@ -365,7 +365,6 @@ suspend fun performValidation(
     }
 
     try {
-
         val result = withContext(Dispatchers.IO) {
             MainViewModel.authViewModel.register(fieldsCheckMap, role)
         }
