@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.mock_data.AccountData
+import com.example.bookingapp.pages.hotelier.mavenProFamily
 
 @Composable
 fun CusProfileFieldEditor(accId: Int, onBack: () -> Unit) {
