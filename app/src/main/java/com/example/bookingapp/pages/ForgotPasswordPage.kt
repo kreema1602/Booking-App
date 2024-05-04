@@ -1,11 +1,9 @@
 package com.example.bookingapp.pages
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,7 +36,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
@@ -419,12 +416,11 @@ fun nextFocus(
 ) {
     coroutineScope.launch {
         for (i in otp.indices) {
-            if(otp[i].value.text == ""){
-                if(i < otp.size){
-                    delay(100)
-                    focusRequesterList[i].requestFocus()
-                    break
-                }
+            if (otp[i].value.text != "") continue
+            if(i < otp.size){
+                delay(100)
+                focusRequesterList[i].requestFocus()
+                break
             }
         }
     }
@@ -437,16 +433,15 @@ fun previousFocus(
 ) {
     coroutineScope.launch {
         for (i in otp.indices) {
-            if(otp[i].value.text == ""){
-                if(i > 0){
-                    delay(100)
-                    otp[i-1].value = TextFieldValue(
-                        text = "",
-                        selection = TextRange(0)
-                    )
-                    focusRequesterList[i - 1].requestFocus()
-                    break
-                }
+            if (otp[i].value.text != "") continue
+            if(i > 0){
+                delay(100)
+                otp[i-1].value = TextFieldValue(
+                    text = "",
+                    selection = TextRange(0)
+                )
+                focusRequesterList[i - 1].requestFocus()
+                break
             }
         }
     }

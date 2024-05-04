@@ -51,6 +51,7 @@ import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.Hotel
+import com.example.bookingapp.navigation.RootScreen
 import com.example.bookingapp.view_models.MainViewModel
 
 
@@ -374,7 +375,7 @@ fun Logout(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 16.dp)
-            .clickable { navController.navigate(RootScreen.Login.route) },
+            .clickable { MainViewModel.authViewModel.logout() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

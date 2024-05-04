@@ -1,11 +1,12 @@
 package com.example.bookingapp.navigation
 
-sealed class RootScreen (val route: String) {
+sealed class RootScreen(val route: String) {
     object Login : RootScreen("login_root")
     object Customer : RootScreen("customer_root")
     object Moderator : RootScreen("moderator_root")
 }
-sealed class CustomerLeafScreen(val route: String){
+
+sealed class CustomerLeafScreen(val route: String) {
     object Home : CustomerLeafScreen("cus_home")
     object Reservation : CustomerLeafScreen("cus_reservation")
     object ReservationDetail : CustomerLeafScreen("cus_reservation_detail")
@@ -14,8 +15,12 @@ sealed class CustomerLeafScreen(val route: String){
     object ProfileEditor : CustomerLeafScreen("cus_profile_editor")
     object Room : CustomerLeafScreen("cus_room")
     object RoomDetail : CustomerLeafScreen("cus_room_detail")
+    object Favorite : CustomerLeafScreen("cus_favorite")
+    object History : CustomerLeafScreen("cus_history")
+    object Payment : CustomerLeafScreen("cus_payment")
 }
-sealed class ModeratorLeafScreen(val route: String){
+
+sealed class ModeratorLeafScreen(val route: String) {
     object Home : ModeratorLeafScreen("mod_home")
     object Notification : ModeratorLeafScreen("mod_notification")
     object Profile : ModeratorLeafScreen("mod_profile")
@@ -26,7 +31,8 @@ sealed class ModeratorLeafScreen(val route: String){
     object RoomRemove : ModeratorLeafScreen("mod_room_remove")
     object History : ModeratorLeafScreen("mod_history")
 }
-sealed class GeneralLeafScreen(val route: String){
+
+sealed class GeneralLeafScreen(val route: String) {
     object Login : GeneralLeafScreen("login")
     object SignUp : GeneralLeafScreen("sign_up")
     object SignUpForm : GeneralLeafScreen("sign_up_form")

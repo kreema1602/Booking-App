@@ -93,7 +93,7 @@ fun LabelIcon(imgVector: ImageVector, text: String, modifier: Modifier) {
         Text(
             text = text,
             modifier = Modifier.padding(start = 8.dp),
-            fontFamily = FontFamily(mavenProFontFamily.first, mavenProFontFamily.second),
+            fontFamily = mavenProFontFamily,
             style = MaterialTheme.typography.labelMedium,
         )
     }
@@ -123,7 +123,7 @@ fun ModHomePage(navController: NavController) {
             Text(
                 text = "Haley Hotel",
                 style = MaterialTheme.typography.titleLarge,
-                fontFamily = FontFamily(mavenProFontFamily.first, mavenProFontFamily.second),
+                fontFamily = mavenProFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
                 textAlign = TextAlign.Center,
@@ -176,7 +176,7 @@ fun VerifyFragment() {
         Text(
             "Waiting for verify: $verifyCount",
             style = MaterialTheme.typography.titleLarge,
-            fontFamily = FontFamily(mavenProFontFamily.first, mavenProFontFamily.second),
+            fontFamily = mavenProFontFamily,
             fontWeight = FontWeight.Bold,
         )
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -352,7 +352,7 @@ fun RoomSearchBar() {
             Text(
                 text = "Search for a room",
                 style = MaterialTheme.typography.bodyLarge,
-                fontFamily = FontFamily(mavenProFontFamily.first, mavenProFontFamily.second),
+                fontFamily = mavenProFontFamily,
                 fontWeight = FontWeight.Medium,
                 color = Color.Gray
             )
@@ -445,10 +445,7 @@ fun BookingItem() {
                     Text(
                         text = "Room 101",
                         style = MaterialTheme.typography.titleLarge,
-                        fontFamily = FontFamily(
-                            mavenProFontFamily.first,
-                            mavenProFontFamily.second
-                        ),
+                        fontFamily = mavenProFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         color = OrangePrimary
                     )
@@ -459,20 +456,14 @@ fun BookingItem() {
                         Text(
                             text = "Check-in: ",
                             style = MaterialTheme.typography.bodyMedium,
-                            fontFamily = FontFamily(
-                                mavenProFontFamily.first,
-                                mavenProFontFamily.second
-                            ),
+                            fontFamily = mavenProFontFamily,
                             fontWeight = FontWeight.Medium,
                             color = Grey
                         )
                         Text(
                             text = "12/12/2021",
                             style = MaterialTheme.typography.bodyMedium,
-                            fontFamily = FontFamily(
-                                mavenProFontFamily.first,
-                                mavenProFontFamily.second
-                            ),
+                            fontFamily = mavenProFontFamily,
                             fontWeight = FontWeight.Medium,
                             color = Grey
                         )
@@ -484,20 +475,14 @@ fun BookingItem() {
                         Text(
                             text = "Check-out: ",
                             style = MaterialTheme.typography.bodyMedium,
-                            fontFamily = FontFamily(
-                                mavenProFontFamily.first,
-                                mavenProFontFamily.second
-                            ),
+                            fontFamily = mavenProFontFamily,
                             fontWeight = FontWeight.Medium,
                             color = Grey
                         )
                         Text(
                             text = "14/12/2021",
                             style = MaterialTheme.typography.bodyMedium,
-                            fontFamily = FontFamily(
-                                mavenProFontFamily.first,
-                                mavenProFontFamily.second
-                            ),
+                            fontFamily = mavenProFontFamily,
                             fontWeight = FontWeight.Medium,
                             color = Grey
                         )
@@ -561,10 +546,7 @@ fun ReservationItem(variant: ReservationStatus = ReservationStatus.CheckIn) {
                 Text(
                     text = "Room 101",
                     style = MaterialTheme.typography.titleLarge,
-                    fontFamily = FontFamily(
-                        mavenProFontFamily.first,
-                        mavenProFontFamily.second
-                    ),
+                    fontFamily = mavenProFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     color = OrangePrimary
                 )
@@ -581,10 +563,7 @@ fun ReservationItem(variant: ReservationStatus = ReservationStatus.CheckIn) {
                     Text(
                         text = "Username",
                         style = MaterialTheme.typography.bodyMedium,
-                        fontFamily = FontFamily(
-                            mavenProFontFamily.first,
-                            mavenProFontFamily.second
-                        ),
+                        fontFamily = mavenProFontFamily,
                         fontWeight = FontWeight.Medium,
                         color = Grey
                     )
@@ -603,10 +582,7 @@ fun ReservationItem(variant: ReservationStatus = ReservationStatus.CheckIn) {
                     Text(
                         text = "Sunday, 12/12/2021",
                         style = MaterialTheme.typography.bodyMedium,
-                        fontFamily = FontFamily(
-                            mavenProFontFamily.first,
-                            mavenProFontFamily.second
-                        ),
+                        fontFamily = mavenProFontFamily,
                         fontWeight = FontWeight.Medium,
                         color = Grey
                     )

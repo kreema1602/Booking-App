@@ -2,7 +2,6 @@ package com.example.bookingapp.pages.customer
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -22,10 +20,9 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -44,42 +40,43 @@ import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.mavenProFontFamily
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.AccountData
-import com.example.bookingapp.models.JoyhubAccount
+import com.example.bookingapp.models.Account
+import com.example.bookingapp.view_models.MainViewModel
 
 @Composable
-fun CusProfilePage(accId: Int, onClickEdit: (Int) -> Unit, onClickLogout: () -> Unit) {
+fun CusProfilePage(accId: Int, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        val acc = AccountData.sampleData.find { it.id == accId }!!
+        val acc = AccountData.sampleData.find { it._id == accId.toString() }!!
         Text(
             text = "Profile",
             fontSize = 30.sp,
-            fontFamily = FontFamily(mavenProFontFamily.first, mavenProFontFamily.second),
+            fontFamily = mavenProFontFamily,
             fontWeight = FontWeight.Bold,
         )
         NameTag(acc)
         Spacer(modifier = Modifier.padding(16.dp))
-        ConfigCard(acc, onClickEdit, onClickLogout)
+        ConfigCard(acc, onClickEdit, onClickLogout, onClickFavorite, onClickHistory)
     }
 }
 
 
 @Composable
-fun ConfigCard(acc: JoyhubAccount, onClickEdit: (Int) -> Unit, onClickLogout: () -> Unit) {
+fun ConfigCard(acc: Account, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
     Card {
         Column {
             ProfileEditor(acc, onClickEdit)
             RechargeJoycoin(acc)
-            RecentlyHistory(acc)
-            FavoriteList(acc)
+            RecentlyHistory(acc, onClickHistory)
+            FavoriteList(acc, onClickFavorite)
             LogOut(onClickLogout)
         }
     }
 }
 
 @Composable
-fun NameTag(acc: JoyhubAccount) {
+fun NameTag(acc: Account) {
     Card(colors = CardDefaults.cardColors(containerColor = OrangePrimary)) {
         Row(
             modifier = Modifier
@@ -100,9 +97,7 @@ fun NameTag(acc: JoyhubAccount) {
                     text = acc.username,
                     modifier = Modifier.fillMaxWidth(),
                     fontSize = 28.sp,
-                    fontFamily = FontFamily(
-                       mavenProFontFamily.first, mavenProFontFamily.second
-                    ),
+                    fontFamily = mavenProFontFamily,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
@@ -112,16 +107,14 @@ fun NameTag(acc: JoyhubAccount) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "JoyCoin", fontFamily = FontFamily(
-                            mavenProFontFamily.first, mavenProFontFamily.second
-                        ), fontSize = 16.sp, color = Color.White
+                        text = "JoyCoin", fontFamily = mavenProFontFamily,
+
+                        fontSize = 16.sp, color = Color.White
                     )
                     Text(
                         text = acc.wallet.toString(),
                         textAlign = TextAlign.End,
-                        fontFamily = FontFamily(
-                            mavenProFontFamily.first, mavenProFontFamily.second
-                        ),
+                        fontFamily = mavenProFontFamily,
                         fontSize = 16.sp,
                         color = Color.White
                     )
@@ -132,20 +125,19 @@ fun NameTag(acc: JoyhubAccount) {
 }
 
 @Composable
-fun ProfileEditor(acc: JoyhubAccount, onClickEdit: (Int) -> Unit) {
-    Log.i("Profile_main_screen", "Edit_user_profile: ${acc.email}")
+fun ProfileEditor(acc: Account, onClickEdit: (String) -> Unit) {
     val context = LocalContext.current
     val editLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
-            val editedAcc = data?.getSerializableExtra("ACCOUNT") as? JoyhubAccount
+            val editedAcc = data?.getSerializableExtra("ACCOUNT") as? Account
             acc.username = editedAcc!!.username
             acc.email = editedAcc.email
             acc.phone = editedAcc.phone
         }
     }
     Card(modifier = Modifier.clickable {
-        onClickEdit(acc.id)
+        onClickEdit(acc._id)
     }) {
         Row(
             modifier = Modifier
@@ -166,7 +158,7 @@ fun ProfileEditor(acc: JoyhubAccount, onClickEdit: (Int) -> Unit) {
 }
 
 @Composable
-fun RechargeJoycoin(acc: JoyhubAccount) {
+fun RechargeJoycoin(acc: Account) {
     Card {
         Row(
             modifier = Modifier
@@ -186,9 +178,14 @@ fun RechargeJoycoin(acc: JoyhubAccount) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecentlyHistory(acc: JoyhubAccount) {
-    Card {
+fun RecentlyHistory(acc: Account, onClickHistory: () -> Unit) {
+    Card(
+        onClick = {
+            onClickHistory()
+        }
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -207,9 +204,14 @@ fun RecentlyHistory(acc: JoyhubAccount) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoriteList(acc: JoyhubAccount) {
-    Card {
+fun FavoriteList(acc: Account, onClickFavorite: () -> Unit) {
+    Card(
+        onClick = {
+            onClickFavorite()
+        }
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -230,7 +232,7 @@ fun FavoriteList(acc: JoyhubAccount) {
 
 @Composable
 fun LogOut(onClickLogout: () -> Unit) {
-    Card( modifier = Modifier.clickable { onClickLogout() }) {
+    Card( modifier = Modifier.clickable { MainViewModel.authViewModel.logout() }) {
         Row(
             Modifier
                 .fillMaxWidth()

@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.core.ui.theme.OrangePrimary
-import com.example.bookingapp.pages.hotelier.mavenProFamily
+import com.example.bookingapp.pages.mavenProFamily
 
 @Composable
 fun HistoryCard(roomName: String, from: String, to: String, customerName: String) {

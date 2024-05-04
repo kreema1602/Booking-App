@@ -31,8 +31,8 @@ android {
         }
 
         debug {
-            buildConfigField("String", "BASE_URL", "\"https://95a8-113-161-39-209.ngrok-free.app/\"")
-//            buildConfigField("String", "BASE_URL", "\"https://88cf-183-80-39-221.ngrok-free.app/\"")
+            buildConfigField("String", "BASE_URL", "\"https://144d-113-161-89-145.ngrok-free.app/\"")
+            buildConfigField("String", "BASE_URL", "\"https://88cf-183-80-39-221.ngrok-free.app/\"")
         }
     }
     compileOptions {
@@ -44,6 +44,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
