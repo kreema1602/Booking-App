@@ -38,7 +38,8 @@ object AccountService {
                 RetrofitClient.clearAuthToken()
 
                 val errorBody = response.errorBody()?.string()
-                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
+                val errorResponse =
+                    Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
 
                 throw Exception(errorResponse.message)
             }
@@ -65,6 +66,7 @@ object AccountService {
 
                     statusCode = response.code()
                 }
+
                 "moderator" -> {
                     val request = ModRegisterRequest(
                         fields["username"]!!,
@@ -82,6 +84,7 @@ object AccountService {
                     statusCode = response.code()
 
                 }
+
                 else -> {
                     throw Exception("Invalid role")
                 }
@@ -91,7 +94,8 @@ object AccountService {
                 return true
             } else {
                 val errorBody = response.errorBody()?.string()
-                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
+                val errorResponse =
+                    Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
 
                 throw Exception(errorResponse.message)
             }

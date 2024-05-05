@@ -47,6 +47,8 @@ import com.example.bookingapp.view_models.CusHotelRoomViewModel
 import com.example.bookingapp.view_models.MainViewModel.accountViewModel
 import com.example.bookingapp.view_models.MainViewModel.authViewModel
 import com.example.bookingapp.view_models.MainViewModel.cusHotelRoomViewModel
+import com.example.bookingapp.view_models.MainViewModel.modHotelRoomViewModel
+import com.example.bookingapp.view_models.ModHotelRoomViewModel
 
 class MainActivity : FragmentActivity() {
     @SuppressLint("StaticFieldLeak")

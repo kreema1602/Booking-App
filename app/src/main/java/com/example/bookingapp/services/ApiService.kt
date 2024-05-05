@@ -1,6 +1,7 @@
 package com.example.bookingapp.services
 
 import com.example.bookingapp.models.ApiResponse
+import com.example.bookingapp.models.requests.CreateRoomReq
 import com.example.bookingapp.models.requests.CusRegisterRequest
 import com.example.bookingapp.models.requests.LoginRequest
 import com.example.bookingapp.models.requests.ModRegisterRequest
@@ -9,6 +10,7 @@ import com.example.bookingapp.models.requests.UpdateAccountRequest
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -39,6 +41,12 @@ interface ApiService {
     @PUT("/{role}/profile/{id}")
     suspend fun updateProfile(@Path("role") role: String, @Path("id") id: String, @Body request: UpdateAccountRequest): Response<ApiResponse>
 
+    @POST("/auth/update/{accId}")
+    suspend fun updateAccount(
+        @Path("accId") accId: String,
+        @Body request: CusRegisterRequest
+    ): Response<ApiResponse>
+
     // Amenity
     @GET("/{role}/amenity")
     suspend fun getAmenities(@Path("role") role: String): Response<ApiResponse>
@@ -61,4 +69,20 @@ interface ApiService {
 
     @GET("/{role}/room/{hotelId}?is_full_detail=true")
     suspend fun getRoomFullDetail(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
+    suspend fun getAverageRating(
+        @Path("role") role: String,
+        @Path("hotelId") hotelId: String
+    ): Response<ApiResponse>
+
+    @GET("/{role}/hotel/price/{hotelId}")
+    suspend fun getPriceRange(
+        @Path("role") role: String,
+        @Path("hotelId") hotelId: String
+    ): Response<ApiResponse>
+
+    @POST("/{role}/room")
+    suspend fun addRoom(
+        @Path("role") role: String,
+        @Body request: CreateRoomReq
+    ): Response<ApiResponse>
 }
