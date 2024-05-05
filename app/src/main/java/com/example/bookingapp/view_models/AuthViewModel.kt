@@ -22,6 +22,15 @@ class AuthViewModel(private val repository: AccountRepository) : ViewModel() {
     private val _loginStatus = MutableStateFlow<String>("")
     val loginStatus get() = _loginStatus.asStateFlow()
 
+    private val _validOTP = MutableStateFlow<Boolean?>(null)
+    val validOTP get() = _validOTP.asStateFlow()
+
+    private val _isForgot = MutableStateFlow<Boolean?>(null)
+    val isForgot get() = _isForgot.asStateFlow()
+
+    private val _isReset = MutableStateFlow<Boolean?>(null)
+    val isReset get() = _isReset.asStateFlow()
+
     init {
         loadAccount()
     }
@@ -91,27 +100,39 @@ class AuthViewModel(private val repository: AccountRepository) : ViewModel() {
         return repository.getCredentials()
     }
 
-    suspend fun verifyOTP(username: String, otp: String): Boolean {
-        try {
-            return AccountService.verifyOTP(username, otp)
-        } catch (e: Exception) {
-            throw Exception("${e.message}")
+    fun verifyOTP(username: String, otp: String): Boolean? {
+        viewModelScope.launch {
+
+            try {
+                _validOTP.value = AccountService.verifyOTP(username, otp)
+            } catch (e: Exception) {
+                throw Exception("${e.message}")
+            }
         }
+        return _validOTP.value
     }
 
-    suspend fun forgotPassword(username: String): Boolean {
-        try {
-            return AccountService.forgotPassword(username)
-        } catch (e: Exception) {
-            throw Exception("${e.message}")
+    fun forgotPassword(username: String): Boolean? {
+        viewModelScope.launch {
+
+            try {
+                _isForgot.value = AccountService.forgotPassword(username)
+            } catch (e: Exception) {
+                throw Exception("${e.message}")
+            }
         }
+        return _isForgot.value
     }
 
-    suspend fun resetPassword(username: String, password: String): Boolean {
-        try {
-            return AccountService.resetPassword(username, password)
-        } catch (e: Exception) {
-            throw Exception("${e.message}")
+    fun resetPassword(username: String, password: String): Boolean? {
+        viewModelScope.launch {
+
+            try {
+                _isReset.value = AccountService.resetPassword(username, password)
+            } catch (e: Exception) {
+                throw Exception("${e.message}")
+            }
         }
+        return _isReset.value
     }
 }

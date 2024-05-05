@@ -1,5 +1,6 @@
 package com.example.bookingapp.pages
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -34,15 +36,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.bookingapp.MainActivity
 import com.example.bookingapp.core.compose.FilledClipButton
 import com.example.bookingapp.core.compose.TopAppBar
-import com.example.bookingapp.view_models.MainViewModel
+import com.example.bookingapp.view_models.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NewPasswordPage(username: String, navController: NavController) {
@@ -60,7 +61,7 @@ fun NewPasswordPage(username: String, navController: NavController) {
                 onClick = { navController.popBackStack() },
             )
             TopTitle(title = "Create new password")
-            SubmitForm(username = username, navController = navController)
+            SubmitForm(username = username, navController = navController, context = LocalContext.current)
         }
     }
 }
@@ -99,7 +100,9 @@ fun TopTitle(
 @Composable
 fun SubmitForm(
     username: String,
-    navController: NavController
+    navController: NavController,
+    context: Context,
+    authViewModel: AuthViewModel = koinViewModel()
 ) {
     val password = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
@@ -123,17 +126,17 @@ fun SubmitForm(
                     val confirmNewPassword = confirmPassword.value
 
                     if (newPassword != confirmNewPassword) {
-                        Toast.makeText(MainActivity.context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
                     } else {
                         CoroutineScope(Dispatchers.Main).launch {
                             val result = withContext(Dispatchers.IO) {
-                                 MainViewModel.authViewModel.resetPassword(username, newPassword)
+                                 authViewModel.resetPassword(username, newPassword)
                             }
-                            if (result) {
-                                Toast.makeText(MainActivity.context, "Password reset successfully", Toast.LENGTH_SHORT).show()
+                            if (result == true) {
+                                Toast.makeText(context, "Password reset successfully", Toast.LENGTH_SHORT).show()
                                 navController.navigate("login")
                             } else {
-                                Toast.makeText(MainActivity.context, "Failed to reset password", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Failed to reset password", Toast.LENGTH_SHORT).show()
                                 navController.navigate("forgot_password")
                             }
                         }

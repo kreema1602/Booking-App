@@ -1,5 +1,6 @@
 package com.example.bookingapp.pages
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,23 +51,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.FilledClipButton
 import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.ui.theme.OrangePrimary
-import com.example.bookingapp.view_models.MainViewModel
+import com.example.bookingapp.view_models.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.Dispatchers
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ForgotPasswordPage(navController: NavController) {
@@ -103,11 +102,12 @@ fun ForgotImage(){
 
 @Composable
 fun ForgotPasswordContent(
-    navController: NavController
+    navController: NavController,
+    authViewModel: AuthViewModel = koinViewModel()
 ) {
     val usernameInput = remember { mutableStateOf("") }
     val showDialog = remember { mutableStateOf(false) }
-    val context = MainActivity.context
+    val context = LocalContext.current
 
     Column (
         modifier = Modifier
@@ -171,8 +171,8 @@ fun ForgotPasswordContent(
                 .clickable {
                     CoroutineScope(Dispatchers.Main).launch {
                         val username = usernameInput.value
-
-                        if (checkUsername(username)) {
+                        val checkUsernameResult = authViewModel.forgotPassword(username)
+                        if (checkUsernameResult == true) {
                             showDialog.value = true
                         } else {
                             Toast
@@ -197,29 +197,32 @@ fun ForgotPasswordContent(
             SendCode(
                 username = usernameInput.value,
                 navController = navController,
-                onDismissRequest = { showDialog.value = false }
+                onDismissRequest = { showDialog.value = false },
+                context= context
             )
         }
     }
 }
 
-suspend fun checkUsername(username: String): Boolean {
-    val result = withContext(Dispatchers.IO) {
-        MainViewModel.authViewModel.forgotPassword(username)
-    }
-    return result
-}
+//suspend fun checkUsername(username: String): Boolean {
+//    val result = withContext(Dispatchers.IO) {
+//        authViewModel.forgotPassword(username)
+//    }
+//    return result
+//}
 
 @Composable
 fun SendCode(
     username: String,
     navController: NavController,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    context: Context
 ){
     ShowOTPDialog(
         username = username,
         navController = navController,
-        onDismissRequest = { onDismissRequest() }
+        onDismissRequest = { onDismissRequest() },
+        context
     )
 }
 
@@ -228,6 +231,8 @@ fun ShowOTPDialog(
     username: String,
     navController: NavController,
     onDismissRequest: () -> Unit,
+    context: Context,
+    authViewModel: AuthViewModel = koinViewModel()
 ){
     val coroutineScope = rememberCoroutineScope()
     val otp = remember {
@@ -276,16 +281,16 @@ fun ShowOTPDialog(
                     onClick = {
                         val otpCode = otp.joinToString("") { it.value.text }
                         if (otpCode.length != 6) {
-                            Toast.makeText(MainActivity.context, "Invalid OTP", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT).show()
                         } else {
                             coroutineScope.launch {
                                 val result = withContext(Dispatchers.IO) {
-                                    MainViewModel.authViewModel.verifyOTP(username, otpCode)
+                                    authViewModel.verifyOTP(username, otpCode)
                                 }
-                                if (result) {
+                                if (result == true) {
                                     navController.navigate("new_password/$username")
                                 } else {
-                                    Toast.makeText(MainActivity.context, "Invalid OTP", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Invalid OTP", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -487,11 +492,11 @@ fun previousFocus(
 fun resendCode(){
     // Call api resend code
 }
-@Preview
-@Composable
-fun ForgotPasswordPagePreview() {
-//    ForgotPasswordPage(navController = rememberNavController())
-    ShowOTPDialog(navController = rememberNavController(), onDismissRequest = { }) {
-        
-    }
-}
+//@Preview
+//@Composable
+//fun ForgotPasswordPagePreview() {
+////    ForgotPasswordPage(navController = rememberNavController())
+//    ShowOTPDialog(navController = rememberNavController(), onDismissRequest = { }) {
+//
+//    }
+//}

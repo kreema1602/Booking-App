@@ -1,8 +1,8 @@
 package com.example.bookingapp.services
 
 import android.content.Context
+import android.util.Log
 import com.example.bookingapp.BuildConfig
-import com.example.bookingapp.MainActivity
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -18,6 +18,7 @@ object RetrofitClient {
 
     fun init(context: Context) {
         if (!initialized) {
+            Log.d("Retrofit", "Initializing")
             val cacheSize = (10 * 1024 * 1024).toLong()
             val cache = okhttp3.Cache(context.cacheDir, cacheSize)
             client = OkHttpClient.Builder()
@@ -38,6 +39,7 @@ object RetrofitClient {
         check(!initialized) {
             throw IllegalStateException("RetrofitClient not initialized")
         }
+        Log.d("Retrofit", "Init completed")
         retrofit.create(ApiService::class.java)
     }
 

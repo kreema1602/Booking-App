@@ -40,6 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,23 +51,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.view_models.CusHotelRoomViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CusHomePage(
     cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel(),
-    showRoomScreen: (Int) -> Unit
+    showRoomScreen: (String) -> Unit
 ) {
     val hotels by cusHotelRoomViewModel.hotels.collectAsState()
     LaunchedEffect(key1 = Unit) {
@@ -100,32 +98,34 @@ fun CusHomePage(
             )
             SearchBar()
         }
-        HotelList(hotels ?: emptyList(), showRoomScreen)
+        HotelList(showRoomScreen)
     }
 
 }
 
 @Composable
 fun HotelList(
-    hotelData: List<Account> = emptyList(),
-    showRoomScreen: (Int) -> Unit,
+    showRoomScreen: (String) -> Unit,
     cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel()
 ) {
     val lazyListState = rememberLazyListState()
+    var hotelData by remember { mutableStateOf(emptyList<Account>()) }
+    val scope = rememberCoroutineScope()
 
-
+    // run launched effect when the page is loaded
     LaunchedEffect(Unit) {
         hotelData += cusHotelRoomViewModel.getHotels()
     }
-
     fun isScrolledToEnd(): Boolean {
         val layoutInfo = lazyListState.layoutInfo
         return layoutInfo.visibleItemsInfo.lastOrNull()?.index == hotelData.size - 1
     }
-
-    if (isScrolledToEnd()) {
-        CoroutineScope(Dispatchers.IO).launch {
-            hotelData += cusHotelRoomViewModel.getHotels(hotelData.size)
+    // run launched effect when scrolled to the end of the list
+    LaunchedEffect(lazyListState) {
+        if (isScrolledToEnd()) {
+            scope.launch {
+                hotelData += cusHotelRoomViewModel.getHotels(hotelData.size)
+            }
         }
     }
 

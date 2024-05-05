@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -35,16 +36,22 @@ import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.compose.getFormattedDate
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.models.RoomFullDetail
 import com.example.bookingapp.navigation.CustomerLeafScreen
-import com.example.bookingapp.view_models.MainViewModel
+import com.example.bookingapp.view_models.CusHotelRoomViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
-    val room = MainViewModel.cusHotelRoomViewModel.room.filter { it._id == MainViewModel.cusHotelRoomViewModel.selectedRoomId }[0]
+fun CusRoomDetail(navController: NavController, onBack: () -> Unit, cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel()) {
+    val roomState by cusHotelRoomViewModel.room.collectAsState()
+    val checkIn by cusHotelRoomViewModel.checkIn.collectAsState()
+    val checkOut by cusHotelRoomViewModel.checkOut.collectAsState()
+    val selectedRoomId by cusHotelRoomViewModel.selectedRoomId.collectAsState()
+    val room = roomState!!.filter { it._id == selectedRoomId }[0]
     val dateRangeState = rememberDateRangePickerState(
-        initialSelectedStartDateMillis = MainViewModel.cusHotelRoomViewModel.checkIn + 86400000L,
-        initialSelectedEndDateMillis = MainViewModel.cusHotelRoomViewModel.checkOut + 86400000L
+        initialSelectedStartDateMillis = checkIn + 86400000L,
+        initialSelectedEndDateMillis = checkOut + 86400000L
     )
     val nights by remember(dateRangeState) {
         derivedStateOf {
@@ -53,7 +60,7 @@ fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
             ((endDate - startDate) / 86400000).toInt()
         }
     }
-    val pricePerNight = MainViewModel.cusHotelRoomViewModel.room.filter { it._id == MainViewModel.cusHotelRoomViewModel.selectedRoomId }[0].price
+    val pricePerNight = roomState!!.filter { it._id == selectedRoomId }[0].price
 
     Box {
         LazyColumn(
@@ -98,7 +105,7 @@ fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
             }
 
             item {
-                PaymentInformation(dateRangeState, nights)
+                PaymentInformation(roomState!!, selectedRoomId, dateRangeState, nights)
             }
 
             item {
@@ -139,7 +146,7 @@ fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
                 calendar = true,
                 price = "${pricePerNight * nights}",
                 buttonText = "Book",
-                onClick = {navController.navigate(CustomerLeafScreen.Payment.route + "/${MainViewModel.cusHotelRoomViewModel.selectedRoomId}")},
+                onClick = {navController.navigate(CustomerLeafScreen.Payment.route + "/${selectedRoomId}")},
                 dateRangeState = dateRangeState
             )
         }
@@ -148,8 +155,8 @@ fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaymentInformation(dateRangeState: DateRangePickerState, nights: Int = 1) {
-    val pricePerNight = MainViewModel.cusHotelRoomViewModel.room.filter { it._id == MainViewModel.cusHotelRoomViewModel.selectedRoomId }[0].price
+fun PaymentInformation(roomState: List<RoomFullDetail>, selectedRoomId: String, dateRangeState: DateRangePickerState, nights: Int = 1) {
+    val pricePerNight = roomState.filter { it._id == selectedRoomId }[0].price
 
     Column(
         modifier = Modifier

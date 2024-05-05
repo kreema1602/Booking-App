@@ -17,6 +17,10 @@ class CusHotelRoomViewModel : ViewModel() {
     private val _selectedHotelId = MutableStateFlow("")
     val selectedHotelId get() = _selectedHotelId.asStateFlow()
 
+    private val _selectedRoomId = MutableStateFlow("")
+    val selectedRoomId get() = _selectedRoomId.asStateFlow()
+
+
     private var _hotel = MutableStateFlow(Account())
     val hotel get() = _hotel.asStateFlow()
 

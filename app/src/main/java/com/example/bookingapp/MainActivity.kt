@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        RetrofitClient.init(this)
+        RetrofitClient.init(this.applicationContext)
 
         startKoin{
             androidLogger()
