@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -45,7 +46,7 @@ import com.example.bookingapp.view_models.CusHotelRoomViewModel
 import com.example.bookingapp.view_models.MainViewModel.authViewModel
 import com.example.bookingapp.view_models.MainViewModel.cusHotelRoomViewModel
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     @SuppressLint("StaticFieldLeak")
     companion object {
         lateinit var context: Context
