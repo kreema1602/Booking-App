@@ -101,8 +101,6 @@ fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (String) -> Unit) {
             item { MySpacer(height = 8.dp) }
             item { HotelInfo(hotel = hotel) }
             item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
-            item { HotelFacilities() }
-            item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
 
             if (standardRoom.isNotEmpty()) {
                 item {
