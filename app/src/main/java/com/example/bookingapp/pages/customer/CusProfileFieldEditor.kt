@@ -42,7 +42,11 @@ import kotlinx.coroutines.withContext
 fun CusProfileFieldEditor(accountId: String, navController: NavController) {
     var account by remember { mutableStateOf (Account()) }
     LaunchedEffect(Unit) {
-        account = getAccountProfile(accountId)
+        try {
+            account = MainViewModel.accountViewModel.getProfile("customer", accountId)
+        } catch (e: Exception) {
+            Log.e("CusProfileFieldEditor", "getProfile: ${e.message}")
+        }
     }
 
     val fullname = remember { mutableStateOf("") }
