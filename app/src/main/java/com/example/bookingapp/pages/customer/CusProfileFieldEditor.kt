@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.AccountData
-import com.example.bookingapp.pages.mavenProFamily
+import com.example.bookingapp.pages.hotelier.mavenProFamily
 
 @Composable
 fun CusProfileFieldEditor(accId: Int, onBack: () -> Unit) {
@@ -48,19 +48,25 @@ fun CusProfileFieldEditor(accId: Int, onBack: () -> Unit) {
             value = username.value,
             onValueChange = { username.value = it },
             label = { Text("Username") },
-            modifier = Modifier.padding(16.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
         )
         TextField(
             value = email.value,
             onValueChange = { email.value = it },
             label = { Text("Email") },
-            modifier = Modifier.padding(16.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
         )
         TextField(
             value = phone.value,
             onValueChange = { phone.value = it },
             label = { Text("Phone") },
-            modifier = Modifier.padding(16.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
         )
         Button(
             onClick = {

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.BottomSection
-import com.example.bookingapp.core.compose.EditCarousel
 import com.example.bookingapp.core.compose.EditText
 import com.example.bookingapp.core.compose.MyDropdownMenu
 import com.example.bookingapp.core.compose.MySpacer
@@ -37,9 +37,9 @@ import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.mock_data.RoomData
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModRoomAdd(onBack: () -> Unit) {
-    val room = RoomData.data[0]
     Box {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -48,12 +48,12 @@ fun ModRoomAdd(onBack: () -> Unit) {
         ) {
             item {
                 TopAppBar(title = "Detail", onClick = onBack)
-                EditCarousel(initialItems = room.images)
+//                EditCarousel(initialItems = room.images)
                 Text(
                     text = "Room",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight(700),
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
                     ),
                     modifier = Modifier.padding(top = 8.dp)
                 )
@@ -69,7 +69,9 @@ fun ModRoomAdd(onBack: () -> Unit) {
                     ),
                     fontSize = 20.sp
                 )
-                Box(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)) {
                     MyDropdownMenu(
                         items = listOf("Deluxe", "Standard", "Superior", "Suite"),
                         onItemSelected = {}
@@ -102,9 +104,19 @@ fun ModRoomAdd(onBack: () -> Unit) {
             }
 
             item {
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Price per night", style = MaterialTheme.typography.bodyLarge, modifier = Modifier.fillMaxWidth(0.4f))
-                    EditText(keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), hint = "Price in VND")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Price per night",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(0.4f)
+                    )
+                    EditText(
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        hint = "Price in VND"
+                    )
                 }
             }
 
@@ -150,7 +162,10 @@ fun DetailInputField() {
                     "People" -> R.drawable.ic_person
                     else -> R.drawable.ic_zoom_out
                 }
-                Row(modifier = Modifier.fillMaxWidth(0.4f), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(0.4f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
                         painter = painterResource(id = icon),
                         contentDescription = null,
@@ -167,7 +182,10 @@ fun DetailInputField() {
                     "Bed" -> "Number of beds"
                     else -> ""
                 }
-                EditText(hint = hint, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                EditText(
+                    hint = hint,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
             }
         }
     }

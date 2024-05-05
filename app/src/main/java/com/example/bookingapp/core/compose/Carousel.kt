@@ -2,7 +2,6 @@ package com.example.bookingapp.core.compose
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -29,16 +28,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.bookingapp.R
-import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Carousel(
-    itemList: List<Int>,
+    itemList: List<String>,
     pageCount: Int = itemList.size,
     pagerState: PagerState = rememberPagerState(pageCount = { itemList.size }),
 ) {
@@ -71,14 +69,17 @@ fun Carousel(
 
 @Composable
 fun CarouselItem(
-    item: Int,
+    imageUrl: String,
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.fillMaxWidth().height(260.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(260.dp),
         contentAlignment = Alignment.Center
     ) {
-        Image(painter = painterResource(id = item), contentDescription = null)
+        val imgUrl = if (imageUrl.contains("http")) imageUrl else imageUrl.toInt()
+        AsyncImage(model = imgUrl, contentDescription = null, error = painterResource(id = R.drawable.placeholder), placeholder = painterResource(id = R.drawable.placeholder))
     }
 }
 
@@ -112,31 +113,31 @@ fun DotIndicators(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EditCarousel(
-    initialItems: List<Int>
-): List<Int> {
+    initialItems: List<String>
+): List<String> {
     var itemList by remember { mutableStateOf(initialItems.toMutableList()) }
     var pageCount by remember { mutableIntStateOf(itemList.size) }
     val pagerState = rememberPagerState(pageCount = { pageCount })
 
-    fun onAdd(): MutableList<Int> {
-        val newList = if (itemList.size == 1 && itemList[0] == R.drawable.placeholder) {
-            mutableListOf(R.drawable.hotel3)
+    fun onAdd(): MutableList<String> {
+        val newList = if (itemList.size == 1 && itemList[0] == R.drawable.placeholder.toString()) {
+            mutableListOf(R.drawable.hotel3.toString())
         } else {
             itemList.toMutableList().apply{
-                add(R.drawable.hotel3)
+                add(R.drawable.hotel3.toString())
             }
         }
         pageCount = newList.size
         return newList
     }
 
-    fun onRemove(): MutableList<Int> {
+    fun onRemove(): MutableList<String> {
         val index = pagerState.currentPage
         itemList.removeAt(index)
         pageCount = itemList.size
 
         if (itemList.size == 0) {
-            itemList.add(R.drawable.placeholder)
+            itemList.add(R.drawable.placeholder.toString())
             pageCount = itemList.size
         }
 
@@ -197,19 +198,5 @@ fun EditCarousel(
     }
 
     return itemList
-}
-
-
-@Preview
-@Composable
-private fun PreviewCarousel() {
-    ThemedPreview {
-        EditCarousel(
-            initialItems = listOf(
-                com.example.bookingapp.R.drawable.hotel3,
-                com.example.bookingapp.R.drawable.hotel2
-            )
-        )
-    }
 }
 

@@ -30,21 +30,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.mavenProFontFamily
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.AccountData
 import com.example.bookingapp.models.Account
-import com.example.bookingapp.view_models.MainViewModel
+import com.example.bookingapp.view_models.AuthViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun CusProfilePage(accId: Int, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
+fun CusProfilePage(accId: Int, onClickEdit: (String) -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit, onClickLogout: () -> Unit){
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -126,7 +127,6 @@ fun NameTag(acc: Account) {
 
 @Composable
 fun ProfileEditor(acc: Account, onClickEdit: (String) -> Unit) {
-    val context = LocalContext.current
     val editLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
@@ -231,8 +231,8 @@ fun FavoriteList(acc: Account, onClickFavorite: () -> Unit) {
 }
 
 @Composable
-fun LogOut(onClickLogout: () -> Unit) {
-    Card( modifier = Modifier.clickable { MainViewModel.authViewModel.logout() }) {
+fun LogOut(onClickLogout: () -> Unit, authViewModel: AuthViewModel = koinViewModel()) {
+    Card( modifier = Modifier.clickable { authViewModel.logout(); onClickLogout();  }) {
         Row(
             Modifier
                 .fillMaxWidth()

@@ -1,109 +1,94 @@
 package com.example.bookingapp.view_models
 
-import android.content.Context
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.bookingapp.MainActivity
+import androidx.lifecycle.viewModelScope
 import com.example.bookingapp.models.Account
+import com.example.bookingapp.repository.AccountRepository
 import com.example.bookingapp.services.AccountService
 import com.example.bookingapp.services.RetrofitClient
-import com.google.gson.Gson
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class AuthViewModel: ViewModel() {
-    var isAuthenticated by mutableStateOf(false)
-        private set
-    var authToken by mutableStateOf("")
-        private set
-    var account by mutableStateOf(Account())
-        private set
+class AuthViewModel(private val repository: AccountRepository) : ViewModel() {
+    private val _isAuthenticated = MutableStateFlow(false)
+    val isAuthenticated get() = _isAuthenticated.asStateFlow()
 
-    fun loadAccount() {
-        try {
-            val context = MainActivity.context
-            val token = context.getSharedPreferences("token", Context.MODE_PRIVATE)
-                .getString("token", "")
-            val accountJson = context.getSharedPreferences("account", Context.MODE_PRIVATE)
-                .getString("account", "")
+    private val _authToken = MutableStateFlow("")
+    val authToken get() = _authToken.asStateFlow()
+    private val _account = MutableStateFlow<Account?>(Account())
+    val account get() = _account.asStateFlow()
+    private val _loginStatus = MutableStateFlow<String>("")
+    val loginStatus get() = _loginStatus.asStateFlow()
 
-            if (token != "" && accountJson != "") {
-                authToken = token!!
-                account = Gson().fromJson(accountJson, Account::class.java)
-                isAuthenticated = true
-            }
-        } catch (e: Exception) {
-            throw Exception("Auth view model: ${e.message}")
+    init {
+        loadAccount()
+    }
+
+    private fun loadAccount() {
+        val (account, token) = repository.loadAccount()
+
+        if (!token.isNullOrEmpty() && account != null) {
+            _authToken.value = token
+            _account.value = account
+            _isAuthenticated.value = true
+            RetrofitClient.setAuthToken(token)
         }
     }
 
     fun logout() {
-        try {
-            isAuthenticated = false
-            authToken = ""
-            account = Account()
+        viewModelScope.launch {
+            _isAuthenticated.value = false
+            _authToken.value = ""
+            _account.value = Account()
 
             clearAccount()
             RetrofitClient.clearAuthToken()
-        } catch (e: Exception) {
-            throw Exception("Auth view model: ${e.message}")
+            _loginStatus.emit("Logged out")
         }
     }
 
-    suspend fun login(email: String, password: String): Boolean {
-        try {
-            AccountService.login(email, password).let {
-                if (it != null) {
-                    account = it.first
-                    authToken = it.second
-                    isAuthenticated = true
-
-                    saveAccount(account, authToken)
-                    RetrofitClient.setAuthToken(authToken)
-                }
+    fun login(email: String, password: String, isBio: Boolean): Boolean {
+        viewModelScope.launch {
+            try {
+                Log.d("AuthViewModel", "login: $email, $password")
+                val result = AccountService.login(email, password, isBio)
+                _account.value = result.first
+                _authToken.value = result.second
+                _isAuthenticated.value = true
+                saveAccount(result.first, result.second)
+                RetrofitClient.setAuthToken(result.second)
+                _loginStatus.emit("Login successful")
+            } catch (e: Exception) {
+                _isAuthenticated.value = false
+                _loginStatus.emit("Login error: ${e.message}")
             }
-        } catch (e: Exception) {
-            throw Exception("${e.message}")
         }
-
-        return isAuthenticated
+        return isAuthenticated.value
     }
 
     private fun saveAccount(account: Account, token: String) {
-        val accountJson = Gson().toJson(account)
-        val context = MainActivity.context
-
-        val accountPref = context.getSharedPreferences("account", Context.MODE_PRIVATE)
-        val accountEditor = accountPref.edit()
-        accountEditor.putString("account", accountJson)
-        accountEditor.apply()
-
-        val tokenPref = context.getSharedPreferences("token", Context.MODE_PRIVATE)
-        val tokenEditor = tokenPref.edit()
-        tokenEditor.putString("token", token)
-        tokenEditor.apply()
+        repository.saveAccount(account, token)
     }
 
     private fun clearAccount() {
-        val context = MainActivity.context
-
-        val accountPref = context.getSharedPreferences("account", Context.MODE_PRIVATE)
-        val accountEditor = accountPref.edit()
-        accountEditor.clear()
-        accountEditor.apply()
-
-        val tokenPref = context.getSharedPreferences("token", Context.MODE_PRIVATE)
-        val tokenEditor = tokenPref.edit()
-        tokenEditor.clear()
-        tokenEditor.apply()
+        repository.clearAccount()
     }
 
-    suspend fun register(fields: Map<String, String>, role: String): Boolean {
-        try {
-            return AccountService.register(fields, role)
-        } catch (e: Exception) {
-            throw Exception("${e.message}")
+    fun register(fields: Map<String, String>, role: String): Boolean {
+        viewModelScope.launch {
+            try {
+                _isAuthenticated.value = AccountService.register(fields, role)
+            } catch (e: Exception) {
+                throw Exception("${e.message}")
+            }
         }
+        return isAuthenticated.value
+    }
+
+    fun getCredentials(): Pair<String, String> {
+        return repository.getCredentials()
     }
 
     suspend fun verifyOTP(username: String, otp: String): Boolean {

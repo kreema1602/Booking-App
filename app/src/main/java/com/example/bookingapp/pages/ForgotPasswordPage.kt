@@ -348,7 +348,6 @@ fun OTPTextField(
     coroutineScope: CoroutineScope
 ){
     val requesterList = remember { List(6) { FocusRequester() } }
-
     val focusManager = LocalFocusManager.current
     val keyBoardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
@@ -492,7 +491,7 @@ fun resendCode(){
 @Composable
 fun ForgotPasswordPagePreview() {
 //    ForgotPasswordPage(navController = rememberNavController())
-//    ShowOTPDialog(navController = rememberNavController(), onDismissRequest = { /*TODO*/ }) {
-//
-//    }
+    ShowOTPDialog(navController = rememberNavController(), onDismissRequest = { }) {
+        
+    }
 }

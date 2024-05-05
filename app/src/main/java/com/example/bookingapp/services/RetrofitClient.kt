@@ -1,27 +1,43 @@
 package com.example.bookingapp.services
 
-import android.os.Build
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
+import android.content.Context
 import com.example.bookingapp.BuildConfig
+import com.example.bookingapp.MainActivity
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import okhttp3.Interceptor
+
 
 object RetrofitClient {
-    private var BASE_URL = BuildConfig.BASE_URL;
-    private val authInterceptor = AuthInterceptor()
-    private val client = OkHttpClient.Builder().addInterceptor(authInterceptor).build()
+    private var BASE_URL = BuildConfig.BASE_URL
+    private lateinit var client: OkHttpClient
+    private lateinit var retrofit: Retrofit
     private var authToken: String? = null
+    private var initialized = false
 
-    private var retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    fun init(context: Context) {
+        if (!initialized) {
+            val cacheSize = (10 * 1024 * 1024).toLong()
+            val cache = okhttp3.Cache(context.cacheDir, cacheSize)
+            client = OkHttpClient.Builder()
+                .addInterceptor(AuthInterceptor())
+                .cache(cache)
+                .build()
+
+            retrofit = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            initialized = true
+        }
+    }
 
     val apiService: ApiService by lazy {
+        check(!initialized) {
+            throw IllegalStateException("RetrofitClient not initialized")
+        }
         retrofit.create(ApiService::class.java)
     }
 

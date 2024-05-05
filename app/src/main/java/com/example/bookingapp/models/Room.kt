@@ -3,12 +3,14 @@ package com.example.bookingapp.models
 import java.io.Serializable
 
 data class Room(
-    var id: Int,
+    var _id: String,
     var name: String,
-    var rating: Float,
-    var address: String,
-    var desc: String,
-    var images: List<Int>,
-    var facilities: List<Pair<String, String>>,
-    var type: String,
-) : Serializable
+    var hotel: String,
+    var roomType: String,
+    var amenitiesIds: List<String>,
+    var isAccepted: Boolean,
+    var isBooked: Boolean,
+    var image: List<String>,
+) : Serializable {
+    constructor() : this("", "", "", "", listOf(), false, false, listOf())
+}

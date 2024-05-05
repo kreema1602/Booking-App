@@ -2,8 +2,6 @@ package com.example.bookingapp.core.compose
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -11,6 +9,7 @@ import androidx.compose.ui.res.painterResource
 import com.example.bookingapp.R
 import kotlin.math.ceil
 import kotlin.math.floor
+
 @Composable
 fun RatingBar(
     modifier: Modifier = Modifier,
@@ -20,7 +19,7 @@ fun RatingBar(
 ) {
     val filledStars = floor(rating).toInt()
     val unfilledStars = (stars - ceil(rating)).toInt()
-    val halfStar = !(rating.rem(1).equals(0.0))
+    val halfStar = rating.rem(1) != 0.0
     Row(modifier = modifier) {
         repeat(filledStars) {
             Icon(painter = painterResource(id = R.drawable.ic_star), contentDescription = null, tint = starsColor)

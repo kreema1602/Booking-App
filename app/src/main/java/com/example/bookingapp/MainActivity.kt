@@ -1,11 +1,9 @@
 package com.example.bookingapp
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,12 +18,12 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
@@ -39,33 +37,34 @@ import com.example.bookingapp.navigation.AppNavGraph
 import com.example.bookingapp.navigation.CustomerLeafScreen
 import com.example.bookingapp.navigation.ModeratorLeafScreen
 import com.example.bookingapp.navigation.RootScreen
+import com.example.bookingapp.repository.AccountRepository
 import com.example.bookingapp.services.RetrofitClient
 import com.example.bookingapp.view_models.AuthViewModel
 import com.example.bookingapp.view_models.CusHotelRoomViewModel
-import com.example.bookingapp.view_models.MainViewModel.authViewModel
-import com.example.bookingapp.view_models.MainViewModel.cusHotelRoomViewModel
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.compose.koinViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
 
-class MainActivity : ComponentActivity() {
-    @SuppressLint("StaticFieldLeak")
-    companion object {
-        lateinit var context: Context
-            private set
+
+class MainActivity : AppCompatActivity() {
+    private val appModule = module {
+        single<AccountRepository> { AccountRepository(applicationContext) }
+        viewModel<AuthViewModel> { AuthViewModel(get()) }
+        viewModel<CusHotelRoomViewModel> { CusHotelRoomViewModel() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context = this
 
-        // set view model
-        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
-        cusHotelRoomViewModel = ViewModelProvider(this)[CusHotelRoomViewModel::class.java]
-        // end set view model
+        RetrofitClient.init(this)
 
-        // load account from shared preferences
-        authViewModel.loadAccount()
-
-        if (authViewModel.authToken != "") {
-            RetrofitClient.setAuthToken(authViewModel.authToken)
+        startKoin{
+            androidLogger()
+            androidContext(this@MainActivity)
+            modules(appModule)
         }
 
         setContent {
@@ -79,17 +78,23 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    companion object
 }
 
 
 @Composable
-fun MyApp() {
+fun MyApp(
+    authViewModel: AuthViewModel = koinViewModel(),
+) {
     val navController = rememberNavController()
     val currentSelectedPage by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
+    val account by authViewModel.account.collectAsState()
     lateinit var currentRouteListByRole: List<String>
 
-    when (authViewModel.account.role) {
+
+    when (account?.role) {
         "customer" -> {
             currentRouteListByRole = listOf(
                 CustomerLeafScreen.Home.route,

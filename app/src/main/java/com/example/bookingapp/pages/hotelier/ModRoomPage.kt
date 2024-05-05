@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,21 +37,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.bookingapp.R
-import com.example.bookingapp.core.compose.BottomSection
 import com.example.bookingapp.core.compose.ExpandableText
-import com.example.bookingapp.core.compose.FacilityList
 import com.example.bookingapp.core.compose.FilledClipButton
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.RatingBar
 import com.example.bookingapp.core.ui.theme.OrangePrimary
-import com.example.bookingapp.core.ui.theme.SuccessPrimary
-import com.example.bookingapp.core.ui.theme.SuccessSecondary
-import com.example.bookingapp.core.ui.theme.WarningPrimary
-import com.example.bookingapp.core.ui.theme.WarningSecondary
 import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.Hotel
 import com.example.bookingapp.navigation.ModeratorLeafScreen
-import kotlin.random.Random
 
 @Composable
 fun ModRoomPage(navController: NavController) {
@@ -318,7 +309,7 @@ fun RoomListItem(showRoomEdit: (Int) -> Unit) {
                             modifier = Modifier.padding(8.dp)
                         )
                     }
-                    FacilityList()
+//                    FacilityList()
                 }
             }
         }

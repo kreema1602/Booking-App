@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,15 +49,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.FilledClipButton
 import com.example.bookingapp.core.compose.TopAppBar
-import com.example.bookingapp.view_models.MainViewModel
+import com.example.bookingapp.view_models.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun Title(role: String) {
@@ -110,7 +110,10 @@ fun Title(role: String) {
 }
 
 @Composable
-fun SignUpForm(navController: NavController, role: String) {
+fun SignUpForm(
+    navController: NavController, role: String,
+    authViewModel: AuthViewModel = koinViewModel()
+) {
 
     val fieldsMap = mapOf(
         "username" to remember { mutableStateOf("") },
@@ -124,6 +127,7 @@ fun SignUpForm(navController: NavController, role: String) {
 
     val acceptTermState = remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
     Surface(
         color = Color(0xFFF9F9F9),
     ) {
@@ -145,10 +149,18 @@ fun SignUpForm(navController: NavController, role: String) {
                 onRegisterClicked = {
                     CoroutineScope(Dispatchers.Main).launch {
                         performValidation(
-                            navController,
                             fieldsMap,
                             acceptTermState.value,
-                            role
+                            role,
+                            onSuccessful = {
+                                Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
+                                navController.navigate("login")
+                            },
+                            performRegister = {
+                                val result = authViewModel.register(fieldsMap.mapValues { it.value.value }, role)
+                                result
+                            },
+                            onError = { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
                         )
                     }
                 }
@@ -285,19 +297,12 @@ fun CheckBoxAcceptTerm(acceptTermState: MutableState<Boolean>) {
 }
 
 fun getFormFields(role: String): List<String> {
-    return when (role.lowercase()) {
-        "customer" -> listOf("Username", "Full Name", "Password", "Confirm Password")
-        "moderator" -> listOf(
-            "Username",
-            "Hotel's name",
-            "Password",
-            "Confirm Password",
-            "Hotel's address",
-            "Description"
-        )
-
-        else -> listOf("Username", "Full Name", "Password", "Confirm Password")
+    val commonFields = listOf("Username", "Full Name", "Password", "Confirm Password")
+    val roleSpecificFields = when (role.lowercase()) {
+        "moderator" -> listOf("Hotel's name", "Hotel's address", "Description")
+        else -> emptyList()
     }
+    return commonFields + roleSpecificFields
 }
 
 fun getFieldMap(field: String): String {
@@ -314,70 +319,42 @@ fun getFieldMap(field: String): String {
 }
 
 suspend fun performValidation(
-    navController: NavController,
     fieldsMap: Map<String, MutableState<String>>,
     acceptTermState: Boolean,
-    role: String
+    role: String,
+    performRegister: () -> Boolean,
+    onSuccessful: () -> Unit,
+    onError: (String) -> Unit
 ) {
     Log.i("SignUpForm", "performValidation")
-    val fieldsCheckMap = mutableMapOf<String, String>()
-    val context = MainActivity.context
 
-    // Initialize fieldsCheckMap based on the role
-    when (role.lowercase()) {
-        "customer" -> {
-            fieldsCheckMap["username"] = fieldsMap["username"]?.value ?: ""
-            fieldsCheckMap["fullName"] = fieldsMap["fullName"]?.value ?: ""
-            fieldsCheckMap["password"] = fieldsMap["password"]?.value ?: ""
-            fieldsCheckMap["confirmPassword"] = fieldsMap["confirmPassword"]?.value ?: ""
-        }
-
-        "moderator" -> {
-            fieldsCheckMap["username"] = fieldsMap["username"]?.value ?: ""
-            fieldsCheckMap["hotelName"] = fieldsMap["hotelName"]?.value ?: ""
-            fieldsCheckMap["password"] = fieldsMap["password"]?.value ?: ""
-            fieldsCheckMap["confirmPassword"] = fieldsMap["confirmPassword"]?.value ?: ""
-            fieldsCheckMap["hotelAddress"] = fieldsMap["hotelAddress"]?.value ?: ""
-            fieldsCheckMap["description"] = fieldsMap["description"]?.value ?: ""
-        }
+    val emptyFields = fieldsMap.filter { it.value.value.isEmpty() }
+    if (emptyFields.isNotEmpty()) {
+        onError("Please fill in all fields")
+        return
     }
 
-    for ((field, value) in fieldsCheckMap) {
-        if (value.isEmpty()) {
-            // format the field name to be more readable
-            val formattedField = field.replaceFirstChar { it.uppercase() }
-            val splitField = formattedField.replace(Regex("([a-z])([A-Z])"), "$1 $2")
-
-            Toast.makeText(context, "$splitField is empty", Toast.LENGTH_SHORT).show()
-            return
-        }
-    }
-
-    if (!fieldsCheckMap["password"].equals(fieldsCheckMap["confirmPassword"])) {
+    if (fieldsMap["password"]?.value != fieldsMap["confirmPassword"]?.value) {
         Log.i("SignUpForm", "Passwords do not match")
-        Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+        onError("Passwords do not match")
         return
     }
 
     if (!acceptTermState) {
-        Toast.makeText(context, "Please accept the terms of service", Toast.LENGTH_SHORT).show()
+        Log.i("SignUpForm", "Terms not accepted")
+        onError("Please accept the terms of service")
         return
     }
-
     try {
-
-        val result = withContext(Dispatchers.IO) {
-            MainViewModel.authViewModel.register(fieldsCheckMap, role)
-        }
+        val result = performRegister()
 
         if (result) {
-            Toast.makeText(context, "Registration successful", Toast.LENGTH_SHORT).show()
-            navController.navigate("login")
+            onSuccessful()
         } else {
-            Toast.makeText(context, "Registration failed", Toast.LENGTH_SHORT).show()
+            onError("Registration failed")
         }
     } catch (e: Exception) {
-        Toast.makeText(context, "Registration failed: ${e.message}", Toast.LENGTH_SHORT).show()
+        onError("Registration error: ${e.message}")
     }
 }
 

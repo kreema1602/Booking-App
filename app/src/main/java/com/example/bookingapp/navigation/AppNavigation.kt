@@ -1,6 +1,8 @@
 package com.example.bookingapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -23,26 +25,31 @@ import com.example.bookingapp.pages.customer.CusReservationDetail
 import com.example.bookingapp.pages.customer.CusReservationPage
 import com.example.bookingapp.pages.customer.CusRoomDetail
 import com.example.bookingapp.pages.customer.CusRoomScreen
+import com.example.bookingapp.pages.hotelier.ModChartScreen
 import com.example.bookingapp.pages.hotelier.ModHomePage
 import com.example.bookingapp.pages.hotelier.ModNotificationPage
 import com.example.bookingapp.pages.hotelier.ModProfilePage
 import com.example.bookingapp.pages.hotelier.ModRoomAdd
 import com.example.bookingapp.pages.hotelier.ModRoomPage
-import com.example.bookingapp.view_models.MainViewModel
+import com.example.bookingapp.view_models.AuthViewModel
+import com.example.bookingapp.view_models.CusHotelRoomViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AppNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    authViewModel: AuthViewModel = koinViewModel(),
+    cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel()
 ) {
-    val authViewModel = MainViewModel.authViewModel
-    val startDes = when (authViewModel.account.role) {
+    val account by authViewModel.account.collectAsState()
+    val startDes = when (account?.role) {
         "customer" -> RootScreen.Customer.route
         "moderator" -> RootScreen.Moderator.route
         else -> RootScreen.Login.route
     }
     NavHost(navController = navController, startDestination = startDes) {
         addLoginRoute(navController)
-        addCustomerRoute(navController)
+        addCustomerRoute(navController, cusHotelRoomViewModel)
         addModeratorRoute(navController)
     }
 }
@@ -99,14 +106,14 @@ private fun NavGraphBuilder.showNewPassword(navController: NavController) {
 // -------------- End of Login navigation ------------------- //
 
 // -------------- Customer navigation ------------------- //
-private fun NavGraphBuilder.addCustomerRoute(navController: NavController) {
+private fun NavGraphBuilder.addCustomerRoute(navController: NavController, cusHotelRoomViewModel: CusHotelRoomViewModel) {
     navigation(
         route = RootScreen.Customer.route,
         startDestination = CustomerLeafScreen.Home.route
     ) {
         showCusHome(navController)
-        showCusRoomScreen(navController)
-        showCusRoomDetail(navController)
+        showCusRoomScreen(navController, cusHotelRoomViewModel)
+        showCusRoomDetail(navController, cusHotelRoomViewModel)
         showCusReservations(navController)
         showCusReservationDetail(navController)
         showCusNotifications(navController)
@@ -128,10 +135,11 @@ private fun NavGraphBuilder.showCusHome(navController: NavController) {
     }
 }
 
-private fun NavGraphBuilder.showCusRoomScreen(navController: NavController) {
+private fun NavGraphBuilder.showCusRoomScreen(navController: NavController, cusHotelRoomViewModel: CusHotelRoomViewModel) {
     composable(CustomerLeafScreen.Room.route + "/{hotelId}") { it ->
-        val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
-        CusRoomScreen(hotelId, onBack = {
+        val hotelId = it.arguments?.getString("hotelId") ?: ""
+        cusHotelRoomViewModel.selectHotel(hotelId)
+        CusRoomScreen(onBack = {
             navController.navigateUp()
         }, showRoomDetail = {
             navController.navigate(CustomerLeafScreen.RoomDetail.route + "/$it")
@@ -139,10 +147,10 @@ private fun NavGraphBuilder.showCusRoomScreen(navController: NavController) {
     }
 }
 
-private fun NavGraphBuilder.showCusRoomDetail(navController: NavController) {
+private fun NavGraphBuilder.showCusRoomDetail(navController: NavController, cusHotelRoomViewModel: CusHotelRoomViewModel) {
     composable(CustomerLeafScreen.RoomDetail.route + "/{roomId}") {
-        val roomId = it.arguments?.getString("roomId")?.toInt() ?: 0
-        CusRoomDetail(navController, roomId, onBack = {
+        val roomId = it.arguments?.getString("roomId") ?: ""
+        CusRoomDetail(navController, onBack = {
             navController.navigateUp()
         })
     }
@@ -225,6 +233,7 @@ private fun NavGraphBuilder.addModeratorRoute(navController: NavController) {
         showModRoomAdd(navController)
         showModNotifications(navController)
         showModProfile(navController)
+        showModHistory(navController)
     }
 }
 
@@ -255,6 +264,12 @@ private fun NavGraphBuilder.showModNotifications(navController: NavController) {
 private fun NavGraphBuilder.showModProfile(navController: NavController) {
     composable(ModeratorLeafScreen.Profile.route) {
         ModProfilePage(navController = navController)
+    }
+}
+
+private fun NavGraphBuilder.showModHistory(navController: NavController) {
+    composable(ModeratorLeafScreen.History.route) {
+        ModChartScreen(navController = navController)
     }
 }
 // -------------- End of Moderator navigation ------------------- //

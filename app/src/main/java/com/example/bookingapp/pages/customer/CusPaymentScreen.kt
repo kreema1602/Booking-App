@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.ui.mavenProFontFamily
 import com.example.bookingapp.core.ui.theme.OrangePrimary
@@ -42,7 +43,7 @@ fun CusPaymentScreen(
             item {
                 TopAppBar(title = "Payment", onClick = onBack)
                 Image(
-                    painter = painterResource(id = room.images[0]),
+                    painter = painterResource(R.drawable.hotel2),
                     contentDescription = null,
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
@@ -56,7 +57,7 @@ fun CusPaymentScreen(
                     modifier = Modifier.padding(8.dp)
                 )
                 Text(
-                    text = "Address: " + room.address,
+                    text = "Address: ",
                     fontFamily = mavenProFontFamily,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(8.dp)

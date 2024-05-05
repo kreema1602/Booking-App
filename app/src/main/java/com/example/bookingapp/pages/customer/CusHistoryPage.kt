@@ -29,19 +29,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.mock_data.RoomData
 import com.example.bookingapp.models.Room
 import com.example.bookingapp.navigation.CustomerLeafScreen
+import com.example.bookingapp.view_models.CusHotelRoomViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun CusHistoryPage(navController: NavController) {
+fun CusHistoryPage(navController: NavController, cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel()) {
     LazyColumn {
         item {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -59,6 +64,7 @@ fun CusHistoryPage(navController: NavController) {
         }
         repeat(10) {
             item {
+                cusHotelRoomViewModel.selectHotel("1")
                 RoomItem(RoomData.data[0], viewDetail = { navController.navigate(CustomerLeafScreen.RoomDetail.route + "/1") })
             }
             item {
@@ -90,8 +96,8 @@ fun RoomItem(item: Room, viewDetail: () -> Unit) {
                 modifier = imageModifier
             ) {
                 Image(
-                    painter = painterResource(id = item.images[0]),
-                    contentDescription = null, // Add proper content description
+                    painter = painterResource(R.drawable.hotel2),
+                    contentDescription = null,
                     contentScale = ContentScale.FillHeight,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -117,7 +123,8 @@ fun RoomItemDetail(item: Room, columnHeight: Dp) {
             color = Color(0xFF333333),
             fontSize = 16.sp
         )
-        Text(text = "${item.name} (${item.type})", color = Color(0xFF555555))
+//        Text(text = "${item.name} (${item.type})", color = Color(0xFF555555))
+        Text(text = "${item.name}", color = Color(0xFF555555))
         Text(
             text = "400.000 VNĐ",
             fontWeight = FontWeight.Bold,

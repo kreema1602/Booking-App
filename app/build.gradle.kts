@@ -31,8 +31,7 @@ android {
         }
 
         debug {
-//            buildConfigField("String", "BASE_URL", "\"https://144d-113-161-89-145.ngrok-free.app/\"")
-            buildConfigField("String", "BASE_URL", "\"https://e54b-171-243-48-243.ngrok-free.app/\"")
+            buildConfigField("String", "BASE_URL", "\"https://8fb4-113-161-80-30.ngrok-free.app/\"")
         }
     }
     compileOptions {
@@ -59,6 +58,9 @@ android {
 dependencies {
     val navVersion = "2.7.7"
 
+    implementation("androidx.biometric:biometric:1.2.0-alpha05")
+    implementation("io.insert-koin:koin-androidx-compose:3.5.6")
+    implementation("androidx.security:security-crypto:1.1.0-alpha03")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation("androidx.core:core-ktx:1.12.0")
@@ -68,12 +70,12 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3:1.1.2")
-    implementation ("androidx.compose.ui:ui:1.6.3")
-    implementation ("androidx.compose.material:material:1.6.3")
-    implementation ("androidx.compose.runtime:runtime:1.6.3")
+    implementation("androidx.compose.ui:ui:1.6.3")
+    implementation("androidx.compose.material:material:1.6.3")
+    implementation("androidx.compose.runtime:runtime:1.6.3")
     implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation ("androidx.compose.material:material-icons-extended:1.6.4")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
