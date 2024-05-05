@@ -44,7 +44,7 @@ class CusHotelRoomViewModel : ViewModel() {
         }
     }
 
-    private suspend fun getHotel(hotelId: String): Account {
+    suspend fun getHotel(hotelId: String): Account {
         try {
             return HotelRoomService.getHotel(hotelId)
         } catch (e: Exception) {

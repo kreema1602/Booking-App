@@ -1,12 +1,13 @@
 package com.example.bookingapp.pages.hotelier
 
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,8 +27,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -44,27 +48,37 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.FilledClipButton
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.ui.theme.OrangePrimary
-import com.example.bookingapp.mock_data.HotelData
-import com.example.bookingapp.models.Hotel
-import com.example.bookingapp.navigation.RootScreen
+import com.example.bookingapp.models.Account
 import com.example.bookingapp.view_models.MainViewModel
 
 
 @Composable
 fun ModProfilePage(navController: NavController) {
     // Call api to get the des
-    var hotel = remember { mutableStateOf(HotelData.data[0]) }
+    val hotel = remember { mutableStateOf<Account>(Account()) }
+    val hotelId = MainViewModel.authViewModel.account._id
+    LaunchedEffect(key1 = Unit) {
+        Log.d("ModProfilePage", "hotelId: $hotelId")
+        try {
+            hotel.value = MainViewModel.cusHotelRoomViewModel.getHotel(hotelId)
+        } catch (e: Exception) {
+            // Handle error
+            Log.e("ModProfilePage", e.message ?: "Error")
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
     ) {
-        HotelBackground(hotel.value.imageUrl)
+        HotelBackground(hotel.value.image)
         LazyColumn(
             modifier = Modifier
                 .padding(top = 200.dp)
@@ -74,7 +88,7 @@ fun ModProfilePage(navController: NavController) {
             item {
                 HotelIntro(hotel = hotel)
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
-                HotelDescription(hotel = hotel.value)
+                HotelDescription(hotel.value.description)
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
                 HotelAccount(hotel = hotel.value)
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
@@ -98,13 +112,14 @@ fun HotelBackground(imgUrl: String) {
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.hotel2),
+        AsyncImage(
+            model = imgUrl,
+            error = painterResource(id = R.drawable.hotel2),
             contentDescription = null,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
-            contentScale = ContentScale.Crop
+                .height(200.dp)
         )
         Row(
             modifier = Modifier
@@ -132,11 +147,21 @@ fun HotelBackground(imgUrl: String) {
 }
 
 @Composable
-fun HotelIntro(hotel: MutableState<Hotel>) {
+fun HotelIntro(hotel: MutableState<Account>) {
     var isEditing by remember { mutableStateOf(false) }
-    var editedName by remember { mutableStateOf(hotel.value.name) }
-    var editedAddress by remember { mutableStateOf(hotel.value.address) }
-    var editedDescription by remember { mutableStateOf(hotel.value.desc) }
+    val editedName by remember { mutableStateOf(hotel.value.hotelName) }
+    val editedAddress by remember { mutableStateOf(hotel.value.hotelAddress) }
+    val editedDescription by remember { mutableStateOf(hotel.value.description) }
+    var rating by remember { mutableDoubleStateOf(0.0) }
+    LaunchedEffect(key1 = Unit) {
+        try {
+            rating = MainViewModel.cusHotelRoomViewModel.getAverageRating(MainViewModel.authViewModel.account._id)
+        } catch (e: Exception) {
+            // Handle error
+            Log.e("ModProfilePage", e.message ?: "Error")
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -155,9 +180,12 @@ fun HotelIntro(hotel: MutableState<Hotel>) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = hotel.value.name,
+                text = hotel.value.hotelName,
                 fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
+                lineHeight = 40.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxHeight().widthIn(max = 250.dp)
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_pencil),
@@ -193,7 +221,7 @@ fun HotelIntro(hotel: MutableState<Hotel>) {
                     .width(80.dp)
             )
             Text(
-                text = hotel.value.address,
+                text = hotel.value.hotelAddress,
                 style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
             )
@@ -220,7 +248,7 @@ fun HotelIntro(hotel: MutableState<Hotel>) {
                     .width(80.dp)
             )
             Text(
-                text = hotel.value.rating.toString(),
+                text = rating.toString(),
                 style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
             )
@@ -241,7 +269,7 @@ fun HotelIntro(hotel: MutableState<Hotel>) {
 }
 
 @Composable
-fun HotelDescription(hotel: Hotel) {
+fun HotelDescription(description: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -260,7 +288,7 @@ fun HotelDescription(hotel: Hotel) {
             ),
         )
         ExpandableText(
-            text = hotel.desc,
+            text = description,
             maxLines = 4,
             onClick = {},
             color = OrangePrimary
@@ -269,7 +297,7 @@ fun HotelDescription(hotel: Hotel) {
 }
 
 @Composable
-fun HotelAccount(hotel: Hotel) {
+fun HotelAccount(hotel: Account) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -302,7 +330,7 @@ fun HotelAccount(hotel: Hotel) {
                     .width(100.dp)
             )
             Text(
-                text = "trangiathinh",
+                text = hotel.username,
                 style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
             )
@@ -321,7 +349,7 @@ fun HotelAccount(hotel: Hotel) {
                     .width(100.dp)
             )
             Text(
-                text = "091231992",
+                text = hotel.phone,
                 style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
             )
@@ -340,7 +368,7 @@ fun HotelAccount(hotel: Hotel) {
                     .width(100.dp)
             )
             Text(
-                text = "cokakakaka@gmail.com",
+                text = hotel.email,
                 style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
             )
