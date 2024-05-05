@@ -53,7 +53,9 @@ object AccountService {
                 "customer" -> {
                     val request = CusRegisterRequest(
                         fields["username"]!!,
+                        fields["email"]!!,
                         fields["password"]!!,
+                        fields["phone"]!!,
                         fields["fullName"]!!,
                         role
                     )
@@ -65,7 +67,10 @@ object AccountService {
                 "moderator" -> {
                     val request = ModRegisterRequest(
                         fields["username"]!!,
+                        fields["email"]!!,
                         fields["password"]!!,
+                        fields["phone"]!!,
+                        fields["fullName"]!!,
                         fields["hotelName"]!!,
                         fields["hotelAddress"]!!,
                         fields["description"]!!,
