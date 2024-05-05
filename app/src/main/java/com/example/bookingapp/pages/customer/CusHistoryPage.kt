@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.ui.ThemedPreview
@@ -90,8 +91,8 @@ fun RoomItem(item: Room, viewDetail: () -> Unit) {
                 modifier = imageModifier
             ) {
                 Image(
-                    painter = painterResource(id = item.images[0]),
-                    contentDescription = null, // Add proper content description
+                    painter = painterResource(R.drawable.hotel2),
+                    contentDescription = null,
                     contentScale = ContentScale.FillHeight,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -117,7 +118,8 @@ fun RoomItemDetail(item: Room, columnHeight: Dp) {
             color = Color(0xFF333333),
             fontSize = 16.sp
         )
-        Text(text = "${item.name} (${item.type})", color = Color(0xFF555555))
+//        Text(text = "${item.name} (${item.type})", color = Color(0xFF555555))
+        Text(text = "${item.name}", color = Color(0xFF555555))
         Text(
             text = "400.000 VNĐ",
             fontWeight = FontWeight.Bold,

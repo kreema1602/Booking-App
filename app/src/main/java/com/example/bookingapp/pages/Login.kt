@@ -56,7 +56,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
@@ -449,12 +448,4 @@ fun LoginPage(
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewLoginPage() {
-    // create a mock nav controller
-    val navController = NavController(LocalContext.current)
-    LoginPage(navController)
 }

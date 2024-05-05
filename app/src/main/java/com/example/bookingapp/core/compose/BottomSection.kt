@@ -30,11 +30,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
-import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -180,24 +178,16 @@ fun BottomSection(
     calendar: Boolean = false,
     price: String = "",
     buttonText: String = "",
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    dateRangeState: DateRangePickerState = rememberDateRangePickerState()
 ) {
-    val state = rememberDateRangePickerState()
     val bottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.background(Color.Transparent)) {
-        MainContent(MainContentParams( calendar, state, bottomSheetState, coroutineScope, price, buttonText, onClick ), modifier = Modifier.align(Alignment.BottomCenter))
-        BottomSheetModal(BottomModalParams(bottomSheetState, state, coroutineScope), modifier = Modifier.align(Alignment.BottomEnd))
-    }
-}
+        MainContent(MainContentParams( calendar, dateRangeState, bottomSheetState, coroutineScope, price, buttonText, onClick ), modifier = Modifier.align(Alignment.BottomCenter))
+        BottomSheetModal(BottomModalParams(bottomSheetState, dateRangeState, coroutineScope), modifier = Modifier.align(Alignment.BottomEnd))
 
-@Preview
-@Composable
-fun BottomSectionPreview() {
-    ThemedPreview {
-        BottomSection(calendar = true, price = "400.000", buttonText = "Book", onClick = {})
-//        SimpleButton(text = "Book", onClick = {})
     }
 }

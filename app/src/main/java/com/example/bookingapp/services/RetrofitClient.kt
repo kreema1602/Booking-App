@@ -1,16 +1,20 @@
 package com.example.bookingapp.services
 
 import com.example.bookingapp.BuildConfig
+import com.example.bookingapp.MainActivity
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import okhttp3.Interceptor
 
 object RetrofitClient {
+    private const val CACHE_SIZE = (10 * 1024 * 1024).toLong()
     private var BASE_URL = BuildConfig.BASE_URL;
     private val authInterceptor = AuthInterceptor()
-    private val client = OkHttpClient.Builder().addInterceptor(authInterceptor).build()
+    private val myCache = okhttp3.Cache(MainActivity.context.cacheDir, CACHE_SIZE)
+    private val client = OkHttpClient.Builder().addInterceptor(authInterceptor).cache(myCache).build()
     private var authToken: String? = null
+
 
     private var retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)

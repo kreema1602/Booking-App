@@ -28,8 +28,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.view_models.CusHotelRoomViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -52,17 +54,14 @@ fun dateValidator(): (Long) -> Boolean {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun MyDateRangePicker(state: DateRangePickerState, bottomSheetState: ModalBottomSheetState, coroutineScope: CoroutineScope) {
-
+fun MyDateRangePicker(state: DateRangePickerState, bottomSheetState: ModalBottomSheetState, coroutineScope: CoroutineScope, cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel()) {
     val dateSkeleton = "yy MM dd"
-    state.setSelection(
-        Calendar.getInstance().apply {
-            add(Calendar.DATE, 1)
-        }.timeInMillis,
-        Calendar.getInstance().apply {
-            add(Calendar.DATE, 2)
-        }.timeInMillis
-    )
+    if (state.selectedStartDateMillis != null) {
+        cusHotelRoomViewModel.setCheckIn(state.selectedStartDateMillis!!)
+    }
+    if (state.selectedEndDateMillis != null) {
+        cusHotelRoomViewModel.setCheckOut(state.selectedEndDateMillis!!)
+    }
 
     DateRangePicker(
         state,
