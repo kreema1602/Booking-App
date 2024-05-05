@@ -5,7 +5,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,6 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,8 +44,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
@@ -51,13 +57,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.core.compose.BiometricAuthenticator
 import com.example.bookingapp.navigation.GeneralLeafScreen
 import com.example.bookingapp.view_models.MainViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -76,10 +85,13 @@ fun LoginPage(
         Font(R.font.maven_pro_semibold, FontWeight.SemiBold)
     )
     val context = MainActivity.context
+    val activity = LocalContext.current as FragmentActivity
     var visible by remember {
         mutableStateOf(false)
     }
+    val biometricAuthenticator = BiometricAuthenticator()
 
+    val scope = rememberCoroutineScope()
 
 
     Surface(color = Color.White) {
@@ -192,7 +204,7 @@ fun LoginPage(
                     .onKeyEvent { keyEvent ->
                         if (keyEvent.key == Key.Enter) {
                             keyboardController?.hide()
-                            performLogin(context, username, password)
+                            performLogin(context, username, password, scope)
                             true
                         } else {
                             false
@@ -222,7 +234,7 @@ fun LoginPage(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
-                        performLogin(context, username, password)
+                        performLogin(context, username, password, scope)
                     }
                 ),
             )
@@ -246,30 +258,73 @@ fun LoginPage(
 
                 )
 
-            Button(
-                onClick = {
-                    performLogin(context, username, password)
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary),
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 45.dp, end = 45.dp, bottom = 10.dp)
-                    .height(50.dp)
+                    .padding(start = 45.dp, end = 45.dp, bottom = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Log in",
-                    fontFamily = mavenProFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
+                Button(
+                    onClick = {
+                        performLogin(context, username, password, scope)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary),
+                    modifier = Modifier
+                        .padding(end = 10.dp)
+                        .weight(0.7f)
+                        .height(50.dp)
+                ) {
+                    Text(
+                        text = "Log in",
+                        fontFamily = mavenProFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+
+                IconButton(onClick = {
+                    biometricAuthenticator.promptBiometricAuth(
+                        title = "Login",
+                        subTitle = "Use your fingerprint",
+                        negativeButtonText = "Cancel",
+                        fragmentActivity = activity,
+                        onSuccess = {
+                            val credentials = MainViewModel.authViewModel.getCredentials()
+                            if (credentials.first.isEmpty() || credentials.second.isEmpty()) {
+                                scope.launch {
+                                Toast.makeText(context, "Please login by your username and password first", Toast.LENGTH_SHORT)
+                                    .show()
+                                }
+                                return@promptBiometricAuth
+                            } else {
+                                performLogin(context, credentials.first, credentials.second, scope, isBio = true)
+                            }
+                        },
+                        onError = { _, errorString ->
+                            scope.launch {
+                                Toast.makeText(context, errorString.toString(), Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        },
+                        onFailed = {
+                            scope.launch {
+                                Toast.makeText(context, "Verification error", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    )
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_fingerprint),
+                        contentDescription = null,
+                        tint = OrangePrimary,
+                        modifier = Modifier.size(50.dp)
+                    )
+                }
             }
 
             TextButton(
-                onClick = {
-//                    role.value = "guest"
-//                    isLoggedIn.value = true
-//                    navController.navigate(RootScreen.Customer.route)
-                },
+                onClick = {},
                 colors = ButtonDefaults.textButtonColors(contentColor = OrangePrimary),
                 modifier = Modifier.size(200.dp, 50.dp)
             ) {
@@ -322,9 +377,11 @@ fun LoginPage(
 fun performLogin(
     context: Context,
     username: String,
-    password: String
+    password: String,
+    scope: CoroutineScope,
+    isBio: Boolean = false
 ) {
-    CoroutineScope(Dispatchers.Main).launch {
+    scope.launch {
         try {
             if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(
@@ -335,7 +392,7 @@ fun performLogin(
                 return@launch
             }
             val result = withContext(Dispatchers.IO) {
-                MainViewModel.authViewModel.login(username, password)
+                MainViewModel.authViewModel.login(username, password, isBio)
             }
 
             if (result) {
@@ -360,9 +417,10 @@ fun performLogin(
     }
 }
 
-
-//@Preview
-//@Composable
-//fun LoginPagePreview() {
-//    LoginPage {}
-//}
+@Preview
+@Composable
+fun PreviewLoginPage() {
+    // create a mock nav controller
+    val navController = NavController(MainActivity.context)
+    LoginPage(navController)
+}

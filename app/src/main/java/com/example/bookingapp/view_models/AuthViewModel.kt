@@ -1,5 +1,6 @@
 package com.example.bookingapp.view_models
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,9 +51,9 @@ class AuthViewModel: ViewModel() {
         }
     }
 
-    suspend fun login(email: String, password: String): Boolean {
+    suspend fun login(email: String, password: String, isBio: Boolean): Boolean {
         try {
-            AccountService.login(email, password).let {
+            AccountService.login(email, password, isBio).let {
                 if (it != null) {
                     account = it.first
                     authToken = it.second
@@ -84,14 +85,9 @@ class AuthViewModel: ViewModel() {
         tokenEditor.apply()
     }
 
+    @SuppressLint("CommitPrefEdits")
     private fun clearAccount() {
         val context = MainActivity.context
-
-        val accountPref = context.getSharedPreferences("account", Context.MODE_PRIVATE)
-        val accountEditor = accountPref.edit()
-        accountEditor.clear()
-        accountEditor.apply()
-
         val tokenPref = context.getSharedPreferences("token", Context.MODE_PRIVATE)
         val tokenEditor = tokenPref.edit()
         tokenEditor.clear()
@@ -104,5 +100,15 @@ class AuthViewModel: ViewModel() {
         } catch (e: Exception) {
             throw Exception("${e.message}")
         }
+    }
+
+    // get username and password from shared preferences
+    fun getCredentials(): Pair<String, String> {
+        val context = MainActivity.context
+        val accountJson = context.getSharedPreferences("account", Context.MODE_PRIVATE)
+            .getString("account", "")
+        val account = Gson().fromJson(accountJson, Account::class.java)
+
+        return Pair(account.username, account.password)
     }
 }

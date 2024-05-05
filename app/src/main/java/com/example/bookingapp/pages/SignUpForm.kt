@@ -57,7 +57,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 @Composable
 fun Title(role: String) {
     val description = when (role) {
@@ -114,8 +113,10 @@ fun SignUpForm(navController: NavController, role: String) {
 
     val fieldsMap = mapOf(
         "username" to remember { mutableStateOf("") },
-        "fullName" to remember { mutableStateOf("") },
+        "email" to remember { mutableStateOf("") },
         "password" to remember { mutableStateOf("") },
+        "phone" to remember { mutableStateOf("") },
+        "fullName" to remember { mutableStateOf("") },
         "confirmPassword" to remember { mutableStateOf("") },
         "hotelName" to remember { mutableStateOf("") },
         "hotelAddress" to remember { mutableStateOf("") },
@@ -284,31 +285,54 @@ fun CheckBoxAcceptTerm(acceptTermState: MutableState<Boolean>) {
     }
 }
 
+val fields = listOf(
+    "Username",
+    "Full Name",
+    "Email",
+    "Phone number",
+    "Password",
+    "Confirm Password",
+    "Hotel's name",
+    "Hotel's address",
+    "Description"
+)
+
 fun getFormFields(role: String): List<String> {
     return when (role.lowercase()) {
-        "customer" -> listOf("Username", "Full Name", "Password", "Confirm Password")
+        "customer" -> listOf(
+            fields[0],
+            fields[1],
+            fields[2],
+            fields[3],
+            fields[4],
+            fields[5]
+        )
         "moderator" -> listOf(
-            "Username",
-            "Hotel's name",
-            "Password",
-            "Confirm Password",
-            "Hotel's address",
-            "Description"
+            fields[0],
+            fields[1],
+            fields[2],
+            fields[3],
+            fields[4],
+            fields[6],
+            fields[7],
+            fields[8]
         )
 
-        else -> listOf("Username", "Full Name", "Password", "Confirm Password")
+        else -> listOf(fields[0], fields[1], fields[2], fields[3], fields[4], fields[5])
     }
 }
 
 fun getFieldMap(field: String): String {
     return when (field) {
-        "Username" -> "username"
-        "Full Name" -> "fullName"
-        "Password" -> "password"
-        "Confirm Password" -> "confirmPassword"
-        "Hotel's name" -> "hotelName"
-        "Hotel's address" -> "hotelAddress"
-        "Description" -> "description"
+        fields[0] -> "username"
+        fields[1] -> "fullName"
+        fields[2] -> "email"
+        fields[3] -> "phone"
+        fields[4] -> "password"
+        fields[5] -> "confirmPassword"
+        fields[6] -> "hotelName"
+        fields[7] -> "hotelAddress"
+        fields[8] -> "description"
         else -> "not found"
     }
 }
@@ -327,16 +351,21 @@ suspend fun performValidation(
     when (role.lowercase()) {
         "customer" -> {
             fieldsCheckMap["username"] = fieldsMap["username"]?.value ?: ""
-            fieldsCheckMap["fullName"] = fieldsMap["fullName"]?.value ?: ""
+            fieldsCheckMap["email"] = fieldsMap["email"]?.value ?: ""
             fieldsCheckMap["password"] = fieldsMap["password"]?.value ?: ""
             fieldsCheckMap["confirmPassword"] = fieldsMap["confirmPassword"]?.value ?: ""
+            fieldsCheckMap["phone"] = fieldsMap["phone"]?.value ?: ""
+            fieldsCheckMap["fullName"] = fieldsMap["fullName"]?.value ?: ""
         }
 
         "moderator" -> {
             fieldsCheckMap["username"] = fieldsMap["username"]?.value ?: ""
-            fieldsCheckMap["hotelName"] = fieldsMap["hotelName"]?.value ?: ""
+            fieldsCheckMap["email"] = fieldsMap["email"]?.value ?: ""
             fieldsCheckMap["password"] = fieldsMap["password"]?.value ?: ""
             fieldsCheckMap["confirmPassword"] = fieldsMap["confirmPassword"]?.value ?: ""
+            fieldsCheckMap["phone"] = fieldsMap["phone"]?.value ?: ""
+            fieldsCheckMap["fullName"] = fieldsMap["fullName"]?.value ?: ""
+            fieldsCheckMap["hotelName"] = fieldsMap["hotelName"]?.value ?: ""
             fieldsCheckMap["hotelAddress"] = fieldsMap["hotelAddress"]?.value ?: ""
             fieldsCheckMap["description"] = fieldsMap["description"]?.value ?: ""
         }
@@ -344,13 +373,28 @@ suspend fun performValidation(
 
     for ((field, value) in fieldsCheckMap) {
         if (value.isEmpty()) {
-            // format the field name to be more readable
             val formattedField = field.replaceFirstChar { it.uppercase() }
             val splitField = formattedField.replace(Regex("([a-z])([A-Z])"), "$1 $2")
 
             Toast.makeText(context, "$splitField is empty", Toast.LENGTH_SHORT).show()
             return
         }
+    }
+
+    // Check format of email
+    val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+.[A-Za-z0-9.-]\$"
+    if (!fieldsCheckMap["email"]?.matches(emailRegex.toRegex())!!) {
+        Log.i("SignUpForm", "Invalid email format")
+        Toast.makeText(context, "Invalid email format", Toast.LENGTH_SHORT).show()
+        return
+    }
+
+    // Check format of phone number
+    val phoneRegex = "^[0-9]{10,11}\$"
+    if (!fieldsCheckMap["phone"]?.matches(phoneRegex.toRegex())!!) {
+        Log.i("SignUpForm", "Invalid phone number format")
+        Toast.makeText(context, "Invalid phone number format", Toast.LENGTH_SHORT).show()
+        return
     }
 
     if (!fieldsCheckMap["password"].equals(fieldsCheckMap["confirmPassword"])) {
