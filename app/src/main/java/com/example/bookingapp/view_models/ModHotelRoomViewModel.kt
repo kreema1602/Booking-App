@@ -7,5 +7,4 @@ class ModHotelRoomViewModel : ViewModel() {
     suspend fun addHotelRoom(fields: Map<String, String>, role: String): Boolean {
         return HotelRoomService.addHotelRoom(fields, role)
     }
-
 }

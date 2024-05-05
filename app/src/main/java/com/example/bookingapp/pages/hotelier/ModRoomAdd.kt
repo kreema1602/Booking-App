@@ -152,9 +152,9 @@ fun ModRoomAdd(onBack: () -> Unit) {
             BottomSection(buttonText = "Create", onClick = {
                 // Add room request
                 val fields = mapOf(
-                    "hotelName" to "Hotel Name", // Replace with actual hotel name
+                    "hotelName" to "Metropolix", // Replace with actual hotel name
                     "roomName" to roomName,
-                    "roomType" to roomType,
+                    "roomType" to "$roomType Room",
                     "isAccepted" to "true",
                     "isBooked" to "false",
                     "img" to "https://picsum.photos/200/300",

@@ -31,8 +31,8 @@ android {
         }
 
         debug {
-            buildConfigField("String", "BASE_URL", "\"https://144d-113-161-89-145.ngrok-free.app/\"")
-            buildConfigField("String", "BASE_URL", "\"https://88cf-183-80-39-221.ngrok-free.app/\"")
+            buildConfigField("String", "BASE_URL", "\"https://171d-171-243-48-3.ngrok-free.app/\"")
+//            buildConfigField("String", "BASE_URL", "\"https://88cf-183-80-39-221.ngrok-free.app/\"")
         }
     }
     compileOptions {
@@ -68,14 +68,14 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3:1.1.2")
-    implementation ("androidx.compose.ui:ui:1.6.3")
-    implementation ("androidx.compose.material:material:1.6.3")
-    implementation ("androidx.compose.runtime:runtime:1.6.3")
+    implementation("androidx.compose.ui:ui:1.6.3")
+    implementation("androidx.compose.material:material:1.6.3")
+    implementation("androidx.compose.runtime:runtime:1.6.3")
     implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    implementation ("androidx.compose.material:material-icons-extended:1.6.4")
+    implementation("androidx.compose.material:material-icons-extended:1.6.4")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")

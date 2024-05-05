@@ -1,5 +1,6 @@
 package com.example.bookingapp.services
 
+import android.util.Log
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.requests.CreateRoomReq
@@ -86,6 +87,8 @@ object HotelRoomService {
 
     suspend fun addHotelRoom(fields: Map<String, String>, role: String): Boolean {
         try {
+//            // Log the request body before making the API call
+//            Log.d("Request", "Fields: $fields, Role: $role")
             val response = apiService.addRoom(
                 role,
                 CreateRoomReq(
@@ -100,13 +103,16 @@ object HotelRoomService {
                     )
                 )
             )
+            val errorBody = response.errorBody()?.string()
+            Log.e("ErrorResponse", errorBody ?: "Error body is null")
+
             val statusCode = response.code()
             return if (statusCode == 201) {
                 true
             } else {
                 val errorBody = response.errorBody()?.string()
                 val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
-
+                Log.e("ErrorResponsess", errorResponse.message)
                 throw Exception(errorResponse.message)
             }
         } catch (e: Exception) {
