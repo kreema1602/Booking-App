@@ -4,4 +4,7 @@ object MainViewModel {
     lateinit var authViewModel: AuthViewModel
     lateinit var cusHotelRoomViewModel: CusHotelRoomViewModel
     lateinit var accountViewModel: AccountViewModel
+
+
+    lateinit var notiViewModel: NotiViewModel
 }

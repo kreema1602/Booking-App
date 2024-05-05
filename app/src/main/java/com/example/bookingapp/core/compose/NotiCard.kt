@@ -26,15 +26,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
 import com.example.bookingapp.models.NotiContent
+import com.example.bookingapp.models.Notification
+import java.text.SimpleDateFormat
+import java.util.Locale
+
+fun convertTime(time: String): String {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+    val date = dateFormat.parse(time)
+    val diff = System.currentTimeMillis() - date.time
+    val times = {
+        val year = diff / 31536000000
+        val month = diff / 2592000000
+        val day = diff / 86400000
+        val hour = diff / 3600000
+        val minute = diff / 60000
+        val second = diff / 1000
+        when {
+            year > 0 -> "$year years ago"
+            month > 0 -> "$month months ago"
+            day > 0 -> "$day days ago"
+            hour > 0 -> "$hour hours ago"
+            minute > 0 -> "$minute minutes ago"
+            else -> "$second seconds ago"
+        }
+    }
+    return times()
+}
 
 @Composable
 fun NotiCard(
-    variant: String,
-    bookingId: String,
-    content: NotiContent,
-    updatedAt: String = "Just now",
-    isRead: Boolean = false
+    notification: Notification
 ) {
+
     Surface(
         shape = MaterialTheme.shapes.large,
         shadowElevation = 3.dp,
@@ -45,56 +68,55 @@ fun NotiCard(
             .fillMaxWidth()
     ) {
         Row(modifier = Modifier.padding(all = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-//                painter = painterResource(id = if (variant == "booking") R.drawable.icon_checkmark_circle else R.drawable.icon_close_circle_outline),
-                painter = painterResource(
-                    id = when (variant) {
-                        "booking" -> R.drawable.icon_checkmark_circle
-                        "cancel" -> R.drawable.icon_close_circle_outline
-                        "alert" -> R.drawable.icon_alert
-                        "order" -> R.drawable.icon_order
-                        else -> R.drawable.icon_checkmark_circle
-                    }
-                ),
-                contentDescription = null,
-//                tint = if (variant == "booking") Color(0xFF36D000) else Color(0xFFFF6400),
-                tint = when (variant) {
-                    "booking" -> Color(0xFF36D000)
-                    "cancel" -> Color(0xFFFF6400)
-                    "alert" -> Color(0xFFFA0B0B)
-                    "order" -> Color(0xFFFFA800)
-                    else -> Color(0xFF36D000)
-                },
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(if (variant == "alert") MaterialTheme.shapes.medium else CircleShape)
-                    .fillMaxWidth()
-            )
+//            Icon(
+//                painter = painterResource(
+//                    id = when (variant) {
+//                        "booking" -> R.drawable.icon_checkmark_circle
+//                        "cancel" -> R.drawable.icon_close_circle_outline
+//                        "alert" -> R.drawable.icon_alert
+//                        "order" -> R.drawable.icon_order
+//                        else -> R.drawable.icon_checkmark_circle
+//                    }
+//                ),
+//                contentDescription = null,
+////                tint = if (variant == "booking") Color(0xFF36D000) else Color(0xFFFF6400),
+//                tint = when (variant) {
+//                    "booking" -> Color(0xFF36D000)
+//                    "cancel" -> Color(0xFFFF6400)
+//                    "alert" -> Color(0xFFFA0B0B)
+//                    "order" -> Color(0xFFFFA800)
+//                    else -> Color(0xFF36D000)
+//                },
+//                modifier = Modifier
+//                    .size(56.dp)
+//                    .clip(if (variant == "alert") MaterialTheme.shapes.medium else CircleShape)
+//                    .fillMaxWidth()
+//            )
             Column(modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)) {
                 Text(
                     buildAnnotatedString {
+                        append(notification.content + " ")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("$bookingId ")
+                            // substring to shorten the text last 5 characters
+                            append(notification.booking)
                         }
-                        append(content.content)
                     },
                     fontSize = 16.sp,
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Black,
                     maxLines = 2
                 )
-                Text(text = updatedAt,
+                Text(text = convertTime(notification.updatedAt),
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.End,
                     fontSize = 16.sp,
-                    fontWeight = if (isRead) FontWeight.Normal else FontWeight.Bold,
-                    color = if (isRead) Color.Gray else Color(0xFFFF6400),
+                    fontWeight = if (notification.is_read) FontWeight.Normal else FontWeight.Bold,
+                    color = if (notification.is_read) Color.Gray else Color(0xFFFF6400),
                     modifier = Modifier
                         .fillMaxWidth()
                 )
-
             }
         }
     }
