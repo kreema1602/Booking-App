@@ -30,7 +30,7 @@ import com.example.bookingapp.mock_data.RoomData
 
 @Composable
 fun CusPaymentScreen(
-    roomId: Int, onBack: () -> Unit
+    roomId: String, onBack: () -> Unit
 ) {
     val room = RoomData.data[0]
     Surface {
@@ -135,5 +135,5 @@ fun PaymentDetail(
 @Preview
 @Composable
 fun PreviewCusPaymentScreen() {
-    CusPaymentScreen(123, onBack = {})
+    CusPaymentScreen("123", onBack = {})
 }

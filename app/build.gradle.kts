@@ -31,7 +31,7 @@ android {
         }
 
         debug {
-            buildConfigField("String", "BASE_URL", "\"https://4f71-183-80-39-221.ngrok-free.app/\"")
+            buildConfigField("String", "BASE_URL", "\"https://c781-113-172-122-34.ngrok-free.app/\"")
         }
     }
     compileOptions {

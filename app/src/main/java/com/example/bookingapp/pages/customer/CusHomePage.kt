@@ -49,6 +49,7 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
@@ -231,7 +232,10 @@ fun HotelDescription(modifier: Modifier, hotel: Account) {
             Text(
                 text = hotel.hotelName,
                 style = MaterialTheme.typography.titleLarge,
-                color = Color.White
+                color = Color.White,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.widthIn(max = 200.dp),
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -271,7 +275,8 @@ fun HotelDescription(modifier: Modifier, hotel: Account) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White,
                     maxLines = 1,
-                    modifier = Modifier.widthIn(max = 150.dp),
+                    modifier = Modifier.widthIn(max = 120.dp),
+                    overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start
                 )
             }

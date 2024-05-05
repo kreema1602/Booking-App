@@ -16,7 +16,7 @@ object HotelRoomService {
 
     suspend fun getHotels(start: Int, num: Int): List<Account> {
         try {
-            val response = apiService.getHotels(authViewModel.account.role, start, num)
+            val response = apiService.getHotels(authViewModel.account.role, authViewModel.account._id, start, num)
             val statusCode = response.code()
 
             return if (statusCode == 200) {

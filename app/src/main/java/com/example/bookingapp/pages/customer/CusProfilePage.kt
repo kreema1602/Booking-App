@@ -2,6 +2,7 @@ package com.example.bookingapp.pages.customer
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -62,7 +63,11 @@ fun CusProfilePage(
 
     var account by remember { mutableStateOf (Account()) }
     LaunchedEffect(Unit) {
-        account = getAccountProfile(accountId)
+        try {
+            account = getAccountProfile(accountId)
+        } catch (e: Exception) {
+            Log.e("CusProfilePage", "getAccountProfile: ${e.message}")
+        }
     }
     
     Column(modifier = Modifier
@@ -258,10 +263,15 @@ fun LogOut() {
     }
 }
 suspend fun getAccountProfile (accountId: String) : Account {
-    val result = withContext(Dispatchers.IO) {
-        MainViewModel.accountViewModel.getProfile("customer", accountId)
+    try {
+        val result = withContext(Dispatchers.IO) {
+            MainViewModel.accountViewModel.getProfile("customer", accountId)
+        }
+        return result
+    }  catch (e: Exception) {
+        throw Exception("CusProfilePage: ${e.message}")
     }
-    return result
+
 }
 @Preview
 @Composable
