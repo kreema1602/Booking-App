@@ -1,6 +1,7 @@
 package com.example.bookingapp.services
 
 import com.example.bookingapp.models.ApiResponse
+import com.example.bookingapp.models.requests.BookingRequest
 import com.example.bookingapp.models.requests.CusRegisterRequest
 import com.example.bookingapp.models.requests.LoginRequest
 import com.example.bookingapp.models.requests.ModRegisterRequest
@@ -61,4 +62,15 @@ interface ApiService {
 
     @GET("/{role}/room/{hotelId}?is_full_detail=true")
     suspend fun getRoomFullDetail(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
+
+    // Booking
+    // Get all bookings of a customer
+    @GET("/{role}/booking/waiting/{hotelId}")
+    suspend fun getWaitingBookings(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
+    @GET("/{role}/booking/accepted/{hotelId}")
+    suspend fun getAcceptedBookings(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
+    @GET("/{role}/booking/staying/{hotelId}")
+    suspend fun getStayingBookings(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
+    @POST("/{role}/booking")
+    suspend fun booking(@Path("role") role: String, @Body request: BookingRequest): Response<ApiResponse>
 }

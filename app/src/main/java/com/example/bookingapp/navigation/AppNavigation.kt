@@ -206,11 +206,10 @@ private fun NavGraphBuilder.showCusHistory(navController: NavController) {
 }
 
 private fun NavGraphBuilder.showCusPayment(navController: NavController) {
-    composable(CustomerLeafScreen.Payment.route + "/{roomId}") {
-        val roomId = it.arguments?.getString("roomId")?.toInt() ?: 0
-        CusPaymentScreen(roomId = roomId, onBack = {
-            navController.navigateUp()
-        })
+    composable(CustomerLeafScreen.Payment.route) {
+        CusPaymentScreen(
+            onBack = { navController.navigateUp() }
+        )
 
     }
 }
