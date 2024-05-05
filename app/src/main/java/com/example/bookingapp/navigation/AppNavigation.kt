@@ -129,8 +129,11 @@ private fun NavGraphBuilder.showCusHome(navController: NavController) {
 
 private fun NavGraphBuilder.showCusRoomScreen(navController: NavController) {
     composable(CustomerLeafScreen.Room.route + "/{hotelId}") { it ->
-        val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
-        CusRoomScreen(hotelId, onBack = {
+        val hotelId = it.arguments?.getString("hotelId") ?: ""
+
+        MainViewModel.cusHotelRoomViewModel.selectedHotelId = hotelId
+
+        CusRoomScreen(onBack = {
             navController.navigateUp()
         }, showRoomDetail = {
             navController.navigate(CustomerLeafScreen.RoomDetail.route + "/$it")
@@ -140,8 +143,10 @@ private fun NavGraphBuilder.showCusRoomScreen(navController: NavController) {
 
 private fun NavGraphBuilder.showCusRoomDetail(navController: NavController) {
     composable(CustomerLeafScreen.RoomDetail.route + "/{roomId}") {
-        val roomId = it.arguments?.getString("roomId")?.toInt() ?: 0
-        CusRoomDetail(navController, roomId, onBack = {
+        val roomId = it.arguments?.getString("roomId") ?: ""
+
+        MainViewModel.cusHotelRoomViewModel.selectedRoomId = roomId
+        CusRoomDetail(navController, onBack = {
             navController.navigateUp()
         })
     }

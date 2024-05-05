@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -41,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.view_models.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -65,15 +67,12 @@ fun dateValidator(): (Long) -> Boolean {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun MyDateRangePicker(state: DateRangePickerState, bottomSheetState: ModalBottomSheetState, coroutineScope: CoroutineScope) {
-
-    state.setSelection(
-        Calendar.getInstance().apply {
-            add(Calendar.DATE, 1)
-        }.timeInMillis,
-        Calendar.getInstance().apply {
-            add(Calendar.DATE, 2)
-        }.timeInMillis
-    )
+    if (state.selectedStartDateMillis != null) {
+        MainViewModel.cusHotelRoomViewModel.checkIn = state.selectedStartDateMillis!!
+    }
+    if (state.selectedEndDateMillis != null) {
+        MainViewModel.cusHotelRoomViewModel.checkOut = state.selectedEndDateMillis!!
+    }
 
     DateRangePicker(
         state,

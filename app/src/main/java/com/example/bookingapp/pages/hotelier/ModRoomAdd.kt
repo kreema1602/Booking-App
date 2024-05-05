@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.BottomSection
-import com.example.bookingapp.core.compose.EditCarousel
 import com.example.bookingapp.core.compose.EditText
 import com.example.bookingapp.core.compose.MyDropdownMenu
 import com.example.bookingapp.core.compose.MySpacer
@@ -37,9 +37,9 @@ import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.mock_data.RoomData
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModRoomAdd(onBack: () -> Unit) {
-    val room = RoomData.data[0]
     Box {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -48,7 +48,7 @@ fun ModRoomAdd(onBack: () -> Unit) {
         ) {
             item {
                 TopAppBar(title = "Detail", onClick = onBack)
-                EditCarousel(initialItems = room.images)
+//                EditCarousel(initialItems = room.images)
                 Text(
                     text = "Room",
                     style = MaterialTheme.typography.titleLarge.copy(

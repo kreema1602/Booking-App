@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +15,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,11 +29,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.R
-import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import kotlinx.coroutines.launch
 
@@ -43,9 +41,9 @@ fun BottomSection(
     calendar: Boolean = false,
     price: String = "",
     buttonText: String = "",
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    dateRangeState: DateRangePickerState = rememberDateRangePickerState()
 ) {
-    val state = rememberDateRangePickerState()
     val bottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
@@ -90,11 +88,11 @@ fun BottomSection(
                         tint = OrangePrimary,
                     )
                     val from =
-                        if (state.selectedStartDateMillis != null) state.selectedStartDateMillis?.let {
+                        if (dateRangeState.selectedStartDateMillis != null) dateRangeState.selectedStartDateMillis?.let {
                             getFormattedDate(it)
                         } else "";
                     val to =
-                        if (state.selectedEndDateMillis != null) state.selectedEndDateMillis?.let {
+                        if (dateRangeState.selectedEndDateMillis != null) dateRangeState.selectedEndDateMillis?.let {
                             getFormattedDate(it)
                         } else "";
                     Text(
@@ -143,21 +141,12 @@ fun BottomSection(
             ModalBottomSheetLayout(
                 sheetState = bottomSheetState,
                 sheetContent = {
-                    MyDateRangePicker(state, bottomSheetState, coroutineScope)
+                    MyDateRangePicker(dateRangeState, bottomSheetState, coroutineScope)
                 },
                 content = {},
                 scrimColor = Color.Black.copy(alpha = 0.5f),
                 sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
             )
         }
-    }
-}
-
-@Preview
-@Composable
-fun BottomSectionPreview() {
-    ThemedPreview {
-        BottomSection(calendar = true, price = "400.000", buttonText = "Book", onClick = {})
-//        SimpleButton(text = "Book", onClick = {})
     }
 }
