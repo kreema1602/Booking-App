@@ -1,5 +1,6 @@
 package com.example.bookingapp.pages
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -55,13 +56,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.FilledClipButton
 import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.view_models.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun ForgotPasswordPage(navController: NavController) {
@@ -102,6 +107,7 @@ fun ForgotPasswordContent(
 ) {
     val usernameInput = remember { mutableStateOf("") }
     val showDialog = remember { mutableStateOf(false) }
+    val context = MainActivity.context
 
     Column (
         modifier = Modifier
@@ -149,11 +155,11 @@ fun ForgotPasswordContent(
                     .padding(vertical = 5.dp, horizontal = 0.dp)
                     .border(1.dp, Color(0xFFDEE7F5), shape = RoundedCornerShape(100)),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color(0xFFf9f9f9), // Modify background color
-                    focusedIndicatorColor = Color.Transparent, // Remove the focus indicator
-                    unfocusedIndicatorColor = Color.Transparent, // Remove the unfocused indicator
-                    cursorColor = Color(0xFFff6400), // Modify cursor color
-                    textColor = Color(0xFF000000), // Modify text color
+                    backgroundColor = Color(0xFFf9f9f9),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = Color(0xFFff6400),
+                    textColor = Color(0xFF000000),
                 ),
             )
         }
@@ -163,7 +169,17 @@ fun ForgotPasswordContent(
                 .clip(RoundedCornerShape(100))
                 .background(OrangePrimary)
                 .clickable {
-                    showDialog.value = true
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val username = usernameInput.value
+
+                        if (checkUsername(username)) {
+                            showDialog.value = true
+                        } else {
+                            Toast
+                                .makeText(context, "Username not found", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -187,25 +203,37 @@ fun ForgotPasswordContent(
     }
 }
 
+suspend fun checkUsername(username: String): Boolean {
+    val result = withContext(Dispatchers.IO) {
+        MainViewModel.authViewModel.forgotPassword(username)
+    }
+    return result
+}
+
 @Composable
 fun SendCode(
     username: String,
     navController: NavController,
     onDismissRequest: () -> Unit
 ){
-    // Check username
-    // Call api send code to email
-
-    ShowOTPDialog(navController = navController, onDismissRequest = { onDismissRequest() }, onConfirmation = { /*TODO*/ })
+    ShowOTPDialog(
+        username = username,
+        navController = navController,
+        onDismissRequest = { onDismissRequest() }
+    )
 }
 
 @Composable
 fun ShowOTPDialog(
+    username: String,
     navController: NavController,
     onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
 ){
     val coroutineScope = rememberCoroutineScope()
+    val otp = remember {
+        List(6) { mutableStateOf(TextFieldValue(text = "", selection = TextRange(0))) }
+    }
+
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
             modifier = Modifier.size(360.dp),
@@ -239,14 +267,28 @@ fun ShowOTPDialog(
                         .fillMaxWidth()
                         .padding(top = 10.dp, bottom = 24.dp, start = 0.dp, end = 0.dp)
                 ) {
-                    OTPTextField(length = 6, coroutineScope = coroutineScope)
+                    OTPTextField(otp= otp, coroutineScope = coroutineScope)
                 }
 
                 // Verify Button
                 FilledClipButton(
                     text = "Verify",
                     onClick = {
-                        navController.navigate("new_password")
+                        val otpCode = otp.joinToString("") { it.value.text }
+                        if (otpCode.length != 6) {
+                            Toast.makeText(MainActivity.context, "Invalid OTP", Toast.LENGTH_SHORT).show()
+                        } else {
+                            coroutineScope.launch {
+                                val result = withContext(Dispatchers.IO) {
+                                    MainViewModel.authViewModel.verifyOTP(username, otpCode)
+                                }
+                                if (result) {
+                                    navController.navigate("new_password/$username")
+                                } else {
+                                    Toast.makeText(MainActivity.context, "Invalid OTP", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
                     }
                 )
 
@@ -302,14 +344,10 @@ fun ShowOTPDialog(
 
 @Composable
 fun OTPTextField(
-    length: Int,
+    otp: List<MutableState<TextFieldValue>>,
     coroutineScope: CoroutineScope
 ){
-    val requesterList = remember { List(length) { FocusRequester() } }
-    val otp = remember {
-        List(length) { mutableStateOf(TextFieldValue(text = "", selection = TextRange(0))) }
-    }
-
+    val requesterList = remember { List(6) { FocusRequester() } }
 
     val focusManager = LocalFocusManager.current
     val keyBoardController = LocalSoftwareKeyboardController.current
@@ -454,7 +492,7 @@ fun resendCode(){
 @Composable
 fun ForgotPasswordPagePreview() {
 //    ForgotPasswordPage(navController = rememberNavController())
-    ShowOTPDialog(navController = rememberNavController(), onDismissRequest = { /*TODO*/ }) {
-        
-    }
+//    ShowOTPDialog(navController = rememberNavController(), onDismissRequest = { /*TODO*/ }) {
+//
+//    }
 }

@@ -111,4 +111,27 @@ class AuthViewModel: ViewModel() {
 
         return Pair(account.username, account.password)
     }
+    suspend fun verifyOTP(username: String, otp: String): Boolean {
+        try {
+            return AccountService.verifyOTP(username, otp)
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
+
+    suspend fun forgotPassword(username: String): Boolean {
+        try {
+            return AccountService.forgotPassword(username)
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
+
+    suspend fun resetPassword(username: String, password: String): Boolean {
+        try {
+            return AccountService.resetPassword(username, password)
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
 }
