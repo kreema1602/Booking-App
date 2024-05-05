@@ -1,5 +1,6 @@
 package com.example.bookingapp.pages.customer
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -121,7 +122,8 @@ fun CusPaymentScreen(
                                 MainViewModel.cusHotelRoomViewModel.selectedRoomId,
                                 MainViewModel.authViewModel.account._id,
                                 MainViewModel.cusHotelRoomViewModel.checkIn,
-                                MainViewModel.cusHotelRoomViewModel.checkOut
+                                MainViewModel.cusHotelRoomViewModel.checkOut,
+                                pricePerNight * nights
                             )
                         }
                     },
@@ -173,27 +175,46 @@ suspend fun makeBooking(
     room: String,
     customer: String,
     checkIn: Long,
-    checkOut: Long
+    checkOut: Long,
+    totalAmount: Int
 ) {
-    val bookingRequest = BookingRequest().apply {
-        this.hotel = hotel
-        this.room = room
-        this.customer = customer
-        this.check_in = checkIn
-        this.check_out = checkOut
-    }
-    val result = withContext(Dispatchers.IO) {
-        try {
-            MainViewModel.bookingViewModel.booking(bookingRequest)
-        } catch (e: Exception) {
-            throw Exception("CusPaymentScreen: ${e.message}")
+    try {
+        if (MainViewModel.authViewModel.account.wallet < totalAmount) {
+            Toast.makeText(MainActivity.context, "Not enough money", Toast.LENGTH_SHORT).show()
+            return
         }
-    }
+        val bookingRequest = BookingRequest().apply {
+            this.hotel = hotel
+            this.room = room
+            this.customer = customer
+            this.check_in = checkIn
+            this.check_out = checkOut
+        }
+        val result = withContext(Dispatchers.IO) {
+            MainViewModel.bookingViewModel.booking(bookingRequest)
+        }
+        if (result) {
+            MainViewModel.authViewModel.account.wallet -= totalAmount
 
-    if (result) {
-        Toast.makeText(MainActivity.context, "Booking successfully", Toast.LENGTH_SHORT).show()
-    } else {
-        Toast.makeText(MainActivity.context, "Booking failed", Toast.LENGTH_SHORT).show()
+            val updateAccountRequest = UpdateAccountRequest().apply {
+                this.wallet = MainViewModel.authViewModel.account.wallet
+            }
+
+            withContext(Dispatchers.IO) {
+                try {
+                    MainViewModel.accountViewModel.updateProfile("customer" ,customer, updateAccountRequest)
+                } catch (e: Exception) {
+                    Log.e("CusProfileFieldEditor", "updateProfile: ${e.message}")
+                    false
+                }
+            }
+
+            Toast.makeText(MainActivity.context, "Booking successfully", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(MainActivity.context, "Booking failed", Toast.LENGTH_SHORT).show()
+        }
+    } catch (e: Exception) {
+        Log.e("CusPaymentScreen", "makeBooking: ${e.message}")
     }
 }
 

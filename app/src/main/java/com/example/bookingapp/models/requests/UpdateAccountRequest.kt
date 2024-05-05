@@ -7,4 +7,5 @@ class UpdateAccountRequest {
     var hotelName : String? = null
     var hotelAddress : String? = null
     var description : String? = null
+    var wallet : Int? = null
 }
