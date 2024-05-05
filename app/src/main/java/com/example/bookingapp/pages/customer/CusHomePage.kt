@@ -35,7 +35,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -197,13 +199,13 @@ fun HotelDescription(
     modifier: Modifier,
     hotel: Account,
     cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel()) {
-    val rating by cusHotelRoomViewModel.averageRating.collectAsState()
-    val price by cusHotelRoomViewModel.priceRange.collectAsState()
+    var rating by remember { mutableDoubleStateOf(0.0) }
+    var price by remember { mutableStateOf(Pair(0.0, 0.0)) }
 
     LaunchedEffect(key1 = Unit) {
         try {
-            cusHotelRoomViewModel.getAverageRating(hotel._id)
-            cusHotelRoomViewModel.getPriceRange(hotel._id)
+            rating = cusHotelRoomViewModel.getAverageRating(hotel._id)
+            price = cusHotelRoomViewModel.getPriceRange(hotel._id)
         } catch (e: Exception) {
             Log.e("CusHomePage", "Failed to get hotel data: ${e.message}")
         }
