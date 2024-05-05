@@ -9,11 +9,12 @@ import retrofit2.http.POST
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     // Account
     @POST("/auth/login")
-    suspend fun login(@Body request: LoginRequest): Response<ApiResponse>
+    suspend fun login(@Body request: LoginRequest, @Query("isBio") isBio: Boolean): Response<ApiResponse>
 
     @POST("/auth/register")
     suspend fun registerCustomer(@Body request: CusRegisterRequest): Response<ApiResponse>

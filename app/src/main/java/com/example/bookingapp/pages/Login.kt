@@ -298,7 +298,7 @@ fun LoginPage(
                                 }
                                 return@promptBiometricAuth
                             } else {
-                                performLogin(context, credentials.first, credentials.second, scope)
+                                performLogin(context, credentials.first, credentials.second, scope, isBio = true)
                             }
                         },
                         onError = { _, errorString ->
@@ -392,7 +392,7 @@ fun performLogin(
                 return@launch
             }
             val result = withContext(Dispatchers.IO) {
-                MainViewModel.authViewModel.login(username, password)
+                MainViewModel.authViewModel.login(username, password, isBio)
             }
 
             if (result) {

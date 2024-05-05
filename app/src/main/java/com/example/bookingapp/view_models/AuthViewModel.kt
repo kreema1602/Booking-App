@@ -51,9 +51,9 @@ class AuthViewModel: ViewModel() {
         }
     }
 
-    suspend fun login(email: String, password: String): Boolean {
+    suspend fun login(email: String, password: String, isBio: Boolean): Boolean {
         try {
-            AccountService.login(email, password).let {
+            AccountService.login(email, password, isBio).let {
                 if (it != null) {
                     account = it.first
                     authToken = it.second
