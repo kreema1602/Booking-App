@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,9 +42,11 @@ import com.example.bookingapp.navigation.RootScreen
 import com.example.bookingapp.services.RetrofitClient
 import com.example.bookingapp.view_models.AccountViewModel
 import com.example.bookingapp.view_models.AuthViewModel
+import com.example.bookingapp.view_models.BookingViewModel
 import com.example.bookingapp.view_models.CusHotelRoomViewModel
 import com.example.bookingapp.view_models.MainViewModel.accountViewModel
 import com.example.bookingapp.view_models.MainViewModel.authViewModel
+import com.example.bookingapp.view_models.MainViewModel.bookingViewModel
 import com.example.bookingapp.view_models.MainViewModel.cusHotelRoomViewModel
 import com.example.bookingapp.view_models.MainViewModel.modHomeViewModel
 import com.example.bookingapp.view_models.ModHomeViewModel
@@ -66,6 +67,8 @@ class MainActivity : FragmentActivity() {
         cusHotelRoomViewModel = ViewModelProvider(this)[CusHotelRoomViewModel::class.java]
         accountViewModel = ViewModelProvider(this)[AccountViewModel::class.java]
         modHomeViewModel = ViewModelProvider(this)[ModHomeViewModel::class.java]
+        bookingViewModel = ViewModelProvider(this)[BookingViewModel::class.java]
+
         // end set view model
 
         // load account from shared preferences

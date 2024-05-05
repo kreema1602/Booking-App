@@ -2,6 +2,7 @@ package com.example.bookingapp.services
 
 import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.Booking
+import com.example.bookingapp.models.requests.BookingRequest
 import com.example.bookingapp.view_models.MainViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -136,6 +137,14 @@ object BookingService {
 
                 throw Exception(errorResponse.message)
             }
+        }
+    }
+    suspend fun booking(newBook: BookingRequest): Boolean {
+        try {
+            val response = apiService.booking(MainViewModel.authViewModel.account.role, newBook)
+            val statusCode = response.code()
+
+            return statusCode == 200
         } catch (e: Exception) {
             throw Exception("${e.message}")
         }

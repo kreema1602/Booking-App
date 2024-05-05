@@ -79,7 +79,12 @@ fun CarouselItem(
         contentAlignment = Alignment.Center
     ) {
         val imgUrl = if (imageUrl.contains("http")) imageUrl else imageUrl.toInt()
-        AsyncImage(model = imgUrl, contentDescription = null, error = painterResource(id = R.drawable.placeholder), placeholder = painterResource(id = R.drawable.placeholder))
+        AsyncImage(
+            model = imgUrl,
+            contentDescription = null,
+            error = painterResource(id = R.drawable.placeholder),
+            placeholder = painterResource(id = R.drawable.placeholder)
+        )
     }
 }
 
@@ -123,7 +128,7 @@ fun EditCarousel(
         val newList = if (itemList.size == 1 && itemList[0] == R.drawable.placeholder.toString()) {
             mutableListOf(R.drawable.hotel3.toString())
         } else {
-            itemList.toMutableList().apply{
+            itemList.toMutableList().apply {
                 add(R.drawable.hotel3.toString())
             }
         }

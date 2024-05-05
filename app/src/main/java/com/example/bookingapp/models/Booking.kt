@@ -13,4 +13,3 @@ data class Booking(
     val updatedAt: String
 ) {
     constructor() : this("", "", "", "", "", "", false, "", "", "")
-}

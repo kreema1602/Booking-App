@@ -19,6 +19,7 @@ import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +55,7 @@ fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
         }
     }
     val pricePerNight = MainViewModel.cusHotelRoomViewModel.room.filter { it._id == MainViewModel.cusHotelRoomViewModel.selectedRoomId }[0].price
+    val isExpanded = remember { mutableStateOf(false) }
 
     Box {
         LazyColumn(
@@ -87,9 +89,11 @@ fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
                 )
                 ExpandableText(
                     text = room.description,
-                    maxLines = 2,
+                    maxLines = if (isExpanded.value) Int.MAX_VALUE else 3,
                     color = OrangePrimary,
-                    onClick = {}
+                    onClick = {
+                        isExpanded.value = !isExpanded.value
+                    }
                 )
             }
 
@@ -139,7 +143,7 @@ fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
                 calendar = true,
                 price = "${pricePerNight * nights}",
                 buttonText = "Book",
-                onClick = {navController.navigate(CustomerLeafScreen.Payment.route + "/${MainViewModel.cusHotelRoomViewModel.selectedRoomId}")},
+                onClick = {navController.navigate(CustomerLeafScreen.Payment.route)},
                 dateRangeState = dateRangeState
             )
         }
