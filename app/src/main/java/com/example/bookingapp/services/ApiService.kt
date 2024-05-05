@@ -5,15 +5,17 @@ import com.example.bookingapp.models.requests.CusRegisterRequest
 import com.example.bookingapp.models.requests.LoginRequest
 import com.example.bookingapp.models.requests.ModRegisterRequest
 import com.example.bookingapp.models.requests.VerifyOTPRequest
+import com.example.bookingapp.models.requests.UpdateAccountRequest
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
-    // Account
+    // Authentication
     @POST("/auth/login")
     suspend fun login(@Body request: LoginRequest, @Query("isBio") isBio: Boolean): Response<ApiResponse>
 
@@ -22,7 +24,6 @@ interface ApiService {
 
     @POST("/auth/register")
     suspend fun registerModerator(@Body request: ModRegisterRequest): Response<ApiResponse>
-
     @POST("/auth/forgot-password")
     suspend fun forgotPassword(@Body request: LoginRequest): Response<ApiResponse>
 
@@ -31,6 +32,12 @@ interface ApiService {
 
     @POST("/auth/verify-otp")
     suspend fun verifyOTP(@Body request: VerifyOTPRequest): Response<ApiResponse>
+    // Account
+    @GET("/{role}/profile/{id}")
+    suspend fun getProfile(@Path("role") role: String, @Path("id") id: String): Response<ApiResponse>
+
+    @PUT("/{role}/profile/{id}")
+    suspend fun updateProfile(@Path("role") role: String, @Path("id") id: String, @Body request: UpdateAccountRequest): Response<ApiResponse>
 
     // Amenity
     @GET("/{role}/amenity")

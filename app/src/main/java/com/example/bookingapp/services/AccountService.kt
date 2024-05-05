@@ -6,6 +6,7 @@ import com.example.bookingapp.models.requests.CusRegisterRequest
 import com.example.bookingapp.models.requests.LoginRequest
 import com.example.bookingapp.models.requests.ModRegisterRequest
 import com.example.bookingapp.models.requests.VerifyOTPRequest
+import com.example.bookingapp.models.requests.UpdateAccountRequest
 import com.google.gson.Gson
 import org.json.JSONObject
 import retrofit2.Response
@@ -45,7 +46,6 @@ object AccountService {
             throw Exception("${e.message}")
         }
     }
-
     suspend fun register(fields: Map<String, String>, role: String): Boolean {
         try {
             val response: Response<ApiResponse>?
@@ -112,6 +112,28 @@ object AccountService {
             throw Exception("${e.message}")
         }
     }
+    suspend fun getProfile(role: String, id: String): Account {
+        try {
+            val response = apiService.getProfile(role, id)
+            val statusCode = response.code()
+
+            return if (statusCode == 200) {
+                val apiResponse = response.body() as ApiResponse
+                val jsonData = JSONObject(Gson().toJson(apiResponse.data))
+                Gson().fromJson(
+                    jsonData.getJSONObject("user").toString(),
+                    Account::class.java
+                )
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
+
+                throw Exception(errorResponse.message)
+            }
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
 
     suspend fun forgotPassword(username: String): Boolean {
         try {
@@ -132,6 +154,23 @@ object AccountService {
             val statusCode = response.code()
 
             return statusCode == 200
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
+    suspend fun updateProfile(role: String, id: String, newAccount: UpdateAccountRequest): Boolean {
+        try {
+            val response = apiService.updateProfile(role, id, newAccount)
+            val statusCode = response.code()
+
+            return if (statusCode == 200) {
+                true
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
+
+                throw Exception(errorResponse.message)
+            }
         } catch (e: Exception) {
             throw Exception("${e.message}")
         }
