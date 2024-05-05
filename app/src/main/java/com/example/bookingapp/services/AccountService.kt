@@ -6,6 +6,7 @@ import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.requests.CusRegisterRequest
 import com.example.bookingapp.models.requests.LoginRequest
 import com.example.bookingapp.models.requests.ModRegisterRequest
+import com.example.bookingapp.models.requests.VerifyOTPRequest
 import com.google.gson.Gson
 import org.json.JSONObject
 import retrofit2.Response
@@ -96,5 +97,39 @@ object AccountService {
         }
     }
 
+    suspend fun verifyOTP(username: String, otp: String): Boolean {
+        try {
+            val request = VerifyOTPRequest(username, otp)
+            val response = apiService.verifyOTP(request)
+            val statusCode = response.code()
 
+            return statusCode == 200
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
+
+    suspend fun forgotPassword(username: String): Boolean {
+        try {
+            val request = LoginRequest(username, "")
+            val response = apiService.forgotPassword(request)
+            val statusCode = response.code()
+
+            return statusCode == 200
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
+
+    suspend fun resetPassword(username: String, password: String): Boolean {
+        try {
+            val request = LoginRequest(username, password)
+            val response = apiService.resetPassword(request)
+            val statusCode = response.code()
+
+            return statusCode == 200
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
 }

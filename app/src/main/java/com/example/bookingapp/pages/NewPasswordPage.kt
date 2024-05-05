@@ -1,5 +1,6 @@
 package com.example.bookingapp.pages
 
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,11 +35,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.bookingapp.MainActivity
 import com.example.bookingapp.core.compose.FilledClipButton
 import com.example.bookingapp.core.compose.TopAppBar
+import com.example.bookingapp.view_models.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
-fun NewPasswordPage(navController: NavController) {
+fun NewPasswordPage(username: String, navController: NavController) {
     Surface(
         color = Color(0xFFF9F9F9),
     ) {
@@ -53,7 +60,7 @@ fun NewPasswordPage(navController: NavController) {
                 onClick = { navController.popBackStack() },
             )
             TopTitle(title = "Create new password")
-            SubmitForm()
+            SubmitForm(username = username, navController = navController)
         }
     }
 }
@@ -91,7 +98,8 @@ fun TopTitle(
 
 @Composable
 fun SubmitForm(
-
+    username: String,
+    navController: NavController
 ) {
     val password = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
@@ -110,7 +118,27 @@ fun SubmitForm(
         ) {
             FilledClipButton(
                 text = "Reset Password",
-                onClick = {  },
+                onClick = {
+                    val newPassword = password.value
+                    val confirmNewPassword = confirmPassword.value
+
+                    if (newPassword != confirmNewPassword) {
+                        Toast.makeText(MainActivity.context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                    } else {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val result = withContext(Dispatchers.IO) {
+                                 MainViewModel.authViewModel.resetPassword(username, newPassword)
+                            }
+                            if (result) {
+                                Toast.makeText(MainActivity.context, "Password reset successfully", Toast.LENGTH_SHORT).show()
+                                navController.navigate("login")
+                            } else {
+                                Toast.makeText(MainActivity.context, "Failed to reset password", Toast.LENGTH_SHORT).show()
+                                navController.navigate("forgot_password")
+                            }
+                        }
+                    }
+                },
             )
         }
 
@@ -177,5 +205,5 @@ fun InputField(
 @Preview
 @Composable
 fun NewPasswordPagePreview() {
-    NewPasswordPage(navController = rememberNavController())
+//    NewPasswordPage(navController = rememberNavController())
 }
