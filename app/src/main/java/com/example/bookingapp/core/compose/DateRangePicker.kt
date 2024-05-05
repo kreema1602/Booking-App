@@ -1,47 +1,35 @@
 package com.example.bookingapp.core.compose
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDateRangePickerState
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.Color
-import kotlinx.coroutines.launch
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -57,7 +45,7 @@ fun dateValidator(): (Long) -> Boolean {
     return { timeInMillis ->
         val endCalenderDate = Calendar.getInstance()
         endCalenderDate.timeInMillis = timeInMillis
-        endCalenderDate.set(Calendar.DATE, Calendar.DATE + 20)
+        endCalenderDate[Calendar.DATE] = Calendar.DATE + 20
         timeInMillis > Calendar.getInstance().timeInMillis && timeInMillis < endCalenderDate.timeInMillis
     }
 }
@@ -66,6 +54,7 @@ fun dateValidator(): (Long) -> Boolean {
 @Composable
 fun MyDateRangePicker(state: DateRangePickerState, bottomSheetState: ModalBottomSheetState, coroutineScope: CoroutineScope) {
 
+    val dateSkeleton = "yy MM dd"
     state.setSelection(
         Calendar.getInstance().apply {
             add(Calendar.DATE, 1)
@@ -78,7 +67,7 @@ fun MyDateRangePicker(state: DateRangePickerState, bottomSheetState: ModalBottom
     DateRangePicker(
         state,
         modifier = Modifier,
-        dateFormatter = DatePickerFormatter("yy MM dd", "yy MM dd", "yy MM dd"),
+        dateFormatter = DatePickerFormatter(dateSkeleton, dateSkeleton, dateSkeleton),
         dateValidator = dateValidator(),
         title = {
             Text(
@@ -98,14 +87,22 @@ fun MyDateRangePicker(state: DateRangePickerState, bottomSheetState: ModalBottom
                         getFormattedDate(
                             it
                         )
-                    } else "Start Date")?.let { Text(text = it, fontSize = 18.sp) }
+                    } else "Start Date").let {
+                        if (it != null) {
+                            Text(text = it, fontSize = 18.sp)
+                        }
+                    }
                 }
                 Box(Modifier.weight(1f)) {
                     (if (state.selectedEndDateMillis != null) state.selectedEndDateMillis?.let {
                         getFormattedDate(
                             it
                         )
-                    } else "End Date")?.let { Text(text = it, fontSize = 18.sp) }
+                    } else "End Date").let {
+                        if (it != null) {
+                            Text(text = it, fontSize = 18.sp)
+                        }
+                    }
                 }
                 Box(Modifier.weight(0.2f)) {
                     Icon(

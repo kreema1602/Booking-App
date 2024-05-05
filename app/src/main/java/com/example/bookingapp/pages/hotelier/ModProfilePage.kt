@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -44,6 +42,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.ExpandableText
@@ -52,8 +51,8 @@ import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.HotelData
 import com.example.bookingapp.models.Hotel
-import com.example.bookingapp.navigation.RootScreen
-import com.example.bookingapp.view_models.MainViewModel
+import com.example.bookingapp.view_models.AuthViewModel
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
@@ -352,12 +351,12 @@ fun OtherPart(text: String) {
     }
 }
 @Composable
-fun Logout(navController: NavController) {
+fun Logout(navController: NavController, authViewModel: AuthViewModel = koinViewModel()) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 16.dp)
-            .clickable { MainViewModel.authViewModel.logout() },
+            .clickable { authViewModel.logout() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -385,7 +384,9 @@ fun EditDialog(
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
-            modifier = Modifier.fillMaxWidth().height(480.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(480.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
             Column(

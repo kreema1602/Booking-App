@@ -1,6 +1,8 @@
 package com.example.bookingapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -28,14 +30,16 @@ import com.example.bookingapp.pages.hotelier.ModNotificationPage
 import com.example.bookingapp.pages.hotelier.ModProfilePage
 import com.example.bookingapp.pages.hotelier.ModRoomAdd
 import com.example.bookingapp.pages.hotelier.ModRoomPage
-import com.example.bookingapp.view_models.MainViewModel
+import com.example.bookingapp.view_models.AuthViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AppNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    authViewModel: AuthViewModel = koinViewModel()
 ) {
-    val authViewModel = MainViewModel.authViewModel
-    val startDes = when (authViewModel.account.role) {
+    val account by authViewModel.account.collectAsState()
+    val startDes = when (account?.role) {
         "customer" -> RootScreen.Customer.route
         "moderator" -> RootScreen.Moderator.route
         else -> RootScreen.Login.route
@@ -128,7 +132,7 @@ private fun NavGraphBuilder.showCusHome(navController: NavController) {
 }
 
 private fun NavGraphBuilder.showCusRoomScreen(navController: NavController) {
-    composable(CustomerLeafScreen.Room.route + "/{hotelId}") { it ->
+    composable(CustomerLeafScreen.Room.route + "/{hotelId}") {
         val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
         CusRoomScreen(hotelId, onBack = {
             navController.navigateUp()

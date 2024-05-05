@@ -1,6 +1,5 @@
 package com.example.bookingapp.pages
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
@@ -29,6 +28,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,12 +41,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -53,34 +53,180 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.theme.OrangePrimary
+import com.example.bookingapp.navigation.CustomerLeafScreen
 import com.example.bookingapp.navigation.GeneralLeafScreen
-import com.example.bookingapp.view_models.MainViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.bookingapp.navigation.ModeratorLeafScreen
+import com.example.bookingapp.view_models.AuthViewModel
+import org.koin.androidx.compose.koinViewModel
+import com.example.bookingapp.core.ui.mavenProFontFamily as mavenProFamily
+
+data class LoginTextFieldParams(
+    val label: String,
+    val value: String,
+    val onValueChange: (String) -> Unit,
+    val placeholder: String
+)
+
+data class PasswordTextFieldParams (
+    val label: String,
+    val value: String,
+    val onValueChange: (String) -> Unit,
+    val performLogin: () -> Unit,
+    val placeholder: String
+)
+@Composable
+fun LoginTextField(params: LoginTextFieldParams, modifier: Modifier = Modifier) {
+    val (label, value, onValueChange, placeholder) = params
+    val focusManager = LocalFocusManager.current
+
+    Text(
+        text = label,
+        modifier = modifier
+            .padding(start = 50.dp, bottom = 3.dp),
+        fontFamily = mavenProFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    )
+
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        shape = RoundedCornerShape(80.dp),
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            unfocusedContainerColor = Color.White
+        ),
+        singleLine = true,
+        modifier = Modifier
+            .padding(bottom = 20.dp)
+            .border(
+                1.dp, Color.Gray, RoundedCornerShape(100)
+            )
+            .onKeyEvent { keyEvent ->
+                if (keyEvent.key == Key.Tab) {
+                    focusManager.clearFocus()
+                    focusManager.moveFocus(FocusDirection.Down)
+                    true
+                } else {
+                    false
+                }
+            },
+        placeholder = { Text(text = placeholder) },
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.clearFocus()
+                focusManager.moveFocus(FocusDirection.Next)
+            }
+        ),
+    )
+}
 
 @Composable
-fun LoginPage(
-    navController: NavController
-) {
-    val mavenProFamily = FontFamily(
-        Font(R.font.maven_pro_regular, FontWeight.Normal),
-        Font(R.font.maven_pro_bold, FontWeight.Bold),
-        Font(R.font.maven_pro_medium, FontWeight.Medium),
-        Font(R.font.maven_pro_semibold, FontWeight.SemiBold)
-    )
-    val context = MainActivity.context
+fun PasswordTextField(params: PasswordTextFieldParams, modifier: Modifier = Modifier) {
+    val (label, value, onValueChange, performLogin, placeholder) = params
     var visible by remember {
         mutableStateOf(false)
     }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
+    Text(
+        text = label,
+        modifier = modifier
+            .padding(start = 50.dp, bottom = 3.dp),
+        fontFamily = mavenProFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    )
 
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        shape = RoundedCornerShape(80.dp),
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            unfocusedContainerColor = Color.White
+        ),
+        singleLine = true,
+        modifier = Modifier
+            .padding(bottom = 10.dp)
+            .border(
+                1.dp, Color.Gray, RoundedCornerShape(100)
+            )
+            .onKeyEvent { keyEvent ->
+                if (keyEvent.key == Key.Enter) {
+                    keyboardController?.hide()
+                    performLogin()
+                    true
+                } else {
+                    false
+                }
+            },
+        placeholder = { Text(text = placeholder) },
+        visualTransformation = if (!visible)
+            PasswordVisualTransformation()
+        else
+            VisualTransformation.None,
+        trailingIcon = {
+            val icon =
+                if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = OrangePrimary,
+                modifier = Modifier
+                    .padding(end = 20.dp)
+                    .clickable {
+                        visible = !visible
+                    }
+            )
+        },
+        // perform login when user press new line on keyboard
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+                performLogin()
+            }
+        ),
+    )
+}
+
+@Composable
+fun LoginPage(
+    navController: NavController,
+    authViewModel: AuthViewModel = koinViewModel()
+) {
+    val context = LocalContext.current
+    val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
+    val loginStatus by authViewModel.loginStatus.collectAsState()
+    val account by authViewModel.account.collectAsState()
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    LaunchedEffect(loginStatus) {
+        if (loginStatus.isNotEmpty()) {
+            Toast.makeText(context, loginStatus, Toast.LENGTH_SHORT).show()
+            if (isAuthenticated && account != null) {
+                when (account!!.role) {
+                    "customer" -> {
+                        navController.navigate(CustomerLeafScreen.Home.route)
+                    }
+
+                    "moderator" -> {
+                        navController.navigate(ModeratorLeafScreen.Home.route)
+                    }
+                }
+            }
+        }
+    }
 
     Surface(color = Color.White) {
         Column(
@@ -114,117 +260,29 @@ fun LoginPage(
                 modifier = Modifier.padding(bottom = 20.dp)
             )
 
-            Text(
-                text = "Username",
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(start = 50.dp, bottom = 3.dp),
-                fontFamily = mavenProFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp
+
+            LoginTextField(
+                LoginTextFieldParams(
+                    label = "Username",
+                    value = username,
+                    onValueChange = { username = it },
+                    placeholder = "Enter username"
+                ),
+                modifier = Modifier.align(Alignment.Start)
             )
 
-            val focusManager = LocalFocusManager.current
-            var username by remember { mutableStateOf("") }
-            TextField(
-                value = username,
-                onValueChange = {
-                    username = it
-                },
-                shape = RoundedCornerShape(80.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    unfocusedContainerColor = Color.White
-                ),
-                singleLine = true,
-                modifier = Modifier
-                    .padding(bottom = 20.dp)
-                    .border(
-                        1.dp, Color.Gray, RoundedCornerShape(100)
-                    )
-                    .onKeyEvent { keyEvent ->
-                        if (keyEvent.key == Key.Tab) {
-                            focusManager.clearFocus()
-                            focusManager.moveFocus(FocusDirection.Down)
-                            true
-                        } else {
-                            false
-                        }
+            PasswordTextField(
+                PasswordTextFieldParams(
+                    label = "Password",
+                    value = password,
+                    onValueChange = { password = it },
+                    performLogin = {
+                        Log.d("LoginPage", "Login: $username, $password")
+                        authViewModel.login(username, password)
                     },
-                placeholder = { Text(text = "Enter username") },
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        focusManager.clearFocus()
-                        focusManager.moveFocus(FocusDirection.Next)
-                    }
+                    placeholder = "Enter password"
                 ),
-            )
-
-            Text(
-                text = "Password",
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(start = 50.dp, bottom = 3.dp),
-                fontFamily = mavenProFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp
-            )
-
-            var password by remember { mutableStateOf("") }
-            val keyboardController = LocalSoftwareKeyboardController.current
-            TextField(
-                value = password,
-                onValueChange = { password = it },
-                shape = RoundedCornerShape(80.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    unfocusedContainerColor = Color.White
-                ),
-                singleLine = true,
-                modifier = Modifier
-                    .padding(bottom = 10.dp)
-                    .border(
-                        1.dp, Color.Gray, RoundedCornerShape(100)
-                    )
-                    .onKeyEvent { keyEvent ->
-                        if (keyEvent.key == Key.Enter) {
-                            keyboardController?.hide()
-                            performLogin(context, username, password)
-                            true
-                        } else {
-                            false
-                        }
-                    },
-                placeholder = { Text(text = "Enter password") },
-                visualTransformation = if (!visible)
-                    PasswordVisualTransformation()
-                else
-                    VisualTransformation.None,
-                trailingIcon = {
-                    val icon =
-                        if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = OrangePrimary,
-                        modifier = Modifier
-                            .padding(end = 20.dp)
-                            .clickable {
-                                visible = !visible
-                            }
-                    )
-                },
-                // perform login when user press new line on keyboard
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        keyboardController?.hide()
-                        performLogin(context, username, password)
-                    }
-                ),
+                modifier = Modifier.align(Alignment.Start)
             )
 
             ClickableText(
@@ -248,7 +306,7 @@ fun LoginPage(
 
             Button(
                 onClick = {
-                    performLogin(context, username, password)
+                    authViewModel.login(username, password)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary),
                 modifier = Modifier
@@ -318,49 +376,6 @@ fun LoginPage(
         }
     }
 }
-
-fun performLogin(
-    context: Context,
-    username: String,
-    password: String
-) {
-    Log.i("Login", "Username: $username, Password: $password")
-    CoroutineScope(Dispatchers.Main).launch {
-        try {
-            if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(
-                    context,
-                    "Please fill username and password",
-                    Toast.LENGTH_SHORT
-                ).show()
-                return@launch
-            }
-            val result = withContext(Dispatchers.IO) {
-                MainViewModel.authViewModel.login(username, password)
-            }
-
-            if (result) {
-                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                Toast.makeText(
-                    context,
-                    "Invalid username or password!",
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-            }
-        } catch (e: Exception) {
-            Log.e("Login", "Failed to login ${e.message}")
-            Toast.makeText(
-                context,
-                "Failed to login ${e.message}",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-}
-
 
 //@Preview
 //@Composable

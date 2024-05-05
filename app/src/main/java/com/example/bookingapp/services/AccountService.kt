@@ -1,5 +1,6 @@
 package com.example.bookingapp.services
 
+import android.util.Log
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.requests.CusRegisterRequest
@@ -14,7 +15,7 @@ object AccountService {
         RetrofitClient.apiService
     }
 
-    suspend fun login(username: String, password: String): Pair<Account, String>? {
+    suspend fun login(username: String, password: String): Pair<Account, String> {
         try {
             val request = LoginRequest(username, password)
             val response = apiService.login(request)
@@ -23,7 +24,7 @@ object AccountService {
             return if (statusCode == 200) {
                 val apiResponse = response.body() as ApiResponse
                 val jsonData = JSONObject(Gson().toJson(apiResponse.data))
-
+                Log.d("AccountService", "login: $jsonData")
                 val account = Gson().fromJson(
                     jsonData.getJSONObject("account").toString(),
                     Account::class.java

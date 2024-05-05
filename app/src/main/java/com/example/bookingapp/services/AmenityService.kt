@@ -1,6 +1,5 @@
 package com.example.bookingapp.services
 
-import android.util.Log
 import com.example.bookingapp.models.Amenity
 import com.example.bookingapp.models.ApiResponse
 import com.google.gson.Gson

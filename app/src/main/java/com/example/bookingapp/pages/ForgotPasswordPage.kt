@@ -309,8 +309,6 @@ fun OTPTextField(
     val otp = remember {
         List(length) { mutableStateOf(TextFieldValue(text = "", selection = TextRange(0))) }
     }
-
-
     val focusManager = LocalFocusManager.current
     val keyBoardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
@@ -454,7 +452,7 @@ fun resendCode(){
 @Composable
 fun ForgotPasswordPagePreview() {
 //    ForgotPasswordPage(navController = rememberNavController())
-    ShowOTPDialog(navController = rememberNavController(), onDismissRequest = { /*TODO*/ }) {
+    ShowOTPDialog(navController = rememberNavController(), onDismissRequest = { }) {
         
     }
 }

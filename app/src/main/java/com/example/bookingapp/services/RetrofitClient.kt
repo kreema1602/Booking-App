@@ -1,8 +1,5 @@
 package com.example.bookingapp.services
 
-import android.os.Build
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import com.example.bookingapp.BuildConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
