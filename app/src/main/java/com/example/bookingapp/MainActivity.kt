@@ -1,5 +1,7 @@
 package com.example.bookingapp
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
@@ -59,7 +61,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        RetrofitClient.init(this.applicationContext)
+//        RetrofitClient.init(this)
 
         startKoin{
             androidLogger()
