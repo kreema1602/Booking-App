@@ -11,7 +11,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface ApiService {
-    // Account
+    // Authentication
     @POST("/auth/login")
     suspend fun login(@Body request: LoginRequest): Response<ApiResponse>
 
@@ -20,6 +20,10 @@ interface ApiService {
 
     @POST("/auth/register")
     suspend fun registerModerator(@Body request: ModRegisterRequest): Response<ApiResponse>
+
+    // Account
+    @GET("/{role}/profile/{id}")
+    suspend fun getProfile(@Path("role") role: String, @Path("id") id: String): Response<ApiResponse>
 
     // Amenity
     @GET("/{role}/amenity")

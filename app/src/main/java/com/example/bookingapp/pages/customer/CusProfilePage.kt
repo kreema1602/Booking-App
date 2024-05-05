@@ -28,6 +28,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,18 +47,25 @@ import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.core.ui.mavenProFontFamily
 import com.example.bookingapp.core.ui.theme.OrangePrimary
-import com.example.bookingapp.mock_data.AccountData
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.view_models.MainViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun CusProfilePage(
-    accId: Int,
+    accountId: String,
     onClickEdit: (String) -> Unit,
     onClickLogout: () -> Unit,
     onClickFavorite: () -> Unit,
     onClickHistory: () -> Unit)
 {
+    // get the account profile
+    var account by remember { mutableStateOf (Account()) }
+    LaunchedEffect(Unit) {
+        account = getAccountProfile(accountId)
+    }
+    
     Column(modifier = Modifier
         .fillMaxSize()
         .background(MaterialTheme.colorScheme.background)
@@ -65,7 +77,7 @@ fun CusProfilePage(
         ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val acc = AccountData.sampleData.find { it._id == accId.toString() }!!
+
         Text(
             text = "Profile",
             fontSize = 30.sp,
@@ -73,28 +85,25 @@ fun CusProfilePage(
             fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.padding(16.dp))
-        NameTag(acc)
+        NameTag(account)
         Spacer(modifier = Modifier.padding(16.dp))
-        ConfigCard(acc, onClickEdit, onClickLogout, onClickFavorite, onClickHistory)
+        ConfigCard(account, onClickEdit, onClickLogout, onClickFavorite, onClickHistory)
     }
 }
-
-
 @Composable
-fun ConfigCard(acc: Account, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
+fun ConfigCard(account: Account, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
     Card {
         Column {
-            ProfileEditor(acc, onClickEdit)
-            RechargeJoycoin(acc)
-            RecentlyHistory(acc, onClickHistory)
-            FavoriteList(acc, onClickFavorite)
+            ProfileEditor(account, onClickEdit)
+            RechargeJoycoin(account)
+            RecentlyHistory(account, onClickHistory)
+            FavoriteList(account, onClickFavorite)
             LogOut(onClickLogout)
         }
     }
 }
-
 @Composable
-fun NameTag(acc: Account) {
+fun NameTag(account: Account) {
     Card(colors = CardDefaults.cardColors(containerColor = OrangePrimary)) {
         Row(
             modifier = Modifier
@@ -102,7 +111,7 @@ fun NameTag(acc: Account) {
                 .align(Alignment.CenterHorizontally)
         ) {
             AsyncImage(
-                model = R.drawable.ava,
+                model = account.image,
                 contentDescription = null,
                 modifier = Modifier
                     .size(60.dp)
@@ -112,7 +121,7 @@ fun NameTag(acc: Account) {
             Spacer(modifier = Modifier.padding(4.dp))
             Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Bottom) {
                 Text(
-                    text = acc.username,
+                    text = account.fullname,
                     modifier = Modifier.fillMaxWidth(),
                     fontSize = 28.sp,
                     fontFamily = mavenProFontFamily,
@@ -130,7 +139,7 @@ fun NameTag(acc: Account) {
                         fontSize = 16.sp, color = Color.White
                     )
                     Text(
-                        text = acc.wallet.toString(),
+                        text = account.wallet.toString(),
                         textAlign = TextAlign.End,
                         fontFamily = mavenProFontFamily,
                         fontSize = 16.sp,
@@ -141,7 +150,6 @@ fun NameTag(acc: Account) {
         }
     }
 }
-
 @Composable
 fun ProfileEditor(acc: Account, onClickEdit: (String) -> Unit) {
     val context = LocalContext.current
@@ -174,7 +182,6 @@ fun ProfileEditor(acc: Account, onClickEdit: (String) -> Unit) {
         }
     }
 }
-
 @Composable
 fun RechargeJoycoin(acc: Account) {
     Card {
@@ -195,7 +202,6 @@ fun RechargeJoycoin(acc: Account) {
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecentlyHistory(acc: Account, onClickHistory: () -> Unit) {
@@ -221,7 +227,6 @@ fun RecentlyHistory(acc: Account, onClickHistory: () -> Unit) {
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteList(acc: Account, onClickFavorite: () -> Unit) {
@@ -247,7 +252,6 @@ fun FavoriteList(acc: Account, onClickFavorite: () -> Unit) {
         }
     }
 }
-
 @Composable
 fun LogOut(onClickLogout: () -> Unit) {
     Card( modifier = Modifier.clickable { MainViewModel.authViewModel.logout() }) {
@@ -264,9 +268,14 @@ fun LogOut(onClickLogout: () -> Unit) {
         }
     }
 }
-
+suspend fun getAccountProfile (accountId: String) : Account {
+    val result = withContext(Dispatchers.IO) {
+        MainViewModel.accountViewModel.getProfile("customer", accountId)
+    }
+    return result
+}
 @Preview
 @Composable
 fun CusProfilePagePreview() {
-    CusProfilePage(1, {}, {}, {}, {})
+    CusProfilePage("6631e317dd026643e4dc6a30", {}, {}, {}, {})
 }

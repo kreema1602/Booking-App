@@ -168,7 +168,7 @@ private fun NavGraphBuilder.showCusNotifications(navController: NavController) {
 
 private fun NavGraphBuilder.showCusProfile(navController: NavController) {
     composable(CustomerLeafScreen.Profile.route) {
-        CusProfilePage(accId = 1, onClickEdit = {
+        CusProfilePage(accountId = "6631e317dd026643e4dc6a30", onClickEdit = {
             navController.navigate(CustomerLeafScreen.ProfileEditor.route + "/$it")
         }, onClickLogout = {
             navController.navigate(RootScreen.Login.route)

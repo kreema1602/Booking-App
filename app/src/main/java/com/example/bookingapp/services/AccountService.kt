@@ -13,7 +13,6 @@ object AccountService {
     private val apiService: ApiService by lazy {
         RetrofitClient.apiService
     }
-
     suspend fun login(username: String, password: String): Pair<Account, String>? {
         try {
             val request = LoginRequest(username, password)
@@ -44,7 +43,6 @@ object AccountService {
             throw Exception("${e.message}")
         }
     }
-
     suspend fun register(fields: Map<String, String>, role: String): Boolean {
         try {
             val response: Response<ApiResponse>?
@@ -92,6 +90,28 @@ object AccountService {
 
         } catch (e: Exception) {
             throw Exception(e.message)
+        }
+    }
+    suspend fun getProfile(role: String, id: String): Account {
+        try {
+            val response = apiService.getProfile(role, id)
+            val statusCode = response.code()
+
+            return if (statusCode == 200) {
+                val apiResponse = response.body() as ApiResponse
+                val jsonData = JSONObject(Gson().toJson(apiResponse.data))
+                Gson().fromJson(
+                    jsonData.getJSONObject("user").toString(),
+                    Account::class.java
+                )
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
+
+                throw Exception(errorResponse.message)
+            }
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
         }
     }
 }
