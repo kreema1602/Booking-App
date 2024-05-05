@@ -46,6 +46,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.context.startKoin
+import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -53,14 +54,13 @@ import org.koin.dsl.module
 
 
 class MainActivity : AppCompatActivity() {
+    private val appModule = module {
+        single<AccountRepository> { AccountRepository(applicationContext) }
+        viewModel<AuthViewModel> { AuthViewModel(get()) }
+        viewModel<CusHotelRoomViewModel> { CusHotelRoomViewModel() }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val appModule = module {
-            single<AccountRepository> { AccountRepository(applicationContext) }
-            viewModel<AuthViewModel> { AuthViewModel(get()) }
-            viewModel<CusHotelRoomViewModel> { CusHotelRoomViewModel() }
-        }
 
         startKoin{
             androidLogger()
@@ -79,6 +79,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        // clear all view models
+//
+//        unloadKoinModules(appModule)
+//    }
 }
 
 
@@ -86,12 +93,12 @@ class MainActivity : AppCompatActivity() {
 fun MyApp(
     authViewModel: AuthViewModel = koinViewModel(),
 ) {
-
     val navController = rememberNavController()
     val currentSelectedPage by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
     val account by authViewModel.account.collectAsState()
     lateinit var currentRouteListByRole: List<String>
+
 
     when (account?.role) {
         "customer" -> {

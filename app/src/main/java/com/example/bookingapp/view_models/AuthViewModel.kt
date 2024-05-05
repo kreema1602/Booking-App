@@ -63,8 +63,8 @@ class AuthViewModel(private val repository: AccountRepository) : ViewModel() {
                 RetrofitClient.setAuthToken(result.second)
                 _loginStatus.emit("Login successful")
             } catch (e: Exception) {
+                _isAuthenticated.value = false
                 _loginStatus.emit("Login error: ${e.message}")
-                throw Exception("${e.message}")
             }
         }
         return isAuthenticated.value

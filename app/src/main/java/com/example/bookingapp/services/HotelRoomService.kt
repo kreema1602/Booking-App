@@ -1,5 +1,6 @@
 package com.example.bookingapp.services
 
+import android.util.Log
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.ApiResponse
 import com.google.gson.Gson
@@ -42,10 +43,21 @@ object HotelRoomService {
     suspend fun getPriceRange(role: String, hotelId: String) : Pair<Double, Double> {
         try {
             val response = apiService.getPriceRange(role, hotelId)
-            val data = processResponse<JSONObject>(response)
-            val minPrice = data.getString("min").toDouble()
-            val maxPrice = data.getString("max").toDouble()
-            return Pair(minPrice, maxPrice)
+            val statusCode = response.code()
+            return if (statusCode == 200) {
+                val apiResponse = response.body() as ApiResponse
+                val jsonData = JSONObject(apiResponse.data.toString())
+                Log.d("HotelRoomService", "getPriceRange: $jsonData")
+                val minPrice = jsonData.getString("min").toDouble()
+                val maxPrice = jsonData.getString("max").toDouble()
+
+                Pair(minPrice, maxPrice)
+            } else {
+                val errorBody = response.errorBody()?.string() ?: throw Exception("No error body")
+                val errorResponse = gson.fromJson(errorBody, ApiResponse::class.java)
+
+                throw Exception(errorResponse.message)
+            }
         } catch (e: Exception) {
             throw Exception("${e.message}")
         }

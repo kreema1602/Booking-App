@@ -46,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -96,7 +97,6 @@ fun CusHomePage(
 
 }
 
-@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun HotelList(
     hotelData: List<Account> = emptyList(),
@@ -109,7 +109,7 @@ fun HotelList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(hotelData.size) { index ->
-            Log.d("CusHomePage", "HotelList: ${hotelData[index]}")
+//            Log.d("CusHomePage", "HotelList: ${hotelData[index]}")
             HotelItem(showRoomScreen, hotelData[index])
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -201,8 +201,12 @@ fun HotelDescription(
     val price by cusHotelRoomViewModel.priceRange.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
-        cusHotelRoomViewModel.getAverageRating(hotel._id)
-        cusHotelRoomViewModel.getPriceRange(hotel._id)
+        try {
+            cusHotelRoomViewModel.getAverageRating(hotel._id)
+            cusHotelRoomViewModel.getPriceRange(hotel._id)
+        } catch (e: Exception) {
+            Log.e("CusHomePage", "Failed to get hotel data: ${e.message}")
+        }
     }
 
     Column(
@@ -255,12 +259,15 @@ fun HotelDescription(
                 )
                 Text(
                     text = hotel.hotelAddress,
+                    Modifier.width(120.dp),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White
                 )
             }
             Text(
-                text = "Price: ${price.first} - ${price.second}",
+                text = "Price: ${price.first.toInt()} - ${price.second.toInt()}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White
             )

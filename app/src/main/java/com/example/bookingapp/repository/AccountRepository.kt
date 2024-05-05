@@ -1,6 +1,7 @@
 package com.example.bookingapp.repository
 
 import android.content.Context
+import android.util.Log
 import com.example.bookingapp.models.Account
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
@@ -18,7 +19,7 @@ class AccountRepository(context: Context) {
 
     fun saveAccount(account: Account, token: String) {
         with(prefs.edit()) {
-            putString("account", account.toString())
+            putString("account", Gson().toJson(account))
             putString("token", token)
             apply()
         }
@@ -27,7 +28,7 @@ class AccountRepository(context: Context) {
     fun loadAccount(): Pair<Account?, String?> {
         val token = prefs.getString("token", null)
         val accountJson = prefs.getString("account", null)
-
+        Log.d("AccountRepository", "loadAccount: $accountJson")
         val account = accountJson?.let{ Gson().fromJson(it, Account::class.java) }
         return account to token
     }

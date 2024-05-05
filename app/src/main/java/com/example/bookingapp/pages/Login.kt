@@ -277,8 +277,12 @@ fun LoginPage(
                     value = password,
                     onValueChange = { password = it },
                     performLogin = {
-                        Log.d("LoginPage", "Login: $username, $password")
-                        authViewModel.login(username, password)
+                        try {
+                            authViewModel.login(username, password)
+                        } catch (e: Exception) {
+                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                            Log.e("LoginPage", "performLogin: ${e.message}")
+                        }
                     },
                     placeholder = "Enter password"
                 ),
