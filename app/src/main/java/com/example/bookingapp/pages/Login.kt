@@ -226,12 +226,7 @@ fun LoginPage(
 
     fun performLogin(username: String, password: String, isBio: Boolean) {
         try {
-            val result = authViewModel.login(username, password, isBio)
-            if (result) {
-                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, "Invalid username or password", Toast.LENGTH_SHORT).show()
-            }
+            authViewModel.login(username, password, isBio)
         } catch (e: Exception) {
             Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
             Log.e("LoginPage", "performLogin: ${e.message}")
