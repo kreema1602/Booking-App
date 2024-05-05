@@ -84,9 +84,7 @@ fun CusProfileFieldEditor(accountId: String, navController: NavController) {
                 CoroutineScope(Dispatchers.Main).launch {
                     updateProfile(
                         accountId,
-                        fullname.value,
-                        email.value,
-                        phone.value,
+                        account,
                         navController
                     )
                 }
@@ -124,15 +122,14 @@ fun EditProfileField(
 
 suspend fun updateProfile (
     accountId: String,
-    fullname: String,
-    email: String,
-    phone: String,
+    account: Account,
     navController: NavController
 ) {
     val updateAccountRequest = UpdateAccountRequest().apply {
-        this.fullname = fullname
-        this.email = email
-        this.phone = phone
+        this.fullname = account.fullname
+        this.email = account.email
+        this.phone = account.phone
+        this.username = account.username
     }
     val result = withContext(Dispatchers.IO) {
         try {

@@ -2,7 +2,6 @@ package com.example.bookingapp.pages.customer
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -36,7 +34,6 @@ import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.compose.getFormattedDate
 import com.example.bookingapp.core.ui.mavenProFontFamily
 import com.example.bookingapp.core.ui.theme.OrangePrimary
-import com.example.bookingapp.mock_data.RoomData
 import com.example.bookingapp.models.requests.BookingRequest
 import com.example.bookingapp.models.requests.UpdateAccountRequest
 import com.example.bookingapp.view_models.MainViewModel

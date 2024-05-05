@@ -1,6 +1,7 @@
 package com.example.bookingapp.models.requests
 
 class UpdateAccountRequest {
+    var username: String? = null
     var fullname: String? = null
     var email: String? = null
     var phone: String? = null

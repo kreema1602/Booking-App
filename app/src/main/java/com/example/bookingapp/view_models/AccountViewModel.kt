@@ -1,6 +1,5 @@
 package com.example.bookingapp.view_models
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.requests.UpdateAccountRequest

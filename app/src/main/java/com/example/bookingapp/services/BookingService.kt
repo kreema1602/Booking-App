@@ -137,6 +137,8 @@ object BookingService {
 
                 throw Exception(errorResponse.message)
             }
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
         }
     }
     suspend fun booking(newBook: BookingRequest): Boolean {
