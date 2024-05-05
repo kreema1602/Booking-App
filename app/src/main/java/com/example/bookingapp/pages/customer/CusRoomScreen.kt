@@ -265,8 +265,9 @@ fun HotelInfo(role: String, hotel: Account, cusHotelRoomViewModel: CusHotelRoomV
 @Composable
 fun HotelFacilities(role: String, selectedHotelId: String, cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel()) {
     val amenities by cusHotelRoomViewModel.hotelAmenities.collectAsState()
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = role, key2 = selectedHotelId){
         cusHotelRoomViewModel.getHotelAmenities(role, selectedHotelId)
+
     }
 
     Text(
@@ -285,34 +286,36 @@ fun HotelFacilities(role: String, selectedHotelId: String, cusHotelRoomViewModel
                 bottom = 8.dp
             )
     ) {
-        items(amenities!!.chunked(3)) { rowAmenities ->
-            Row {
-                rowAmenities.forEach { amenity ->
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(
-                            end = 24.dp,
-                            bottom = 8.dp,
-                            top = 8.dp
-                        )
-                    ) {
-                        AsyncImage(
-                            model = amenityMap[amenity.name]!!,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Text(
-                            text = amenity.name,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier
-                                .padding(bottom = 4.dp)
-                                .widthIn(max = 68.dp)
-                                .align(Alignment.CenterHorizontally),
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                            textAlign = TextAlign.Center
-                        )
+        amenities?.let { fetchedAmenities ->
+            items(fetchedAmenities.chunked(3)) { rowAmenities ->
+                Row {
+                    rowAmenities.forEach { amenity ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(
+                                end = 24.dp,
+                                bottom = 8.dp,
+                                top = 8.dp
+                            )
+                        ) {
+                            AsyncImage(
+                                model = amenityMap[amenity.name]!!,
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Text(
+                                text = amenity.name,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier
+                                    .padding(bottom = 4.dp)
+                                    .widthIn(max = 68.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }

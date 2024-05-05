@@ -24,7 +24,7 @@ class CusHotelRoomViewModel : ViewModel() {
     private var _hotel = MutableStateFlow(Account())
     val hotel get() = _hotel.asStateFlow()
 
-    private val _room = MutableStateFlow<List<RoomFullDetail>?>(null)
+    private val _room = MutableStateFlow<List<RoomFullDetail>?>(emptyList())
     val room get() = _room.asStateFlow()
 
     private val _checkIn = MutableStateFlow(
@@ -43,7 +43,7 @@ class CusHotelRoomViewModel : ViewModel() {
 
     val checkOut get() = _checkOut.asStateFlow()
 
-    private val _hotels = MutableStateFlow<List<Account>?>(null)
+    private val _hotels = MutableStateFlow<List<Account>?>(emptyList())
     val hotels get() = _hotels.asStateFlow()
 
     private val _averageRating = MutableStateFlow(0.0)
@@ -52,8 +52,8 @@ class CusHotelRoomViewModel : ViewModel() {
     private val _priceRange = MutableStateFlow(Pair(0.0, 0.0))
     val priceRange get() = _priceRange.asStateFlow()
 
-    private val _hotelAmenities = MutableStateFlow<List<Amenity>?>(null)
-    val hotelAmenities get() = _hotelAmenities.asStateFlow()
+    private val _hotelAmenities = MutableStateFlow<List<Amenity>>(emptyList())
+    val hotelAmenities get() = _hotelAmenities.asStateFlow<List<Amenity>>()
 
     private val _error = MutableStateFlow<String?>(null)
     val error get() = _error.asStateFlow()
