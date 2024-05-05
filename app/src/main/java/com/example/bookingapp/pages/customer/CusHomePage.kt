@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -29,6 +30,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -51,8 +53,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.models.Account
+import com.example.bookingapp.pages.hotelier.HotelDescription
+import com.example.bookingapp.services.HotelRoomService.getAverageRating
+import com.example.bookingapp.services.HotelRoomService.getPriceRange
 import com.example.bookingapp.view_models.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -99,16 +105,31 @@ fun CusHomePage(
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun HotelList(showRoomScreen: (String) -> Unit) {
-    var hotelData by rememberSaveable { mutableStateOf(listOf<Account>()) }
+    var hotelData by rememberSaveable { mutableStateOf(emptyList<Account>()) }
+    val lazyListState = rememberLazyListState()
+
     LaunchedEffect(Unit) {
-        hotelData = getHotelData()
+        hotelData += getHotelData(0)
     }
+
+    fun isScrolledToEnd(): Boolean {
+        val layoutInfo = lazyListState.layoutInfo
+        return layoutInfo.visibleItemsInfo.lastOrNull()?.index == hotelData.size - 1
+    }
+
+    if (isScrolledToEnd()) {
+        CoroutineScope(Dispatchers.IO).launch {
+            hotelData += getHotelData(hotelData.size)
+        }
+    }
+
     LazyColumn(
         contentPadding = PaddingValues(
             top = 16.dp,
             bottom = 16.dp
         ),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        state = lazyListState
     ) {
         items(hotelData.size) { index ->
             HotelItem(showRoomScreen, hotelData[index])
@@ -268,10 +289,10 @@ fun HotelDescription(modifier: Modifier, hotel: Account) {
     }
 }
 
-suspend fun getHotelData(): List<Account> {
+suspend fun getHotelData(start: Int): List<Account> {
     return withContext(Dispatchers.IO) {
         try {
-            MainViewModel.cusHotelRoomViewModel.getHotels()
+            MainViewModel.cusHotelRoomViewModel.getHotels(start)
         } catch (e: Exception) {
             Log.d("CusHomePage", "getHotelData: ${e.message}")
             emptyList()
@@ -299,10 +320,4 @@ suspend fun getPriceRange(hotelId: String): Pair<Double, Double> {
             Pair(0.0, 0.0)
         }
     }
-}
-
-@Composable
-@Preview
-fun CusHomePagePreview() {
-    CusHomePage(showRoomScreen = {})
 }

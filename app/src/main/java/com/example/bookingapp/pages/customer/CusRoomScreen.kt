@@ -133,12 +133,12 @@ fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (String) -> Unit) {
             }
             item { MySpacer(height = 100.dp, color = Color.Transparent) }
         }
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-        ) {
-            BottomSection(calendar = true, onClick = {})
-        }
+//        Column(
+//            modifier = Modifier
+//                .align(Alignment.BottomCenter)
+//        ) {
+//            BottomSection(calendar = true, onClick = {})
+//        }
     }
 }
 

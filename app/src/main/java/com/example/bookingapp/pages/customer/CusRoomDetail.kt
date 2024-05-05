@@ -11,9 +11,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.DateRangePickerState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,15 +38,29 @@ import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.FacilityList
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.TopAppBar
+import com.example.bookingapp.core.compose.getFormattedDate
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.mock_data.PaymentData
 import com.example.bookingapp.navigation.CustomerLeafScreen
 import com.example.bookingapp.view_models.MainViewModel
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
     val room = MainViewModel.cusHotelRoomViewModel.room.filter { it._id == MainViewModel.cusHotelRoomViewModel.selectedRoomId }[0]
+    val dateRangeState = rememberDateRangePickerState(
+        initialSelectedStartDateMillis = MainViewModel.cusHotelRoomViewModel.checkIn + 86400000L,
+        initialSelectedEndDateMillis = MainViewModel.cusHotelRoomViewModel.checkOut + 86400000L
+    )
+    val nights by remember(dateRangeState) {
+        derivedStateOf {
+            val startDate = dateRangeState.selectedStartDateMillis ?: return@derivedStateOf 0
+            val endDate = dateRangeState.selectedEndDateMillis ?: startDate
+            ((endDate - startDate) / 86400000).toInt()
+        }
+    }
+    val pricePerNight = MainViewModel.cusHotelRoomViewModel.room.filter { it._id == MainViewModel.cusHotelRoomViewModel.selectedRoomId }[0].price
+
     Box {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -79,7 +104,7 @@ fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
             }
 
             item {
-                PaymentInformation()
+                PaymentInformation(dateRangeState, nights)
             }
 
             item {
@@ -118,16 +143,20 @@ fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
         ) {
             BottomSection(
                 calendar = true,
-                price = "400.000",
+                price = "${pricePerNight * nights}",
                 buttonText = "Book",
-                onClick = {navController.navigate(CustomerLeafScreen.Payment.route + "/${MainViewModel.cusHotelRoomViewModel.selectedRoomId}")}
+                onClick = {navController.navigate(CustomerLeafScreen.Payment.route + "/${MainViewModel.cusHotelRoomViewModel.selectedRoomId}")},
+                dateRangeState = dateRangeState
             )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaymentInformation() {
+fun PaymentInformation(dateRangeState: DateRangePickerState, nights: Int = 1) {
+    val pricePerNight = MainViewModel.cusHotelRoomViewModel.room.filter { it._id == MainViewModel.cusHotelRoomViewModel.selectedRoomId }[0].price
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -140,13 +169,12 @@ fun PaymentInformation() {
             ),
             modifier = Modifier.padding(vertical = 8.dp)
         )
-        val payment = PaymentData.data[0]
-        val total = payment.perNight * payment.nights
-        PaymentDetail(Pair("Per Night", "${payment.perNight} VND"))
-        PaymentDetail(Pair("From", payment.from))
-        PaymentDetail(Pair("To", payment.to))
-        PaymentDetail(Pair("Nights", payment.nights.toString()))
-        PaymentDetail(Pair("Total", "$total VND"), OrangePrimary, FontWeight.Bold)
+
+        PaymentDetail(Pair("Per Night", "$pricePerNight VND"))
+        PaymentDetail(Pair("From", getFormattedDate(dateRangeState.selectedStartDateMillis!!)))
+        PaymentDetail(Pair("To", getFormattedDate(if (dateRangeState.selectedEndDateMillis != null) dateRangeState.selectedEndDateMillis!! else dateRangeState.selectedStartDateMillis!!)))
+        PaymentDetail(Pair("Nights", nights.toString()))
+        PaymentDetail(Pair("Total", "${pricePerNight * nights} VND"), OrangePrimary, FontWeight.Bold)
     }
 }
 
