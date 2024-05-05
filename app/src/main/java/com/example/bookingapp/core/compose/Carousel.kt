@@ -2,7 +2,6 @@ package com.example.bookingapp.core.compose
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -29,11 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
-import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -202,18 +199,4 @@ fun EditCarousel(
 
     return itemList
 }
-
-
-//@Preview
-//@Composable
-//private fun PreviewCarousel() {
-//    ThemedPreview {
-//        EditCarousel(
-//            initialItems = listOf(
-//                com.example.bookingapp.R.drawable.hotel3,
-//                com.example.bookingapp.R.drawable.hotel2
-//            )
-//        )
-//    }
-//}
 

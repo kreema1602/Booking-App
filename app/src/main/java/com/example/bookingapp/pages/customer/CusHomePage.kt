@@ -30,7 +30,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -50,13 +49,10 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.models.Account
-import com.example.bookingapp.pages.hotelier.HotelDescription
 import com.example.bookingapp.services.HotelRoomService.getAverageRating
 import com.example.bookingapp.services.HotelRoomService.getPriceRange
 import com.example.bookingapp.view_models.MainViewModel

@@ -19,12 +19,7 @@ import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,7 +35,6 @@ import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.compose.getFormattedDate
 import com.example.bookingapp.core.ui.theme.OrangePrimary
-import com.example.bookingapp.mock_data.PaymentData
 import com.example.bookingapp.navigation.CustomerLeafScreen
 import com.example.bookingapp.view_models.MainViewModel
 

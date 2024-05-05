@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.bookingapp.R
-import com.example.bookingapp.core.compose.BottomSection
 import com.example.bookingapp.core.compose.ExpandableText
 import com.example.bookingapp.core.compose.FacilityList
 import com.example.bookingapp.core.compose.MySpacer
@@ -81,8 +80,6 @@ fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (String) -> Unit) {
     var superiorRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
     var deluxeRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
     var suiteRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
-
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = Unit) {
         MainViewModel.cusHotelRoomViewModel.fetchHotelData()
@@ -133,12 +130,6 @@ fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (String) -> Unit) {
             }
             item { MySpacer(height = 100.dp, color = Color.Transparent) }
         }
-//        Column(
-//            modifier = Modifier
-//                .align(Alignment.BottomCenter)
-//        ) {
-//            BottomSection(calendar = true, onClick = {})
-//        }
     }
 }
 
@@ -371,7 +362,10 @@ fun RoomList(title: String, showRoomDetail: (String) -> Unit, rooms: List<RoomFu
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RoomListItem(showRoomDetail: (String) -> Unit, room: RoomFullDetail) {
+fun RoomListItem(
+    showRoomDetail: (String) -> Unit,
+    room: RoomFullDetail
+) {
     Card(
         modifier = Modifier
             .padding(12.dp)
@@ -381,102 +375,115 @@ fun RoomListItem(showRoomDetail: (String) -> Unit, room: RoomFullDetail) {
         onClick = { showRoomDetail(room._id) }
     ) {
         Column {
-            Box(
-                modifier = Modifier
-                    .height(200.dp)
-                    .width(320.dp)
-            ) {
-                AsyncImage(
-                    model = room.image[0],
-                    placeholder = painterResource(id = R.drawable.placeholder),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 180.dp)
+            RoomHeader(room)
+            RoomDetails(room)
+        }
+    }
+}
+
+@Composable
+private fun RoomHeader(room: RoomFullDetail) {
+    Box(
+        modifier = Modifier
+            .height(200.dp)
+            .width(320.dp)
+    ) {
+        AsyncImage(
+            model = room.image[0],
+            placeholder = painterResource(id = R.drawable.placeholder),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 180.dp)
+        )
+        val state = if (room.isBooked) "Full" else "Available"
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(43.dp)
+                .align(Alignment.TopEnd)
+                .padding(
+                    top = 12.dp,
+                    end = 12.dp
                 )
-                // State
-                val state = if (room.isBooked) "Full" else "Available"
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(43.dp)
-                        .align(Alignment.TopEnd)
-                        .padding(
-                            top = 12.dp,
-                            end = 12.dp
-                        )
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .widthIn(max = 110.dp)
-                            .align(Alignment.TopEnd)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(if (state == "Full") WarningSecondary else SuccessSecondary)
-                            .padding(
-                                start = 4.dp,
-                                end = 4.dp
-                            ),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Icon(
-                            painter = painterResource(id = if (state == "Full") R.drawable.ic_cancel else R.drawable.ic_check),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(24.dp)
-                                .padding(end = 4.dp),
-                            tint = if (state == "Full") WarningPrimary else SuccessPrimary
-                        )
-                        Text(
-                            text = state,
-                            color = if (state == "Full") WarningPrimary else SuccessPrimary,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-            }
-            Box(
+        ) {
+            Row(
                 modifier = Modifier
-                    .width(320.dp)
-                    .background(Color.White)
+                    .fillMaxHeight()
+                    .widthIn(max = 110.dp)
+                    .align(Alignment.TopEnd)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(if (state == "Full") WarningSecondary else SuccessSecondary)
+                    .padding(
+                        start = 4.dp,
+                        end = 4.dp
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Column {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = room.name,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
-                            ),
-                            color = Color.Black,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                        Text(
-                            text = "${room.price} VND / night",
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                fontSize = 14.sp
-                            ),
-                            color = Color.Black,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                    FacilityList(mapOf(
-                        "Area" to "${room.area} m²",
-                        "Bedroom" to "${room.bedroom}",
-                        "Guest" to "${room.guest}",
-                        "Bathroom" to "${room.bathroom}"
-                    ))
-                }
+                Icon(
+                    painter = painterResource(id = if (state == "Full") R.drawable.ic_cancel else R.drawable.ic_check),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(end = 4.dp),
+                    tint = if (state == "Full") WarningPrimary else SuccessPrimary
+                )
+                Text(
+                    text = state,
+                    color = if (state == "Full") WarningPrimary else SuccessPrimary,
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
     }
 }
+
+@Composable
+private fun RoomDetails(room: RoomFullDetail) {
+    Box(
+        modifier = Modifier
+            .width(320.dp)
+            .background(Color.White)
+            .padding(8.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = room.name,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = Color.Black
+                )
+                Column {
+                    Text(
+                        text = "${room.price} VND / night",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = 14.sp
+                        ),
+                        color = Color.Black
+                    )
+                }
+            }
+            FacilityList(
+                mapOf(
+                    "Area" to "${room.area} m²",
+                    "Bedroom" to "${room.bedroom}",
+                    "Guest" to "${room.guest}",
+                    "Bathroom" to "${room.bathroom}"
+                )
+            )
+        }
+    }
+}
+
 
 @Composable
 fun CommentsList() {

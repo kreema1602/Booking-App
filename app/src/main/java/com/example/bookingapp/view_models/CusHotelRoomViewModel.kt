@@ -39,7 +39,7 @@ class CusHotelRoomViewModel : ViewModel() {
 
     suspend fun getHotels(start: Int = 0, num: Int = 20): List<Account> {
         try {
-            return withContext(Dispatchers.IO) { HotelRoomService.getHotels(start, num) }
+            return HotelRoomService.getHotels(start, num)
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
@@ -47,7 +47,7 @@ class CusHotelRoomViewModel : ViewModel() {
 
     private suspend fun getHotel(hotelId: String): Account {
         try {
-            return withContext(Dispatchers.IO) { HotelRoomService.getHotel(hotelId) }
+            return HotelRoomService.getHotel(hotelId)
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
@@ -55,7 +55,7 @@ class CusHotelRoomViewModel : ViewModel() {
 
     suspend fun getAverageRating(hotelId: String): Double {
         try {
-            return withContext(Dispatchers.IO) { HotelRoomService.getAverageRating(hotelId) }
+            return HotelRoomService.getAverageRating(hotelId)
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
@@ -63,7 +63,7 @@ class CusHotelRoomViewModel : ViewModel() {
 
     suspend fun getPriceRange(hotelId: String): Pair<Double, Double> {
         try {
-            return withContext(Dispatchers.IO) { HotelRoomService.getPriceRange(hotelId) }
+            return HotelRoomService.getPriceRange(hotelId)
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
@@ -71,7 +71,7 @@ class CusHotelRoomViewModel : ViewModel() {
 
     suspend fun getRoomData(hotelId: String): List<RoomFullDetail> {
         try {
-            return withContext(Dispatchers.IO) { HotelRoomService.getRoomFullDetail(hotelId) }
+            return HotelRoomService.getRoomFullDetail(hotelId)
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
@@ -79,7 +79,7 @@ class CusHotelRoomViewModel : ViewModel() {
 
     suspend fun getHotelAmenities(hotelId: String): List<Amenity> {
         try {
-            return withContext(Dispatchers.IO) { HotelRoomService.getHotelAmenities(hotelId) }
+            return HotelRoomService.getHotelAmenities(hotelId)
         } catch (e: Exception) {
             throw Exception("CusHotelRoomViewModel: ${e.message}")
         }
