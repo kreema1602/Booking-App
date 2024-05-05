@@ -53,7 +53,7 @@ fun ModRoomAdd(onBack: () -> Unit) {
                     text = "Room",
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight(700),
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
                     ),
                     modifier = Modifier.padding(top = 8.dp)
                 )
@@ -69,7 +69,9 @@ fun ModRoomAdd(onBack: () -> Unit) {
                     ),
                     fontSize = 20.sp
                 )
-                Box(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)) {
                     MyDropdownMenu(
                         items = listOf("Deluxe", "Standard", "Superior", "Suite"),
                         onItemSelected = {}
@@ -102,9 +104,19 @@ fun ModRoomAdd(onBack: () -> Unit) {
             }
 
             item {
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Price per night", style = MaterialTheme.typography.bodyLarge, modifier = Modifier.fillMaxWidth(0.4f))
-                    EditText(keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), hint = "Price in VND")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Price per night",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(0.4f)
+                    )
+                    EditText(
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        hint = "Price in VND"
+                    )
                 }
             }
 
@@ -150,7 +162,10 @@ fun DetailInputField() {
                     "People" -> R.drawable.ic_person
                     else -> R.drawable.ic_zoom_out
                 }
-                Row(modifier = Modifier.fillMaxWidth(0.4f), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(0.4f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
                         painter = painterResource(id = icon),
                         contentDescription = null,
@@ -167,7 +182,10 @@ fun DetailInputField() {
                     "Bed" -> "Number of beds"
                     else -> ""
                 }
-                EditText(hint = hint, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                EditText(
+                    hint = hint,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
             }
         }
     }
