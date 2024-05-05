@@ -5,6 +5,7 @@ import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.requests.CusRegisterRequest
 import com.example.bookingapp.models.requests.LoginRequest
 import com.example.bookingapp.models.requests.ModRegisterRequest
+import com.example.bookingapp.models.requests.UpdateAccountRequest
 import com.google.gson.Gson
 import org.json.JSONObject
 import retrofit2.Response
@@ -104,6 +105,23 @@ object AccountService {
                     jsonData.getJSONObject("user").toString(),
                     Account::class.java
                 )
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson
+
+                throw Exception(errorResponse.message)
+            }
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
+    suspend fun updateProfile(role: String, id: String, newAccount: UpdateAccountRequest): Boolean {
+        try {
+            val response = apiService.updateProfile(role, id, newAccount)
+            val statusCode = response.code()
+
+            return if (statusCode == 200) {
+                true
             } else {
                 val errorBody = response.errorBody()?.string()
                 val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java) // Parse using Gson

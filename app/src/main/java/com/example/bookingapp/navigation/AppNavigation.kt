@@ -170,7 +170,6 @@ private fun NavGraphBuilder.showCusProfile(navController: NavController) {
     composable(CustomerLeafScreen.Profile.route) {
         CusProfilePage(
             onClickEdit = { navController.navigate(CustomerLeafScreen.ProfileEditor.route + "/$it") },
-            onClickLogout = { navController.navigate(RootScreen.Login.route) },
             onClickFavorite = { navController.navigate(CustomerLeafScreen.Favorite.route) },
             onClickHistory = { navController.navigate(CustomerLeafScreen.History.route) }
         )
@@ -179,10 +178,11 @@ private fun NavGraphBuilder.showCusProfile(navController: NavController) {
 
 private fun NavGraphBuilder.showCusProfileEditor(navController: NavController) {
     composable(CustomerLeafScreen.ProfileEditor.route + "/{accId}") {
-        val accId = it.arguments?.getString("accId")?.toInt() ?: 0
-        CusProfileFieldEditor(accId = accId, onBack = {
-            navController.navigateUp()
-        })
+        val accId = it.arguments?.getString("accId") ?: ""
+        CusProfileFieldEditor(
+            accountId = accId,
+            navController = navController
+        )
     }
 }
 

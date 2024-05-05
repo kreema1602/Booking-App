@@ -55,7 +55,6 @@ import kotlinx.coroutines.withContext
 @Composable
 fun CusProfilePage(
     onClickEdit: (String) -> Unit,
-    onClickLogout: () -> Unit,
     onClickFavorite: () -> Unit,
     onClickHistory: () -> Unit)
 {
@@ -87,18 +86,18 @@ fun CusProfilePage(
         Spacer(modifier = Modifier.padding(16.dp))
         NameTag(account)
         Spacer(modifier = Modifier.padding(16.dp))
-        ConfigCard(account, onClickEdit, onClickLogout, onClickFavorite, onClickHistory)
+        ConfigCard(account, onClickEdit, onClickFavorite, onClickHistory)
     }
 }
 @Composable
-fun ConfigCard(account: Account, onClickEdit: (String) -> Unit, onClickLogout: () -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
+fun ConfigCard(account: Account, onClickEdit: (String) -> Unit, onClickFavorite: () -> Unit, onClickHistory: () -> Unit) {
     Card {
         Column {
             ProfileEditor(account, onClickEdit)
-            RechargeJoycoin(account)
+            RechargeJoyCoin(account)
             RecentlyHistory(account, onClickHistory)
             FavoriteList(account, onClickFavorite)
-            LogOut(onClickLogout)
+            LogOut()
         }
     }
 }
@@ -151,19 +150,9 @@ fun NameTag(account: Account) {
     }
 }
 @Composable
-fun ProfileEditor(acc: Account, onClickEdit: (String) -> Unit) {
-    val context = LocalContext.current
-    val editLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent? = result.data
-            val editedAcc = data?.getSerializableExtra("ACCOUNT") as? Account
-            acc.username = editedAcc!!.username
-            acc.email = editedAcc.email
-            acc.phone = editedAcc.phone
-        }
-    }
+fun ProfileEditor(account: Account, onClickEdit: (String) -> Unit) {
     Card(modifier = Modifier.clickable {
-        onClickEdit(acc._id)
+        onClickEdit(account._id)
     }) {
         Row(
             modifier = Modifier
@@ -183,7 +172,7 @@ fun ProfileEditor(acc: Account, onClickEdit: (String) -> Unit) {
     }
 }
 @Composable
-fun RechargeJoycoin(acc: Account) {
+fun RechargeJoyCoin(acc: Account) {
     Card {
         Row(
             modifier = Modifier
@@ -253,7 +242,7 @@ fun FavoriteList(acc: Account, onClickFavorite: () -> Unit) {
     }
 }
 @Composable
-fun LogOut(onClickLogout: () -> Unit) {
+fun LogOut() {
     Card( modifier = Modifier.clickable { MainViewModel.authViewModel.logout() }) {
         Row(
             Modifier
@@ -277,5 +266,5 @@ suspend fun getAccountProfile (accountId: String) : Account {
 @Preview
 @Composable
 fun CusProfilePagePreview() {
-    CusProfilePage({}, {}, {}, {})
+    CusProfilePage({}, {}, {})
 }

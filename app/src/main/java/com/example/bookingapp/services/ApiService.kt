@@ -4,10 +4,12 @@ import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.requests.CusRegisterRequest
 import com.example.bookingapp.models.requests.LoginRequest
 import com.example.bookingapp.models.requests.ModRegisterRequest
+import com.example.bookingapp.models.requests.UpdateAccountRequest
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ApiService {
@@ -24,6 +26,10 @@ interface ApiService {
     // Account
     @GET("/{role}/profile/{id}")
     suspend fun getProfile(@Path("role") role: String, @Path("id") id: String): Response<ApiResponse>
+
+    @PUT("/{role}/profile/{id}")
+    suspend fun updateProfile(@Path("role") role: String, @Path("id") id: String, @Body request: UpdateAccountRequest): Response<ApiResponse>
+
 
     // Amenity
     @GET("/{role}/amenity")
