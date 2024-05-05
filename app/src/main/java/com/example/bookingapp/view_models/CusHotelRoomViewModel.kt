@@ -62,7 +62,7 @@ class CusHotelRoomViewModel : ViewModel() {
     val isLoading get() = _isLoading.asStateFlow()
 
 
-    fun getHotels(start: Int = 0, num: Int = 20): List<Account> {
+    fun getHotels(start: Int = 0, num: Int = 20): List<Account>? {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
@@ -75,7 +75,7 @@ class CusHotelRoomViewModel : ViewModel() {
                 _isLoading.value = false
             }
         }
-        return _hotels.value ?: emptyList()
+        return _hotels.value
     }
 
     fun getHotel(role: String, hotelId: String): Account {

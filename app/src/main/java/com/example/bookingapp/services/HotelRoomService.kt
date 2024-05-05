@@ -28,13 +28,13 @@ object HotelRoomService {
             return if (statusCode == 200) {
                 val apiResponse = response.body() as ApiResponse
 
-                Gson().fromJson(
-                    Gson().toJson(apiResponse.data),
+                gson.fromJson(
+                    gson.toJson(apiResponse.data),
                     object : TypeToken<List<Account>>() {}.type
                 )
             } else {
                 val errorBody = response.errorBody()?.string()
-                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
+                val errorResponse = gson.fromJson(errorBody, ApiResponse::class.java)
                 RetrofitClient.clearAuthToken()
                 throw Exception(errorResponse.message)
             }

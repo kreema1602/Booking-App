@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -43,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,6 +61,7 @@ import coil.compose.AsyncImage
 import com.example.bookingapp.R
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.view_models.CusHotelRoomViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -108,25 +112,21 @@ fun HotelList(
     showRoomScreen: (String) -> Unit,
     cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel()
 ) {
+    val hotelData by cusHotelRoomViewModel.hotels.collectAsState()
     val lazyListState = rememberLazyListState()
-    var hotelData by remember { mutableStateOf(emptyList<Account>()) }
-    val scope = rememberCoroutineScope()
 
     // run launched effect when the page is loaded
     LaunchedEffect(Unit) {
-        hotelData += cusHotelRoomViewModel.getHotels()
-    }
-    fun isScrolledToEnd(): Boolean {
-        val layoutInfo = lazyListState.layoutInfo
-        return layoutInfo.visibleItemsInfo.lastOrNull()?.index == hotelData.size - 1
+        cusHotelRoomViewModel.getHotels()
     }
     // run launched effect when scrolled to the end of the list
     LaunchedEffect(lazyListState) {
-        if (isScrolledToEnd()) {
-            scope.launch {
-                hotelData += cusHotelRoomViewModel.getHotels(hotelData.size)
+        snapshotFlow { lazyListState.isScrolledToEnd() }
+            .collectLatest { isEnd ->
+                if (isEnd) {
+                    hotelData?.let { cusHotelRoomViewModel.getHotels(it.size) }
+                }
             }
-        }
     }
 
     LazyColumn(
@@ -137,11 +137,18 @@ fun HotelList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         state = lazyListState
     ) {
-        items(hotelData.size) { index ->
-            HotelItem(showRoomScreen, hotelData[index])
-            Spacer(modifier = Modifier.height(8.dp))
+        hotelData?.let {
+            items(it) { hotel ->
+                HotelItem(showRoomScreen, hotel)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
         }
     }
+}
+
+fun LazyListState.isScrolledToEnd(): Boolean {
+    val layoutInfo = layoutInfo
+    return layoutInfo.visibleItemsInfo.lastOrNull()?.index == layoutInfo.totalItemsCount - 1
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

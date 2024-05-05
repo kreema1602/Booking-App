@@ -1,7 +1,5 @@
 package com.example.bookingapp
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
@@ -40,7 +38,6 @@ import com.example.bookingapp.navigation.CustomerLeafScreen
 import com.example.bookingapp.navigation.ModeratorLeafScreen
 import com.example.bookingapp.navigation.RootScreen
 import com.example.bookingapp.repository.AccountRepository
-import com.example.bookingapp.services.RetrofitClient
 import com.example.bookingapp.view_models.AuthViewModel
 import com.example.bookingapp.view_models.CusHotelRoomViewModel
 import org.koin.android.ext.koin.androidContext
