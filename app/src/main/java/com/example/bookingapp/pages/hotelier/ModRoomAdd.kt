@@ -1,5 +1,7 @@
 package com.example.bookingapp.pages.hotelier
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,9 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.BottomSection
 import com.example.bookingapp.core.compose.EditCarousel
@@ -39,15 +42,15 @@ import com.example.bookingapp.core.compose.EditText
 import com.example.bookingapp.core.compose.MyDropdownMenu
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.TopAppBar
-import com.example.bookingapp.core.ui.ThemedPreview
 import com.example.bookingapp.mock_data.RoomData
+import com.example.bookingapp.view_models.MainViewModel
 import com.example.bookingapp.view_models.ModHotelRoomViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun ModRoomAdd(onBack: () -> Unit) {
+fun ModRoomAdd(onBack: () -> Unit, navController: NavController) {
     val room = RoomData.data[0]
     var roomName by remember { mutableStateOf("") }
     var roomType by remember { mutableStateOf("") }
@@ -152,7 +155,7 @@ fun ModRoomAdd(onBack: () -> Unit) {
             BottomSection(buttonText = "Create", onClick = {
                 // Add room request
                 val fields = mapOf(
-                    "hotelName" to "Metropolix", // Replace with actual hotel name
+                    "hotelName" to MainViewModel.authViewModel.account.hotelName, // Replace with actual hotel name
                     "roomName" to roomName,
                     "roomType" to "$roomType Room",
                     "isAccepted" to "true",
@@ -160,8 +163,9 @@ fun ModRoomAdd(onBack: () -> Unit) {
                     "img" to "https://picsum.photos/200/300",
                     "amenity" to "[]"
                 )
+                Log.e("hotelName", MainViewModel.authViewModel.account.toString())
                 CoroutineScope(Dispatchers.Main).launch {
-                    sendRoomRequest(fields)
+                    sendRoomRequest(fields, navController)
                 }
             })
         }
@@ -220,15 +224,29 @@ fun DetailInputField() {
     }
 }
 
-suspend fun sendRoomRequest(fields: Map<String, String>) {
+suspend fun sendRoomRequest(fields: Map<String, String>, navController: NavController) {
     // Send room request
-    ModHotelRoomViewModel().addHotelRoom(fields, "moderator")
-}
-
-@Preview
-@Composable
-fun PreviewModRoomAdd() {
-    ThemedPreview {
-        ModRoomAdd(onBack = {})
+    try {
+        val result = ModHotelRoomViewModel().addHotelRoom(fields, "moderator")
+        if (result) {
+            // Success
+            Toast.makeText(MainActivity.context, "Room added successfully", Toast.LENGTH_SHORT)
+                .show()
+            navController.popBackStack()
+        } else {
+            // Failure
+            Toast.makeText(MainActivity.context, "Failed to add room", Toast.LENGTH_SHORT).show()
+        }
+    } catch (e: Exception) {
+        // Handle exception
+        Toast.makeText(MainActivity.context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
     }
 }
+
+//@Preview
+//@Composable
+//fun PreviewModRoomAdd() {
+//    ThemedPreview {
+//        ModRoomAdd(onBack = {}, navController = navController)
+//    }
+//}

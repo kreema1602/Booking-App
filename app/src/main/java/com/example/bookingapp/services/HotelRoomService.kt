@@ -103,11 +103,10 @@ object HotelRoomService {
                     )
                 )
             )
-            val errorBody = response.errorBody()?.string()
-            Log.e("ErrorResponse", errorBody ?: "Error body is null")
 
             val statusCode = response.code()
-            return if (statusCode == 201) {
+
+            return if (statusCode == 200) {
                 true
             } else {
                 val errorBody = response.errorBody()?.string()
