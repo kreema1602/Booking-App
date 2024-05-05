@@ -48,7 +48,7 @@ interface ApiService {
 
     // Hotel and Room
     @GET("/{role}/hotel")
-    suspend fun getHotels(@Path("role") role: String, @Query("start") start: Int, @Query("number") num: Int): Response<ApiResponse>
+    suspend fun getHotels(@Path("role") role: String, @Query("userId") userId: String, @Query("start") start: Int, @Query("number") num: Int): Response<ApiResponse>
 
     @GET("/{role}/hotel/{hotelId}")
     suspend fun getHotel(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
