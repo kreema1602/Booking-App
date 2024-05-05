@@ -2,7 +2,6 @@ package com.example.bookingapp.view_models
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.repository.AccountRepository
@@ -50,15 +49,14 @@ class AuthViewModel(private val repository: AccountRepository) : ViewModel() {
         }
     }
 
-    fun login(email: String, password: String): Boolean {
+    fun login(email: String, password: String, isBio: Boolean): Boolean {
         viewModelScope.launch {
             try {
                 Log.d("AuthViewModel", "login: $email, $password")
-                val result = AccountService.login(email, password)
+                val result = AccountService.login(email, password, isBio)
                 _account.value = result.first
                 _authToken.value = result.second
                 _isAuthenticated.value = true
-
                 saveAccount(result.first, result.second)
                 RetrofitClient.setAuthToken(result.second)
                 _loginStatus.emit("Login successful")
@@ -87,5 +85,9 @@ class AuthViewModel(private val repository: AccountRepository) : ViewModel() {
             }
         }
         return isAuthenticated.value
+    }
+
+    fun getCredentials(): Pair<String, String> {
+        return repository.getCredentials()
     }
 }

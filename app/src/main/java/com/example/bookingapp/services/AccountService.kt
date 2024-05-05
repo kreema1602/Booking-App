@@ -15,10 +15,10 @@ object AccountService {
         RetrofitClient.apiService
     }
 
-    suspend fun login(username: String, password: String): Pair<Account, String> {
+    suspend fun login(username: String, password: String, isBio: Boolean): Pair<Account, String> {
         try {
             val request = LoginRequest(username, password)
-            val response = apiService.login(request)
+            val response = apiService.login(request, isBio)
             val statusCode = response.code()
 
             return if (statusCode == 200) {
@@ -95,4 +95,6 @@ object AccountService {
             throw Exception(e.message)
         }
     }
+
+
 }
