@@ -28,16 +28,25 @@ class AccountRepository(context: Context) {
     fun loadAccount(): Pair<Account?, String?> {
         val token = prefs.getString("token", null)
         val accountJson = prefs.getString("account", null)
-        Log.d("AccountRepository", "loadAccount: $accountJson")
         val account = accountJson?.let{ Gson().fromJson(it, Account::class.java) }
         return account to token
     }
 
     fun clearAccount() {
         with(prefs.edit()) {
-            remove("account")
             remove("token")
             apply()
         }
+    }
+
+    fun getCredentials(): Pair<String, String> {
+        val accountJson = prefs.getString("account", null)
+        val account = accountJson.let{ Gson().fromJson(it, Account::class.java) }
+        Log.d("GetCredentials", "Account: ${account.username}, ${account.password}")
+        if (account == null) {
+            Log.e("AccountRepository", "Account is null")
+            return "" to ""
+        }
+        return account.username to account.password
     }
 }

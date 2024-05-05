@@ -58,6 +58,7 @@ android {
 dependencies {
     val navVersion = "2.7.7"
 
+    implementation("androidx.biometric:biometric:1.2.0-alpha05")
     implementation("io.insert-koin:koin-androidx-compose:3.5.6")
     implementation("androidx.security:security-crypto:1.1.0-alpha03")
     implementation("io.coil-kt:coil-compose:2.6.0")

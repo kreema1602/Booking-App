@@ -232,7 +232,7 @@ fun FavoriteList(acc: Account, onClickFavorite: () -> Unit) {
 
 @Composable
 fun LogOut(onClickLogout: () -> Unit, authViewModel: AuthViewModel = koinViewModel()) {
-    Card( modifier = Modifier.clickable { onClickLogout(); authViewModel.logout() }) {
+    Card( modifier = Modifier.clickable { authViewModel.logout(); onClickLogout();  }) {
         Row(
             Modifier
                 .fillMaxWidth()

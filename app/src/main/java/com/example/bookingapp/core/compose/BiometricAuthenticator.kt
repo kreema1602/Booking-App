@@ -1,18 +1,18 @@
 package com.example.bookingapp.core.compose
 
+import android.content.Context
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.FragmentActivity
-import com.example.bookingapp.MainActivity
 import com.example.bookingapp.models.BiometricAuthStatus
 
-class BiometricAuthenticator {
+class BiometricAuthenticator(context: Context) {
 
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
-    private val biometricManager: BiometricManager =
-        BiometricManager.from(MainActivity.context.applicationContext)
+    // using context from Koin
+    private val biometricManager: BiometricManager = BiometricManager.from(context)
     private lateinit var biometricPrompt: BiometricPrompt
 
     private fun isBiometricAuthAvailable(): BiometricAuthStatus {
