@@ -48,6 +48,8 @@ import com.example.bookingapp.view_models.MainViewModel.accountViewModel
 import com.example.bookingapp.view_models.MainViewModel.authViewModel
 import com.example.bookingapp.view_models.MainViewModel.bookingViewModel
 import com.example.bookingapp.view_models.MainViewModel.cusHotelRoomViewModel
+import com.example.bookingapp.view_models.MainViewModel.modHomeViewModel
+import com.example.bookingapp.view_models.ModHomeViewModel
 
 class MainActivity : FragmentActivity() {
     @SuppressLint("StaticFieldLeak")
@@ -64,7 +66,9 @@ class MainActivity : FragmentActivity() {
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
         cusHotelRoomViewModel = ViewModelProvider(this)[CusHotelRoomViewModel::class.java]
         accountViewModel = ViewModelProvider(this)[AccountViewModel::class.java]
+        modHomeViewModel = ViewModelProvider(this)[ModHomeViewModel::class.java]
         bookingViewModel = ViewModelProvider(this)[BookingViewModel::class.java]
+
         // end set view model
 
         // load account from shared preferences

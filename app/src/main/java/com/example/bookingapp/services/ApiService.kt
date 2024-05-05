@@ -100,13 +100,24 @@ interface ApiService {
     suspend fun getRoomFullDetail(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
 
     // Booking
-    // Get all bookings of a customer
+    // Get all bookings of customer
     @GET("/{role}/booking/waiting/{hotelId}")
     suspend fun getWaitingBookings(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
     @GET("/{role}/booking/accepted/{hotelId}")
     suspend fun getAcceptedBookings(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
     @GET("/{role}/booking/staying/{hotelId}")
     suspend fun getStayingBookings(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
+
+
+    @PUT("/{role}/booking/accept/{bookingId}")
+    suspend fun acceptBooking(@Path("role") role: String, @Path("bookingId") bookingId: String): Response<ApiResponse>
+    @PUT("/{role}/booking/reject/{bookingId}")
+    suspend fun rejectBooking(@Path("role") role: String, @Path("bookingId") bookingId: String): Response<ApiResponse>
+    @PUT("/{role}/booking/checkin/{bookingId}")
+    suspend fun checkInBooking(@Path("role") role: String, @Path("bookingId") bookingId: String): Response<ApiResponse>
+    @PUT("/{role}/booking/checkout/{bookingId}")
+    suspend fun checkOutBooking(@Path("role") role: String, @Path("bookingId") bookingId: String): Response<ApiResponse>
+
     @POST("/{role}/booking")
     suspend fun booking(@Path("role") role: String, @Body request: BookingRequest): Response<ApiResponse>
 

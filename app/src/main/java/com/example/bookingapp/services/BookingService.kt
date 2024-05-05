@@ -80,6 +80,65 @@ object BookingService {
             throw Exception("${e.message}")
         }
     }
+
+    suspend fun acceptBooking(bookingId: String) {
+        try {
+            val response = apiService.acceptBooking(MainViewModel.authViewModel.account.role, bookingId)
+            val statusCode = response.code()
+
+            if (statusCode != 200) {
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
+
+                throw Exception(errorResponse.message)
+            }
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
+    suspend fun rejectBooking(bookingId: String) {
+        try {
+            val response = apiService.rejectBooking(MainViewModel.authViewModel.account.role, bookingId)
+            val statusCode = response.code()
+
+            if (statusCode != 200) {
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
+
+                throw Exception(errorResponse.message)
+            }
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
+    suspend fun checkInBooking(bookingId: String) {
+        try {
+            val response = apiService.checkInBooking(MainViewModel.authViewModel.account.role, bookingId)
+            val statusCode = response.code()
+
+            if (statusCode != 200) {
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
+
+                throw Exception(errorResponse.message)
+            }
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
+    suspend fun checkOutBooking(bookingId: String) {
+        try {
+            val response = apiService.checkOutBooking(MainViewModel.authViewModel.account.role, bookingId)
+            val statusCode = response.code()
+
+            if (statusCode != 200) {
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
+
+                throw Exception(errorResponse.message)
+            }
+        }
+    }
     suspend fun booking(newBook: BookingRequest): Boolean {
         try {
             val response = apiService.booking(MainViewModel.authViewModel.account.role, newBook)
