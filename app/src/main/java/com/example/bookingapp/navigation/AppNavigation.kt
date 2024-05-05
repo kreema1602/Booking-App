@@ -210,7 +210,6 @@ private fun NavGraphBuilder.showCusPayment(navController: NavController) {
         CusPaymentScreen(
             onBack = { navController.navigateUp() }
         )
-
     }
 }
 
@@ -245,7 +244,7 @@ private fun NavGraphBuilder.showModRoom(navController: NavController) {
 
 private fun NavGraphBuilder.showModRoomAdd(navController: NavController) {
     composable(ModeratorLeafScreen.RoomAdd.route) {
-        ModRoomAdd(onBack = { navController.navigateUp() })
+        ModRoomAdd(onBack = { navController.navigateUp() }, navController = navController)
     }
 }
 
