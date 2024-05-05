@@ -1,4 +1,4 @@
-package com.example.bookingapp.pages
+package com.example.bookingapp.pages.hotelier
 
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -28,8 +28,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.HistoryCard
+import com.example.bookingapp.core.compose.TopAppBar
 import com.example.bookingapp.core.ui.theme.Black
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 
@@ -128,7 +130,11 @@ fun LineChart(data: List<Float>, notes: List<String>, modifier: Modifier = Modif
 }
 
 @Composable
-fun ChartScreen() {
+fun ModChartScreen(
+    navController: NavController? = null, onBack: () -> Unit = {
+        navController?.navigateUp()
+    }
+) {
     Surface {
         Column(
             modifier = Modifier
@@ -136,6 +142,7 @@ fun ChartScreen() {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            TopAppBar(title = "Detail", onClick = onBack)
             Text(
                 text = "Financial Charts",
                 fontFamily = mavenProFamily,
@@ -184,5 +191,5 @@ fun ChartScreen() {
 @Preview
 @Composable
 fun BarChartPreview() {
-    ChartScreen()
+    ModChartScreen()
 }

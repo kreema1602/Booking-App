@@ -25,6 +25,7 @@ import com.example.bookingapp.pages.customer.CusReservationDetail
 import com.example.bookingapp.pages.customer.CusReservationPage
 import com.example.bookingapp.pages.customer.CusRoomDetail
 import com.example.bookingapp.pages.customer.CusRoomScreen
+import com.example.bookingapp.pages.hotelier.ModChartScreen
 import com.example.bookingapp.pages.hotelier.ModHomePage
 import com.example.bookingapp.pages.hotelier.ModNotificationPage
 import com.example.bookingapp.pages.hotelier.ModProfilePage
@@ -231,6 +232,7 @@ private fun NavGraphBuilder.addModeratorRoute(navController: NavController) {
         showModRoomAdd(navController)
         showModNotifications(navController)
         showModProfile(navController)
+        showModHistory(navController)
     }
 }
 
@@ -261,6 +263,12 @@ private fun NavGraphBuilder.showModNotifications(navController: NavController) {
 private fun NavGraphBuilder.showModProfile(navController: NavController) {
     composable(ModeratorLeafScreen.Profile.route) {
         ModProfilePage(navController = navController)
+    }
+}
+
+private fun NavGraphBuilder.showModHistory(navController: NavController) {
+    composable(ModeratorLeafScreen.History.route) {
+        ModChartScreen(navController = navController)
     }
 }
 // -------------- End of Moderator navigation ------------------- //
