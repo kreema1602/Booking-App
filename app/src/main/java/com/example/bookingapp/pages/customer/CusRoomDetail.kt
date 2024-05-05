@@ -143,7 +143,7 @@ fun CusRoomDetail(navController: NavController, onBack: () -> Unit) {
                 calendar = true,
                 price = "${pricePerNight * nights}",
                 buttonText = "Book",
-                onClick = {navController.navigate(CustomerLeafScreen.Payment.route + "/${MainViewModel.cusHotelRoomViewModel.selectedRoomId}")},
+                onClick = {navController.navigate(CustomerLeafScreen.Payment.route)},
                 dateRangeState = dateRangeState
             )
         }

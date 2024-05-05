@@ -206,14 +206,10 @@ private fun NavGraphBuilder.showCusHistory(navController: NavController) {
 }
 
 private fun NavGraphBuilder.showCusPayment(navController: NavController) {
-    composable(CustomerLeafScreen.Payment.route + "/{roomId}") {
-        val roomId = it.arguments?.getString("roomId")
-        if (roomId != null) {
-            CusPaymentScreen(roomId = roomId, onBack = {
-                navController.navigateUp()
-            })
-        }
-
+    composable(CustomerLeafScreen.Payment.route) {
+        CusPaymentScreen(
+            onBack = { navController.navigateUp() }
+        )
     }
 }
 
@@ -248,7 +244,7 @@ private fun NavGraphBuilder.showModRoom(navController: NavController) {
 
 private fun NavGraphBuilder.showModRoomAdd(navController: NavController) {
     composable(ModeratorLeafScreen.RoomAdd.route) {
-        ModRoomAdd(onBack = { navController.navigateUp() })
+        ModRoomAdd(onBack = { navController.navigateUp() }, navController = navController)
     }
 }
 

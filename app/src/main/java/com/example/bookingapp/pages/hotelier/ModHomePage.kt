@@ -1,5 +1,6 @@
 package com.example.bookingapp.pages.hotelier
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,6 +44,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -77,6 +79,14 @@ import com.example.bookingapp.core.compose.TonalButton
 import com.example.bookingapp.core.ui.theme.Grey
 import com.example.bookingapp.core.ui.theme.OrangePrimary
 import com.example.bookingapp.core.ui.mavenProFontFamily
+import com.example.bookingapp.models.Booking
+import com.example.bookingapp.view_models.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun LabelIcon(imgVector: ImageVector, text: String, modifier: Modifier) {
@@ -101,6 +111,17 @@ fun LabelIcon(imgVector: ImageVector, text: String, modifier: Modifier) {
 
 @Composable
 fun ModHomePage(navController: NavController) {
+    LaunchedEffect(key1 = MainViewModel.modHomeViewModel.statusNotification) {
+        if (MainViewModel.modHomeViewModel.statusNotification.isNotEmpty()) {
+            Toast.makeText(
+                navController.context,
+                MainViewModel.modHomeViewModel.statusNotification,
+                Toast.LENGTH_SHORT
+            ).show()
+            MainViewModel.modHomeViewModel.statusNotification = ""
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -121,7 +142,7 @@ fun ModHomePage(navController: NavController) {
                 .weight(1f))
 
             Text(
-                text = "Haley Hotel",
+                text = MainViewModel.authViewModel.account.hotelName,
                 style = MaterialTheme.typography.titleLarge,
                 fontFamily = mavenProFontFamily,
                 fontWeight = FontWeight.Bold,
@@ -166,13 +187,20 @@ fun ModHomePage(navController: NavController) {
 
 @Composable
 fun VerifyFragment() {
+    var waitingBooking by rememberSaveable { mutableStateOf(emptyList<Booking>()) }
+
+    LaunchedEffect(key1 = Unit) {
+        getWaitingBooking()
+        waitingBooking = MainViewModel.modHomeViewModel.waitingBooking
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        val verifyCount = 3
+        val verifyCount = waitingBooking.size
         Text(
             "Waiting for verify: $verifyCount",
             style = MaterialTheme.typography.titleLarge,
@@ -180,8 +208,10 @@ fun VerifyFragment() {
             fontWeight = FontWeight.Bold,
         )
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(verifyCount) {
-                BookingItem()
+            waitingBooking.forEach { booking ->
+                item {
+                    BookingItem(booking)
+                }
             }
         }
     }
@@ -189,17 +219,30 @@ fun VerifyFragment() {
 
 @Composable
 fun CheckInFragment() {
+    var acceptedBooking by rememberSaveable { mutableStateOf(emptyList<Booking>()) }
+
+    LaunchedEffect(key1 = Unit) {
+        getAcceptedBooking()
+        acceptedBooking = MainViewModel.modHomeViewModel.acceptedBooking
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        val checkInCount = 5
-        Text("Waiting for check-in: $checkInCount", style = MaterialTheme.typography.titleMedium)
+        val checkInCount = acceptedBooking.size
+        Text(
+            "Waiting for verify: $checkInCount",
+            style = MaterialTheme.typography.titleLarge,
+            fontFamily = mavenProFontFamily,
+            fontWeight = FontWeight.Bold,
+        )
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(checkInCount) {
-                ReservationItem(variant = ReservationStatus.CheckIn)
+            acceptedBooking.forEach { booking ->
+                item {
+                    ReservationItem(booking = booking, variant = ReservationStatus.CheckIn)
+                }
             }
         }
     }
@@ -207,17 +250,30 @@ fun CheckInFragment() {
 
 @Composable
 fun CheckOutFragment() {
+    var stayingBooking by rememberSaveable { mutableStateOf(emptyList<Booking>()) }
+
+    LaunchedEffect(key1 = Unit) {
+        getStayingBooking()
+        stayingBooking = MainViewModel.modHomeViewModel.stayingBooking
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        val checkOutCount = 5
-        Text("Waiting for check-out: $checkOutCount", style = MaterialTheme.typography.titleMedium)
+        val checkOutCount = stayingBooking.size
+        Text(
+            "Waiting for verify: $checkOutCount",
+            style = MaterialTheme.typography.titleLarge,
+            fontFamily = mavenProFontFamily,
+            fontWeight = FontWeight.Bold,
+        )
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(checkOutCount) {
-                ReservationItem(variant = ReservationStatus.CheckOut)
+            stayingBooking.forEach { booking ->
+                item {
+                    ReservationItem(booking = booking, variant = ReservationStatus.CheckOut)
+                }
             }
         }
     }
@@ -326,7 +382,6 @@ fun CustomSearchBar(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoomSearchBar() {
     var text by rememberSaveable { mutableStateOf("") }
@@ -394,7 +449,7 @@ fun CategoryBar(
 }
 
 @Composable
-fun BookingItem() {
+fun BookingItem(booking: Booking) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -412,13 +467,8 @@ fun BookingItem() {
             ) {
             LabelIcon(
                 imgVector = Icons.Filled.AccountBox,
-                text = "Username",
+                text = booking.customer,
                 modifier = Modifier.padding(top = 16.dp, start = 8.dp)
-            )
-            LabelIcon(
-                imgVector = Icons.Filled.Phone,
-                text = "0234567891",
-                modifier = Modifier.padding(start = 8.dp)
             )
             Row(
                 modifier = Modifier
@@ -443,7 +493,7 @@ fun BookingItem() {
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = "Room 101",
+                        text = booking.room,
                         style = MaterialTheme.typography.titleLarge,
                         fontFamily = mavenProFontFamily,
                         fontWeight = FontWeight.SemiBold,
@@ -461,7 +511,7 @@ fun BookingItem() {
                             color = Grey
                         )
                         Text(
-                            text = "12/12/2021",
+                            text = formatDate(booking.checkIn),
                             style = MaterialTheme.typography.bodyMedium,
                             fontFamily = mavenProFontFamily,
                             fontWeight = FontWeight.Medium,
@@ -480,7 +530,7 @@ fun BookingItem() {
                             color = Grey
                         )
                         Text(
-                            text = "14/12/2021",
+                            text = formatDate(booking.checkOut),
                             style = MaterialTheme.typography.bodyMedium,
                             fontFamily = mavenProFontFamily,
                             fontWeight = FontWeight.Medium,
@@ -491,12 +541,20 @@ fun BookingItem() {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         FilledClipButton(
                             text = "Accept",
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    acceptBooking(booking._id)
+                                }
+                            },
                             modifier = Modifier.fillMaxWidth(0.5f)
                         )
                         FilledClipButton(
                             text = "Decline",
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    rejectBooking(booking._id)
+                                }
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             color = Grey
                         )
@@ -509,7 +567,7 @@ fun BookingItem() {
 }
 
 @Composable
-fun ReservationItem(variant: ReservationStatus = ReservationStatus.CheckIn) {
+fun ReservationItem(variant: ReservationStatus = ReservationStatus.CheckIn, booking: Booking) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -544,7 +602,7 @@ fun ReservationItem(variant: ReservationStatus = ReservationStatus.CheckIn) {
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "Room 101",
+                    text = booking.room,
                     style = MaterialTheme.typography.titleLarge,
                     fontFamily = mavenProFontFamily,
                     fontWeight = FontWeight.SemiBold,
@@ -561,7 +619,7 @@ fun ReservationItem(variant: ReservationStatus = ReservationStatus.CheckIn) {
                         tint = Color.Black
                     )
                     Text(
-                        text = "Username",
+                        text = booking.customer,
                         style = MaterialTheme.typography.bodyMedium,
                         fontFamily = mavenProFontFamily,
                         fontWeight = FontWeight.Medium,
@@ -580,7 +638,7 @@ fun ReservationItem(variant: ReservationStatus = ReservationStatus.CheckIn) {
                         tint = Color.Black
                     )
                     Text(
-                        text = "Sunday, 12/12/2021",
+                        text = formatDate(booking.checkIn),
                         style = MaterialTheme.typography.bodyMedium,
                         fontFamily = mavenProFontFamily,
                         fontWeight = FontWeight.Medium,
@@ -594,7 +652,17 @@ fun ReservationItem(variant: ReservationStatus = ReservationStatus.CheckIn) {
                         ReservationStatus.CheckOut -> "Check-out"
                         else -> {""}
                     },
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        when (variant) {
+                            ReservationStatus.CheckIn -> CoroutineScope(Dispatchers.IO).launch {
+                                checkInBooking(booking._id)
+                            }
+                            ReservationStatus.CheckOut -> CoroutineScope(Dispatchers.IO).launch {
+                                checkOutBooking(booking._id)
+                            }
+                            else -> {}
+                        }
+                    },
                     color = OrangePrimary,
                 )
             }
@@ -607,6 +675,55 @@ enum class ReservationStatus {
     Verify,
     CheckIn,
     CheckOut
+}
+
+suspend fun getWaitingBooking() {
+    withContext(Dispatchers.IO) {
+        MainViewModel.modHomeViewModel.loadWaitingBooking()
+    }
+}
+
+suspend fun getAcceptedBooking() {
+    withContext(Dispatchers.IO) {
+        MainViewModel.modHomeViewModel.loadAcceptedBooking()
+    }
+}
+
+suspend fun getStayingBooking() {
+    withContext(Dispatchers.IO) {
+        MainViewModel.modHomeViewModel.loadStayingBooking()
+    }
+}
+
+suspend fun acceptBooking(bookingId: String) {
+    withContext(Dispatchers.IO) {
+        MainViewModel.modHomeViewModel.acceptBooking(bookingId)
+    }
+}
+
+suspend fun rejectBooking(bookingId: String) {
+    withContext(Dispatchers.IO) {
+        MainViewModel.modHomeViewModel.rejectBooking(bookingId)
+    }
+}
+
+suspend fun checkInBooking(bookingId: String) {
+    withContext(Dispatchers.IO) {
+        MainViewModel.modHomeViewModel.checkInBooking(bookingId)
+    }
+}
+
+suspend fun checkOutBooking(bookingId: String) {
+    withContext(Dispatchers.IO) {
+        MainViewModel.modHomeViewModel.checkOutBooking(bookingId)
+    }
+}
+
+fun formatDate(timestamp: String): String {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
+    val date = inputFormat.parse(timestamp)
+    return outputFormat.format(date)
 }
 
 @Preview
