@@ -1,7 +1,6 @@
 package com.example.bookingapp.pages.customer
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,11 +30,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -64,33 +63,32 @@ import com.example.bookingapp.core.ui.theme.SuccessSecondary
 import com.example.bookingapp.core.ui.theme.WarningPrimary
 import com.example.bookingapp.core.ui.theme.WarningSecondary
 import com.example.bookingapp.models.Account
-import com.example.bookingapp.models.Amenity
 import com.example.bookingapp.models.RoomFullDetail
-import com.example.bookingapp.services.HotelRoomService.getHotelAmenities
-import com.example.bookingapp.view_models.MainViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.example.bookingapp.view_models.AuthViewModel
+import com.example.bookingapp.view_models.CusHotelRoomViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (String) -> Unit) {
-    var hotel by rememberSaveable { mutableStateOf(Account()) }
-    var room by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
+fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (String) -> Unit, cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel(), authViewModel: AuthViewModel = koinViewModel()) {
     var standardRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
     var superiorRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
     var deluxeRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
     var suiteRoom by rememberSaveable { mutableStateOf(emptyList<RoomFullDetail>()) }
+    val account by authViewModel.account.collectAsState()
+    val hotel by cusHotelRoomViewModel.hotel.collectAsState()
+    val room by cusHotelRoomViewModel.room.collectAsState()
+    val selectedHotelId by cusHotelRoomViewModel.selectedHotelId.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
-        MainViewModel.cusHotelRoomViewModel.fetchHotelData()
-        hotel = MainViewModel.cusHotelRoomViewModel.hotel
-        room = MainViewModel.cusHotelRoomViewModel.room
+        cusHotelRoomViewModel.fetchHotelData(account!!.role)
+        cusHotelRoomViewModel.getHotel(account!!.role, selectedHotelId)
+        cusHotelRoomViewModel.getRoomData(account!!.role, selectedHotelId)
 
-        standardRoom = room.filter { it.roomType == "Standard Room" }
-        superiorRoom = room.filter { it.roomType == "Superior Room" }
-        deluxeRoom = room.filter { it.roomType == "Deluxe Room" }
-        suiteRoom = room.filter { it.roomType == "Suite Room" }
-
+        standardRoom = room!!.filter { it.roomType == "Standard Room" }
+        superiorRoom = room!!.filter { it.roomType == "Superior Room" }
+        deluxeRoom = room!!.filter { it.roomType == "Deluxe Room" }
+        suiteRoom = room!!.filter { it.roomType == "Suite Room" }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -99,9 +97,9 @@ fun CusRoomScreen(onBack: () -> Unit, showRoomDetail: (String) -> Unit) {
         ) {
             item { HotelImage(imageUrl = hotel.image, onBack) }
             item { MySpacer(height = 8.dp) }
-            item { HotelInfo(hotel = hotel) }
+            item { HotelInfo(account!!.role, hotel = hotel) }
             item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
-            item { HotelFacilities() }
+            item { HotelFacilities(account!!.role, selectedHotelId) }
             item { MySpacer(height = 8.dp, color = Color(0xFFF2F2F2)) }
 
             if (standardRoom.isNotEmpty()) {
@@ -204,11 +202,13 @@ fun TopBar(onBack: () -> Unit) {
 }
 
 @Composable
-fun HotelInfo(hotel: Account) {
-    var rating by remember { mutableDoubleStateOf(0.0) }
+fun HotelInfo(role: String, hotel: Account, cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel()) {
+    var rating by remember {
+        mutableDoubleStateOf(0.0)
+    }
 
     LaunchedEffect(key1 = Unit) {
-        rating = getHotelRating()
+        rating = cusHotelRoomViewModel.getAverageRating(role, hotel._id)
     }
 
     Column(
@@ -263,10 +263,10 @@ fun HotelInfo(hotel: Account) {
 }
 
 @Composable
-fun HotelFacilities() {
-    var amenities by remember { mutableStateOf(emptyList<Amenity>()) }
+fun HotelFacilities(role: String, selectedHotelId: String, cusHotelRoomViewModel: CusHotelRoomViewModel = koinViewModel()) {
+    val amenities by cusHotelRoomViewModel.hotelAmenities.collectAsState()
     LaunchedEffect(key1 = Unit) {
-        amenities = getHotelAmenities(MainViewModel.cusHotelRoomViewModel.selectedHotelId)
+        cusHotelRoomViewModel.getHotelAmenities(role, selectedHotelId)
     }
 
     Text(
@@ -285,7 +285,7 @@ fun HotelFacilities() {
                 bottom = 8.dp
             )
     ) {
-        items(amenities.chunked(3)) { rowAmenities ->
+        items(amenities!!.chunked(3)) { rowAmenities ->
             Row {
                 rowAmenities.forEach { amenity ->
                     Column(
@@ -450,7 +450,9 @@ private fun RoomDetails(room: RoomFullDetail) {
     ) {
         Column {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -554,17 +556,6 @@ fun Comment() {
             modifier = Modifier.padding(bottom = 8.dp)
         )
         MySpacer(height = 0.5.dp, color = Color.Black)
-    }
-}
-
-suspend fun getHotelRating(): Double {
-    return withContext(Dispatchers.IO) {
-        try {
-            MainViewModel.cusHotelRoomViewModel.getAverageRating(MainViewModel.cusHotelRoomViewModel.selectedHotelId)
-        } catch (e: Exception) {
-            Log.e("CusRoomScreen", e.message.toString())
-            0.0
-        }
     }
 }
 

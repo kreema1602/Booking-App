@@ -1,5 +1,6 @@
 package com.example.bookingapp.services
 
+import android.content.Context
 import com.example.bookingapp.BuildConfig
 import com.example.bookingapp.MainActivity
 import okhttp3.Interceptor
@@ -7,22 +8,36 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 object RetrofitClient {
-    private const val CACHE_SIZE = (10 * 1024 * 1024).toLong()
-    private var BASE_URL = BuildConfig.BASE_URL;
-    private val authInterceptor = AuthInterceptor()
-    private val myCache = okhttp3.Cache(MainActivity.context.cacheDir, CACHE_SIZE)
-    private val client = OkHttpClient.Builder().addInterceptor(authInterceptor).cache(myCache).build()
+    private var BASE_URL = BuildConfig.BASE_URL
+    private lateinit var client: OkHttpClient
+    private lateinit var retrofit: Retrofit
     private var authToken: String? = null
+    private var initialized = false
 
+    fun init(context: Context) {
+        if (!initialized) {
+            val cacheSize = (10 * 1024 * 1024).toLong()
+            val cache = okhttp3.Cache(context.cacheDir, cacheSize)
+            client = OkHttpClient.Builder()
+                .addInterceptor(AuthInterceptor())
+                .cache(cache)
+                .build()
 
-    private var retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+            retrofit = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            initialized = true
+        }
+    }
 
     val apiService: ApiService by lazy {
+        check(!initialized) {
+            throw IllegalStateException("RetrofitClient not initialized")
+        }
         retrofit.create(ApiService::class.java)
     }
 

@@ -38,6 +38,7 @@ import com.example.bookingapp.navigation.CustomerLeafScreen
 import com.example.bookingapp.navigation.ModeratorLeafScreen
 import com.example.bookingapp.navigation.RootScreen
 import com.example.bookingapp.repository.AccountRepository
+import com.example.bookingapp.services.RetrofitClient
 import com.example.bookingapp.view_models.AuthViewModel
 import com.example.bookingapp.view_models.CusHotelRoomViewModel
 import org.koin.android.ext.koin.androidContext
@@ -54,8 +55,11 @@ class MainActivity : AppCompatActivity() {
         viewModel<AuthViewModel> { AuthViewModel(get()) }
         viewModel<CusHotelRoomViewModel> { CusHotelRoomViewModel() }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        RetrofitClient.init(this)
 
         startKoin{
             androidLogger()
@@ -74,6 +78,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    companion object
 }
 
 
