@@ -99,6 +99,8 @@ interface ApiService {
     @GET("/{role}/room/{hotelId}?is_full_detail=true")
     suspend fun getRoomFullDetail(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
 
+    @GET("/{role}/noti/{to}")
+    suspend fun getNoti(@Path("role") role: String, @Path("to") to: String): Response<ApiResponse>
     // Booking
     // Get all bookings of customer
     @GET("/{role}/booking/waiting/{hotelId}")
