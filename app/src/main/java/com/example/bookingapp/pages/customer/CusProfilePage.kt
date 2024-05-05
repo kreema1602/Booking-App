@@ -54,13 +54,13 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun CusProfilePage(
-    accountId: String,
     onClickEdit: (String) -> Unit,
     onClickLogout: () -> Unit,
     onClickFavorite: () -> Unit,
     onClickHistory: () -> Unit)
 {
-    // get the account profile
+    val accountId = MainViewModel.authViewModel.account._id
+
     var account by remember { mutableStateOf (Account()) }
     LaunchedEffect(Unit) {
         account = getAccountProfile(accountId)
@@ -277,5 +277,5 @@ suspend fun getAccountProfile (accountId: String) : Account {
 @Preview
 @Composable
 fun CusProfilePagePreview() {
-    CusProfilePage("6631e317dd026643e4dc6a30", {}, {}, {}, {})
+    CusProfilePage({}, {}, {}, {})
 }
