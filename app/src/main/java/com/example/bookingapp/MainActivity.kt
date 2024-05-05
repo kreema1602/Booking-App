@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,8 +46,6 @@ import com.example.bookingapp.view_models.CusHotelRoomViewModel
 import com.example.bookingapp.view_models.MainViewModel.accountViewModel
 import com.example.bookingapp.view_models.MainViewModel.authViewModel
 import com.example.bookingapp.view_models.MainViewModel.cusHotelRoomViewModel
-import com.example.bookingapp.view_models.MainViewModel.modHotelRoomViewModel
-import com.example.bookingapp.view_models.ModHotelRoomViewModel
 
 class MainActivity : FragmentActivity() {
     @SuppressLint("StaticFieldLeak")

@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.Amenity
 import com.example.bookingapp.models.ApiResponse
+import com.example.bookingapp.models.RoomFullDetail
 import com.example.bookingapp.models.requests.CreateRoomReq
 import com.example.bookingapp.view_models.MainViewModel.authViewModel
 import com.google.gson.Gson
@@ -17,7 +18,12 @@ object HotelRoomService {
 
     suspend fun getHotels(start: Int, num: Int): List<Account> {
         try {
-            val response = apiService.getHotels(authViewModel.account.role, authViewModel.account._id, start, num)
+            val response = apiService.getHotels(
+                authViewModel.account.role,
+                authViewModel.account._id,
+                start,
+                num
+            )
             val statusCode = response.code()
 
             return if (statusCode == 200) {
@@ -147,11 +153,17 @@ object HotelRoomService {
             } else {
                 val errorBody = response.errorBody()?.string()
                 val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
+                return emptyList()
+            }
+        } catch (e: Exception) {
+            throw Exception("${e.message}")
+        }
+    }
 
     suspend fun addHotelRoom(fields: Map<String, String>, role: String): Boolean {
         try {
-//            // Log the request body before making the API call
-//            Log.d("Request", "Fields: $fields, Role: $role")
+            // Log the request body before making the API call
+            Log.d("Request", "Fields: $fields, Role: $role")
             val response = apiService.addRoom(
                 role,
                 CreateRoomReq(

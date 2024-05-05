@@ -38,11 +38,11 @@ import androidx.navigation.NavController
 import com.example.bookingapp.MainActivity
 import com.example.bookingapp.R
 import com.example.bookingapp.core.compose.BottomSection
+import com.example.bookingapp.core.compose.EditCarousel
 import com.example.bookingapp.core.compose.EditText
 import com.example.bookingapp.core.compose.MyDropdownMenu
 import com.example.bookingapp.core.compose.MySpacer
 import com.example.bookingapp.core.compose.TopAppBar
-import com.example.bookingapp.mock_data.RoomData
 import com.example.bookingapp.view_models.MainViewModel
 import com.example.bookingapp.view_models.ModHotelRoomViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -52,7 +52,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModRoomAdd(onBack: () -> Unit, navController: NavController) {
-    val room = RoomData.data[0]
+//    val room = RoomData.data[0]
     var roomName by remember { mutableStateOf("") }
     var roomType by remember { mutableStateOf("") }
 
@@ -70,7 +70,12 @@ fun ModRoomAdd(onBack: () -> Unit, navController: NavController) {
             ) {
                 item {
                     TopAppBar(title = "Detail", onClick = onBack)
-                    EditCarousel(initialItems = room.images)
+                    EditCarousel(
+                        initialItems = listOf(
+                            R.drawable.hotel1.toString(),
+                            R.drawable.hotel2.toString()
+                        )
+                    )
                     Text(
                         text = "Room", style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight(700),
@@ -248,6 +253,6 @@ suspend fun sendRoomRequest(fields: Map<String, String>, navController: NavContr
 //@Composable
 //fun PreviewModRoomAdd() {
 //    ThemedPreview {
-//        ModRoomAdd(onBack = {}, navController = navController)
+//        ModRoomAdd(onBack = {}, navController = null)
 //    }
 //}

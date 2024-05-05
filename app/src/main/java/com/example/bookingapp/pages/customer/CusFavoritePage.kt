@@ -24,7 +24,9 @@ fun CusFavoritePage(navController: NavController) {
     LazyColumn {
         item {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -42,7 +44,9 @@ fun CusFavoritePage(navController: NavController) {
         }
         repeat(10) {
             item {
-                RoomItem(RoomData.data[0], viewDetail = { navController.navigate(CustomerLeafScreen.RoomDetail.route + "/1") })
+                RoomItem(
+                    RoomData.data[0],
+                    viewDetail = { navController.navigate(CustomerLeafScreen.RoomDetail.route + "/1") })
             }
             item {
                 MySpacer(height = 8.dp, color = Color(0xFFF2F2F2))
