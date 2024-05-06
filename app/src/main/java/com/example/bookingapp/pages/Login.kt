@@ -392,6 +392,7 @@ fun performLogin(
                 return@launch
             }
             val result = withContext(Dispatchers.IO) {
+                Log.d("Login", "Login with username: $username, password: $password")
                 MainViewModel.authViewModel.login(username, password, isBio)
             }
 

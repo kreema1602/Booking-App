@@ -190,8 +190,12 @@ fun VerifyFragment() {
     var waitingBooking by rememberSaveable { mutableStateOf(emptyList<Booking>()) }
 
     LaunchedEffect(key1 = Unit) {
-        getWaitingBooking()
-        waitingBooking = MainViewModel.modHomeViewModel.waitingBooking
+        try {
+            getWaitingBooking()
+            waitingBooking = MainViewModel.modHomeViewModel.waitingBooking
+        } catch (e: Exception) {
+            MainViewModel.modHomeViewModel.statusNotification = e.message.toString()
+        }
     }
 
     Column(
@@ -222,8 +226,12 @@ fun CheckInFragment() {
     var acceptedBooking by rememberSaveable { mutableStateOf(emptyList<Booking>()) }
 
     LaunchedEffect(key1 = Unit) {
-        getAcceptedBooking()
-        acceptedBooking = MainViewModel.modHomeViewModel.acceptedBooking
+        try {
+            getAcceptedBooking()
+            acceptedBooking = MainViewModel.modHomeViewModel.acceptedBooking
+        } catch (e: Exception) {
+            MainViewModel.modHomeViewModel.statusNotification = e.message.toString()
+        }
     }
     Column(
         modifier = Modifier
@@ -253,8 +261,12 @@ fun CheckOutFragment() {
     var stayingBooking by rememberSaveable { mutableStateOf(emptyList<Booking>()) }
 
     LaunchedEffect(key1 = Unit) {
-        getStayingBooking()
-        stayingBooking = MainViewModel.modHomeViewModel.stayingBooking
+        try {
+            getStayingBooking()
+            stayingBooking = MainViewModel.modHomeViewModel.stayingBooking
+        } catch (e: Exception) {
+            MainViewModel.modHomeViewModel.statusNotification = e.message.toString()
+        }
     }
     Column(
         modifier = Modifier

@@ -103,6 +103,10 @@ interface ApiService {
     suspend fun getNoti(@Path("role") role: String, @Path("to") to: String): Response<ApiResponse>
     // Booking
     // Get all bookings of customer
+    @GET("/{role}/booking/{customerId}")
+    suspend fun getBookingOfCustomer(@Path("role") role: String, @Path("customerId") customerId: String): Response<ApiResponse>
+    @GET("/{role}/booking/{id}")
+    suspend fun getDetailBooking(@Path("role") role: String, @Path("id") id: String): Response<ApiResponse>
     @GET("/{role}/booking/waiting/{hotelId}")
     suspend fun getWaitingBookings(@Path("role") role: String, @Path("hotelId") hotelId: String): Response<ApiResponse>
     @GET("/{role}/booking/accepted/{hotelId}")

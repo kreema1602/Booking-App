@@ -1,7 +1,6 @@
 package com.example.bookingapp.pages.customer
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +24,11 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,28 +39,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.bookingapp.mock_data.ReservationData
 import com.example.bookingapp.models.ReservationItem
+import com.example.bookingapp.view_models.MainViewModel
+import java.text.SimpleDateFormat
 
 @Composable
-fun CusReservationDetail(hotelId: Int, navController: NavController) {
-    val hotels = ReservationData.sampleData
-    val chosenHotel = hotels.find { it.id == hotelId}
+fun CusReservationDetail(reservationId: String, navController: NavController) {
+    var reservation by remember { mutableStateOf(ReservationItem())}
+    LaunchedEffect(key1 = reservationId) {
+        reservation = MainViewModel.bookingViewModel.getDetailBooking(reservationId)
+    }
 
-    if (chosenHotel != null) {
-        Surface(color = Color.White) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                DetailTopBar(chosenHotel, navController)
-                DetailContent(chosenHotel)
-            }
+    Surface(color = Color.White) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            DetailTopBar(reservation, navController)
+            DetailContent(reservation)
         }
-    } else {
-        Text(text = "Hotel not found")
     }
 }
 
 @Composable
-fun DetailTopBar(chosenHotel: ReservationItem, navController: NavController) {
+fun DetailTopBar(reservation: ReservationItem, navController: NavController) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color.White,
@@ -81,7 +84,7 @@ fun DetailTopBar(chosenHotel: ReservationItem, navController: NavController) {
             }
 
             // Status Box
-            StatusBox(status = chosenHotel.status)
+            StatusBox(status = reservation.status)
 
             // Report Button (if status is Completed)
             IconButton(
@@ -90,7 +93,7 @@ fun DetailTopBar(chosenHotel: ReservationItem, navController: NavController) {
                 Icon(
                     imageVector = Icons.Filled.Info,
                     contentDescription = "Report",
-                    tint = if (chosenHotel.status == "Completed") Color.Black else Color.White
+                    tint = if (reservation.status == "Completed") Color.Black else Color.White
                 )
             }
 
@@ -100,14 +103,16 @@ fun DetailTopBar(chosenHotel: ReservationItem, navController: NavController) {
 }
 
 @Composable
-fun DetailContent(chosenHotel: ReservationItem) {
+fun DetailContent(reservation: ReservationItem) {
+    val sdf = SimpleDateFormat("dd/MM/yyyy")
+    val date = sdf.parse(reservation.check_in)?.toString() + " - " + sdf.parse(reservation.check_out)?.toString()
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        CoreContent(images = chosenHotel.imageResource
-            , hotelName = chosenHotel.name
-            , roomType = chosenHotel.roomType)
+        CoreContent(images = reservation.image.map { it.toInt() }
+            , hotelName = reservation.hotel
+            , roomType = reservation.roomtype)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -115,14 +120,14 @@ fun DetailContent(chosenHotel: ReservationItem) {
                 .background(Color(0xFFe7e7e7))
 
         )
-        Information(date = chosenHotel.date, price = chosenHotel.price)
+        Information(date = date, price = reservation.price.toString())
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(6.dp)
                 .background(Color(0xFFe7e7e7))
         )
-        StatusButton(status = chosenHotel.status)
+        StatusButton(status = reservation.status)
     }
 }
 
@@ -226,7 +231,7 @@ fun StatusButton(status: String) {
                 .padding(top = 22.dp, start = 24.dp, end = 24.dp, bottom = 16.dp)
                 .clip(RoundedCornerShape(50.dp))
                 .background(Color(0xFFff6400))
-                .clickable {  },
+                .clickable { },
             contentAlignment = Alignment.Center
         ) {
             Text(

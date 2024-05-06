@@ -54,6 +54,7 @@ class AuthViewModel: ViewModel() {
 
     suspend fun login(email: String, password: String, isBio: Boolean): Boolean {
         try {
+            Log.d("AuthViewModel", "login: $email, $password, $isBio")
             AccountService.login(email, password, isBio).let {
                 if (it != null) {
                     account = it.first

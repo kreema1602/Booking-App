@@ -161,9 +161,11 @@ private fun NavGraphBuilder.showCusReservations(navController: NavController) {
 }
 
 private fun NavGraphBuilder.showCusReservationDetail(navController: NavController) {
-    composable(CustomerLeafScreen.ReservationDetail.route + "/{hotelId}") {
-        val hotelId = it.arguments?.getString("hotelId")?.toInt() ?: 0
-        CusReservationDetail(hotelId, navController = navController)
+    composable(CustomerLeafScreen.ReservationDetail.route + "/{reservationId}") {
+        val reservationId = it.arguments?.getString("reservationId")
+        if (reservationId != null) {
+            CusReservationDetail(reservationId, navController = navController)
+        }
     }
 }
 

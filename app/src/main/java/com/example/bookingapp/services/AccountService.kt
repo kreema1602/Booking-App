@@ -1,5 +1,6 @@
 package com.example.bookingapp.services
 
+import android.util.Log
 import com.example.bookingapp.models.Account
 import com.example.bookingapp.models.ApiResponse
 import com.example.bookingapp.models.requests.CusRegisterRequest
@@ -20,6 +21,7 @@ object AccountService {
         try {
             val request = LoginRequest(username, password)
             val response = apiService.login(request, isBio)
+            Log.d("AccountService", response.toString())
             val statusCode = response.code()
 
             return if (statusCode == 200) {

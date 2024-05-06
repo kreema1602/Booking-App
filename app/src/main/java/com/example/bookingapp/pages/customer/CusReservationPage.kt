@@ -1,7 +1,6 @@
 package com.example.bookingapp.pages.customer
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,20 +19,27 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.bookingapp.models.ReservationItem
-import com.example.bookingapp.mock_data.ReservationData
 import com.example.bookingapp.navigation.CustomerLeafScreen
+import com.example.bookingapp.view_models.MainViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Composable
 fun CusReservationPage(navController: NavController) {
@@ -42,7 +48,11 @@ fun CusReservationPage(navController: NavController) {
 
 @Composable
 fun ReservationList(navController: NavController) {
-    val items = ReservationData.sampleData
+    var items by rememberSaveable { mutableStateOf(emptyList<ReservationItem>()) }
+
+    LaunchedEffect(key1 = Unit) {
+        items = MainViewModel.bookingViewModel.getBookingOfCustomer()
+    }
 
     LazyColumn (
 //        contentPadding = PaddingValues(16.dp),
@@ -55,8 +65,8 @@ fun ReservationList(navController: NavController) {
     {
         items(items = items) { item ->
             ReservationListItem(item = item, viewDetail = {
-                Log.i("ReservationList", "View detail of ${item.id}")
-                navController.navigate(CustomerLeafScreen.ReservationDetail.route + "/${item.id}")
+                Log.i("ReservationList", "View detail of ${item._id}")
+                navController.navigate(CustomerLeafScreen.ReservationDetail.route + "/${item._id}")
             })
         }
     }
@@ -84,12 +94,13 @@ fun ReservationListItem(item: ReservationItem, viewDetail: () -> Unit = {}){
             Box(
                 modifier = imageModifier
             ) {
-                Image(
-                    painter = painterResource(id = item.imageResource[0]),
-                    contentDescription = null, // Add proper content description
-                    contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.fillMaxSize()
-                )
+//                Image(
+//                    painter = painterResource(id = item.image[0]),
+//                    contentDescription = null, // Add proper content description
+//                    contentScale = ContentScale.FillHeight,
+//                    modifier = Modifier.fillMaxSize()
+//                )
+                AsyncImage(model = item.image[0], contentDescription = null, contentScale = ContentScale.FillHeight, modifier = Modifier.fillMaxSize())
             }
 
             // Details
@@ -102,16 +113,16 @@ fun ReservationListItem(item: ReservationItem, viewDetail: () -> Unit = {}){
 @Composable
 fun StatusBox(status: String) {
     val backgroundColor = when (status) {
-        "Completed" -> Color(0xFFC7EDD9)
-        "Waiting" -> Color(0xFFFFF3EB)
-        "Cancelled" -> Color(0xFFdddddd)
+        "approved" -> Color(0xFFC7EDD9)
+        "waiting" -> Color(0xFFFFF3EB)
+        "rejected" -> Color(0xFFdddddd)
         else -> Color.Gray
     }
 
     val textColor = when (status) {
-        "Completed" -> Color(0xFF41AF79)
-        "Waiting" -> Color(0xFFff6400)
-        "Cancelled" -> Color(0xFF878787)
+        "approved" -> Color(0xFF41AF79)
+        "waiting" -> Color(0xFFff6400)
+        "rejected" -> Color(0xFF878787)
         else -> Color.Gray
     }
 
@@ -155,7 +166,11 @@ fun RatingButton(status: String){
 
 @Composable
 fun ItemDetail(item: ReservationItem, columnHeight: Dp){
-    Column(
+    val sdf = SimpleDateFormat("dd/MM/yyyy")
+    val date = sdf.parse(item.check_in)?.toString() + " - " + sdf.parse(item.check_out)?.toString()
+    val diff = sdf.parse(item.check_in)?.time?.minus(sdf.parse(item.check_out)?.time!!)
+    val diffDay = diff?.let { Date(it) }?.day
+    Column (
         modifier = Modifier
             .padding(start = 16.dp)
             .fillMaxWidth()
@@ -165,17 +180,20 @@ fun ItemDetail(item: ReservationItem, columnHeight: Dp){
     ) {
         StatusBox(status = item.status)
         Text(
-            text = item.name,
+            text = item.hotel,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF333333),
             fontSize = 16.sp)
-        Text(text = item.roomType, color = Color(0xFF555555))
-        Text(text = item.date, color = Color(0xFF555555))
-        Text(
-            text = "${item.price} VNĐ",
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFFFF6400),
-            fontSize = 18.sp)
+        Text(text = item.roomtype, color = Color(0xFF555555))
+        Text(text = date,
+            color = Color(0xFF555555))
+        if (diffDay != null) {
+            Text(
+                text = "${diffDay * item.price} VNĐ",
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFFF6400),
+                fontSize = 18.sp)
+        }
 
     }
 }
